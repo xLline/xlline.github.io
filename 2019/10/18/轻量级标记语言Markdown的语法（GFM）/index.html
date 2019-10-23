@@ -79,16 +79,16 @@
 
 
 
-<meta name="description" content="Hexo下使用的MarkDown是Github的GFM，整理下常用的语法，方便后续写作。 常用必备字体相关斜体:用一个 * 或 _ 包裹，紧贴被强调文本   我这是测试斜体哦  粗体:用两个 * 或 _ 包裹，紧贴被强调文本   我这是测试粗体哦  删除线： 用两个 ~ 包裹被删除文本  我这是测试删除文字哦  段落文本行:即一行文字，markdown 中换行必须进行手动操作，自动换行将会变成一个">
+<meta name="description" content="Hexo下使用的MarkDown是Github的GFM，整理下常用的语法，方便后续写作。 常用必备字体相关斜体:用 * 或 _ 包裹，紧贴被强调文本   我这是测试斜体哦  粗体:用 ** 或 __ 包裹，紧贴被强调文本   我这是测试粗体哦  删除线： 用 ~~ 包裹被删除文本  我这是测试删除文字哦  段落  文本行 : 即一行文字，markdown 中换行必须进行手动操作，自动换行将会变成一">
 <meta name="keywords" content="杂谈,Markdown">
 <meta property="og:type" content="article">
 <meta property="og:title" content="轻量级标记语言Markdown的语法（GFM）">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;18&#x2F;%E8%BD%BB%E9%87%8F%E7%BA%A7%E6%A0%87%E8%AE%B0%E8%AF%AD%E8%A8%80Markdown%E7%9A%84%E8%AF%AD%E6%B3%95%EF%BC%88GFM%EF%BC%89&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="Hexo下使用的MarkDown是Github的GFM，整理下常用的语法，方便后续写作。 常用必备字体相关斜体:用一个 * 或 _ 包裹，紧贴被强调文本   我这是测试斜体哦  粗体:用两个 * 或 _ 包裹，紧贴被强调文本   我这是测试粗体哦  删除线： 用两个 ~ 包裹被删除文本  我这是测试删除文字哦  段落文本行:即一行文字，markdown 中换行必须进行手动操作，自动换行将会变成一个">
+<meta property="og:description" content="Hexo下使用的MarkDown是Github的GFM，整理下常用的语法，方便后续写作。 常用必备字体相关斜体:用 * 或 _ 包裹，紧贴被强调文本   我这是测试斜体哦  粗体:用 ** 或 __ 包裹，紧贴被强调文本   我这是测试粗体哦  删除线： 用 ~~ 包裹被删除文本  我这是测试删除文字哦  段落  文本行 : 即一行文字，markdown 中换行必须进行手动操作，自动换行将会变成一">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;.io&#x2F;&#x2F;%E5%9B%BE%E7%89%87%E9%93%BE%E6%8E%A5">
-<meta property="og:updated_time" content="2019-10-23T10:08:14.315Z">
+<meta property="og:updated_time" content="2019-10-23T10:12:26.393Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;.io&#x2F;&#x2F;%E5%9B%BE%E7%89%87%E9%93%BE%E6%8E%A5">
 
@@ -363,21 +363,32 @@
 
       
         <p>Hexo下使用的MarkDown是Github的GFM，整理下常用的语法，方便后续写作。</p>
-<h1 id="常用必备"><a href="#常用必备" class="headerlink" title="常用必备"></a>常用必备</h1><p><strong>字体相关</strong><br>斜体:用一个 * 或 _ 包裹，紧贴被强调文本 </p>
+<h1 id="常用必备"><a href="#常用必备" class="headerlink" title="常用必备"></a>常用必备</h1><p><strong>字体相关</strong><br>斜体:用 <code>*</code> 或 <code>_</code> 包裹，紧贴被强调文本 </p>
 <blockquote>
 <p><em>我这是测试斜体哦</em></p>
 </blockquote>
-<p>粗体:用两个 * 或 _ 包裹，紧贴被强调文本 </p>
+<p>粗体:用 <code>**</code> 或 <code>__</code> 包裹，紧贴被强调文本 </p>
 <blockquote>
 <p><strong>我这是测试粗体哦</strong></p>
 </blockquote>
-<p>删除线： 用两个 ~ 包裹被删除文本</p>
+<p>删除线： 用 <code>~~</code> 包裹被删除文本</p>
 <blockquote>
 <p><del>我这是测试删除文字哦</del></p>
 </blockquote>
-<p><strong>段落</strong><br>文本行:即一行文字，markdown 中换行必须进行手动操作，自动换行将会变成一个空格<br>段　落:由数行文字成一段，markdown 中由空行划分段落</p>
-<p><strong>标题</strong><br>底线形式(Setext):标题下方插入任意数量的 = (一级标题）或 -（二级标题）<br>井号形式(atx):标题行首插入1至6个 #加上空格，构成一至六级标题</p>
-<p><strong>引用区块</strong><br>段落行首插入 &gt; 。插入多个 &gt; 可在区块内实现多重嵌套</p>
+<p><strong>段落</strong></p>
+<ul>
+<li>文本行 : 即一行文字，markdown 中换行必须进行手动操作，自动换行将会变成一个空格</li>
+<li>段　落 : 由数行文字成一段，markdown 中由空行划分段落</li>
+</ul>
+<p><strong>标题</strong></p>
+<ul>
+<li>底线形式(Setext) : 标题下方插入任意数量的<code>=</code>(一级标题）或<code>-</code>二级标题）</li>
+<li>井号形式(atx) : 标题行首插入1至6个<code>#</code>加上空格，构成一至六级标题</li>
+</ul>
+<p><strong>引用区块</strong><br>段落行首插入 &gt; 。插入多个 &gt; 可在区块内实现多重嵌套<br>`&gt;aaa<br>bbb</p>
+<blockquote>
+<p>aaa<br>bbb<br>`</p>
+</blockquote>
 <p><strong>列表</strong><br>无序列表 : 行首插入 *、+ 或 - ，加上一个空格 <code></code> 可生成无序列表项目，可通过制表符进行多重嵌套<br>有序列表 : 数字. + <code></code>可生成相应编号列表项目，可通过制表符进行多重嵌套</p>
 <h1 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h1><p><strong>行内代码</strong>：用 <code>包裹</code>hello world！`</p>
 <p><strong>图片</strong><br>使用 ! ，在图片链接之前添加就可以额<br>行内式:<img src="/.io//%E5%9B%BE%E7%89%87%E9%93%BE%E6%8E%A5" alt title="图片标签"><br>参考式:![][唯一id]，然后于文章任意处起一行 : [唯一id]: 图片链接 “图片标签”</p>
