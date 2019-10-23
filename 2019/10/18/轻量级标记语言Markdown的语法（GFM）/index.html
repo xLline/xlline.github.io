@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="Hexo下使用的MarkDown是Github的GFM，整理下常用的语法，方便后续写作。 常用必备字体相关斜体:用 * 或 _ 包裹，紧贴被强调文本   我这是测试斜体哦  粗体:用 ** 或 __ 包裹，紧贴被强调文本   我这是测试粗体哦  删除线： 用 ~~ 包裹被删除文本  我这是测试删除文字哦  段落文本行 : 即一行文字，markdown 中换行必须进行手动操作，自动换行将会变成一个空">
+<meta name="description" content="Hexo下使用的MarkDown是Github的GFM，整理下常用的语法，方便后续写作。 常用必备字体相关斜体:用 * 或 _ 包裹，紧贴被强调文本  1*斜体文本*  我这是测试斜体哦  粗体文本粗体:用 `*或__` 包裹，紧贴被强调文本   1**粗体文本**  我这是测试粗体哦删除线： 用 ~~ 包裹被删除文本  1~~我这是测试删除文字哦~~  我这是测试删除文字哦  段落文本行 : 即">
 <meta name="keywords" content="杂谈,Markdown">
 <meta property="og:type" content="article">
 <meta property="og:title" content="轻量级标记语言Markdown的语法（GFM）">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;18&#x2F;%E8%BD%BB%E9%87%8F%E7%BA%A7%E6%A0%87%E8%AE%B0%E8%AF%AD%E8%A8%80Markdown%E7%9A%84%E8%AF%AD%E6%B3%95%EF%BC%88GFM%EF%BC%89&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="Hexo下使用的MarkDown是Github的GFM，整理下常用的语法，方便后续写作。 常用必备字体相关斜体:用 * 或 _ 包裹，紧贴被强调文本   我这是测试斜体哦  粗体:用 ** 或 __ 包裹，紧贴被强调文本   我这是测试粗体哦  删除线： 用 ~~ 包裹被删除文本  我这是测试删除文字哦  段落文本行 : 即一行文字，markdown 中换行必须进行手动操作，自动换行将会变成一个空">
+<meta property="og:description" content="Hexo下使用的MarkDown是Github的GFM，整理下常用的语法，方便后续写作。 常用必备字体相关斜体:用 * 或 _ 包裹，紧贴被强调文本  1*斜体文本*  我这是测试斜体哦  粗体文本粗体:用 `*或__` 包裹，紧贴被强调文本   1**粗体文本**  我这是测试粗体哦删除线： 用 ~~ 包裹被删除文本  1~~我这是测试删除文字哦~~  我这是测试删除文字哦  段落文本行 : 即">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-23T10:31:30.676Z">
+<meta property="og:updated_time" content="2019-10-23T10:37:23.598Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -362,14 +362,15 @@
       
         <p>Hexo下使用的MarkDown是Github的GFM，整理下常用的语法，方便后续写作。</p>
 <h1 id="常用必备"><a href="#常用必备" class="headerlink" title="常用必备"></a>常用必备</h1><p><strong>字体相关</strong><br>斜体:用 <code>*</code> 或 <code>_</code> 包裹，紧贴被强调文本 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*斜体文本*</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p><em>我这是测试斜体哦</em></p>
+<p><em>我这是测试斜体哦<br>  <strong>粗体文本</strong><br>粗体:用 `*</em><code>或</code>__` 包裹，紧贴被强调文本 </p>
 </blockquote>
-<p>粗体:用 <code>**</code> 或 <code>__</code> 包裹，紧贴被强调文本 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">**粗体文本**</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p><strong>我这是测试粗体哦</strong></p>
+<p><strong>我这是测试粗体哦</strong><br>删除线： 用 <code>~~</code> 包裹被删除文本</p>
 </blockquote>
-<p>删除线： 用 <code>~~</code> 包裹被删除文本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~~我这是测试删除文字哦~~</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p><del>我这是测试删除文字哦</del></p>
 </blockquote>
@@ -377,29 +378,82 @@
 <p><strong>标题</strong></p>
 <ul>
 <li>底线形式(Setext) : 标题下方插入任意数量的<code>=</code>(一级标题）或<code>-</code>二级标题）</li>
-<li>井号形式(atx) : 标题行首插入1至6个<code>#</code>加上空格，构成一至六级标题</li>
+<li>井号形式(atx) : 标题行首插入1至6个<code>#</code>加上空格，构成一至六级标题<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">一级标题</span><br><span class="line">=</span><br><span class="line">二级标题</span><br><span class="line">-------</span><br><span class="line"># 一级标题</span><br><span class="line">## 二级标题</span><br><span class="line">### 三级标题</span><br><span class="line">#### 四级标题</span><br><span class="line">##### 五级标题</span><br><span class="line">###### 六级标题</span><br></pre></td></tr></table></figure></li>
+<li><em>引用区块*</em><br>段落行首插入 &gt; 。插入多个 &gt; 可在区块内实现多重嵌套<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;aaa  </span><br><span class="line">bbb</span><br><span class="line"></span><br><span class="line">&gt;aaa</span><br><span class="line">&gt;bbb</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>aaa<br>bbb</p>
+</blockquote>
+</li>
 </ul>
-<p><strong>引用区块</strong><br>段落行首插入 &gt; 。插入多个 &gt; 可在区块内实现多重嵌套</p>
-<p><strong>列表</strong><br>无序列表 : 行首插入 <code>*</code>、<code>+</code> 或 <code>-</code> ，加上一个空格 <code></code> 可生成无序列表项目，可通过制表符进行多重嵌套<br>有序列表 : <code>数字.</code> + <code></code>可生成相应编号列表项目，可通过制表符进行多重嵌套</p>
+<blockquote>
+<p>aaa<br>bbb<br><strong>列表</strong><br>无序列表 : 行首插入 <code>*</code>、<code>+</code> 或 <code>-</code> ，加上一个空格 <code></code> 可生成无序列表项目，可通过制表符进行多重嵌套<br>有序列表 : <code>数字.</code> + <code></code>可生成相应编号列表项目，可通过制表符进行多重嵌套</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">* 项目一</span><br><span class="line">* 项目二</span><br><span class="line"></span><br><span class="line">+ 项目一</span><br><span class="line"> + 项目二</span><br><span class="line">  + 项目三</span><br><span class="line"></span><br><span class="line">- 项目一</span><br><span class="line">- 项目二</span><br><span class="line"></span><br><span class="line">1. 项目一</span><br><span class="line">2. 项目二</span><br></pre></td></tr></table></figure>
+<ul>
+<li>项目一</li>
+<li>项目二</li>
+</ul>
+<ul>
+<li>项目一<ul>
+<li>项目二</li>
+<li>项目三</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>项目一</li>
+<li>项目二</li>
+</ul>
+<ol>
+<li>项目一</li>
+<li>项目二</li>
+</ol>
 <p><strong>代码块</strong><br>原生 md使用一个制表符（4个空格）进行缩进即可生成代码区块<br>GFM采用围栏式代码区块，在代码上下一行使用三个反引号 ```， 并在第一行反引号后自定义代码语种，支持相应语种的代码高亮<br><strong>行内代码</strong>：用 ` 包裹<br><code>hello world！</code></p>
 <p><strong>链接</strong><br>行内式 : <code>[显示文本](链接 &quot;标签&quot;)</code><br>参考式 : <code>[显示文本][唯一id]</code>，然后于文章任意处起一行 : <code>[唯一id]: 链接 &quot;链接标题&quot;</code><br>自动式 : <code>&lt;链接&gt;</code>, 必须标明通讯协议<br>标题锚 : <code>[显示文本](#某个标题)</code></p>
-<figure class="highlight plain"><figcaption><span>"bing.com")！  </span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">有问题？别[百度][1]！  </span><br><span class="line">可能的话，用 &lt;https://www.google.com&gt; 好一点。  </span><br><span class="line">[脚注](#脚注)其实也有点像标题锚的其实, 但更像 html 中的锚  </span><br><span class="line">...</span><br><span class="line">[1]: https://www.baidu.com</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">有问题？有[必应](https://www.bing.com &quot;bing.com&quot;)！  </span><br><span class="line">有问题？别[百度][1]！  </span><br><span class="line">可能的话，用 &lt;https://www.google.com&gt; 好一点。  </span><br><span class="line">[脚注](#脚注)其实也有点像标题锚的其实, 但更像 html 中的锚  </span><br><span class="line">...</span><br><span class="line">[1]: https://www.baidu.com</span><br></pre></td></tr></table></figure>
 
 
 <p><strong>分割线</strong><br>在一行中使用3个及以上的 <code>*</code> 、<code>-</code> 或 <code>_</code> 可生成分割线， 符号之间允许有空格但不允许有任何字符，三个以上 <code>-</code> 推荐用 <code>- - -</code> 表示，防止产生与标题相同的歧义</p>
-<blockquote>
-<p>第一段</p>
-</blockquote>
-<figure class="highlight plain"><figcaption><span>- -</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">第二段</span><br><span class="line">***</span><br><span class="line">第三段</span><br><span class="line">___</span><br><span class="line">第四段</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">第一段</span><br><span class="line">- - -</span><br><span class="line">第二段</span><br><span class="line">***</span><br><span class="line">第三段</span><br><span class="line">___</span><br><span class="line">第四段</span><br></pre></td></tr></table></figure>
 
 <p><strong>图片</strong><br>使用 ! ，在图片链接之前添加就可以额<br>行内式:<code>![](图片链接 &quot;图片标签&quot;)</code><br>参考式:<code>![][唯一id]</code>，然后于文章任意处起一行 : <code>[唯一id]: 图片链接 &quot;图片标签&quot;</code></p>
 <h1 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h1><p><strong>emoji 表情</strong><br>如 :smile: 为 :smile: , :kissing: 为 :kissing:<br>具体表情参考 GFM 表情列表 <a href="https://github.com/caiyongji/emoji-list" target="_blank" rel="noopener">GFM 表情列表</a> :stuck_out_tongue_winking_eye: </p>
 <p><strong>不同的列表嵌套方法</strong><br>每缩进指定数量空格，嵌套一层列表，空格数量可以自行设定</p>
-<figure class="highlight plain"><figcaption><span>项目一</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">* 项目二</span><br><span class="line">    * part a</span><br><span class="line">    * part b</span><br><span class="line">    * part c</span><br><span class="line">        * chapter one</span><br><span class="line">        * chapter two</span><br><span class="line">* 项目三</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">* 项目一</span><br><span class="line">* 项目二</span><br><span class="line">    * part a</span><br><span class="line">    * part b</span><br><span class="line">    * part c</span><br><span class="line">        * chapter one</span><br><span class="line">        * chapter two</span><br><span class="line">* 项目三</span><br></pre></td></tr></table></figure>
 <p><strong>表格</strong><br>表格为横行竖列，首行为标题，第二行指定表格内容布局，第三行开始为表格数据，示例如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">标题一 | 标题二 | 标题三</span><br><span class="line">- | :-: | -:</span><br><span class="line">a | 一 | 1</span><br><span class="line">b | 二 | 2</span><br><span class="line">c | 三 | 3.1 task1&lt;br/&gt;3.2 task2&lt;br/&gt;3.3 task3&lt;br/&gt;</span><br><span class="line">解析：</span><br><span class="line">| 作为表格列的分割标志</span><br><span class="line">:- | :-: | -: 作为表格标题与内容的分割标志，同时控制内容的布局， :- 表示左对齐，相应的后两个为居中和右对齐， - 数量不限，- 默认为左对齐</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">标题一 | 标题二 | 标题三</span><br><span class="line">- | :-: | -:</span><br><span class="line">a | 一 | 1</span><br><span class="line">b | 二 | 2</span><br><span class="line">c | 三 | 3.1 task1&lt;br/&gt;3.2 task2&lt;br/&gt;3.3 task3&lt;br/&gt;</span><br></pre></td></tr></table></figure>
+<p>解析：<br><code>|</code> 作为表格列的分割标志<br><code>:- | :-: | -:</code>作为表格标题与内容的分割标志，同时控制内容的布局，<code>:-</code> 表示左对齐，相应的后两个为居中和右对齐， <code>-</code> 数量不限，<code>-</code> 默认为左对齐</p>
+<table>
+<thead>
+<tr>
+<th>标题一</th>
+<th align="center">标题二</th>
+<th align="right">标题三</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>a</td>
+<td align="center">一</td>
+<td align="right">1</td>
+</tr>
+<tr>
+<td>b</td>
+<td align="center">二</td>
+<td align="right">2</td>
+</tr>
+<tr>
+<td>c</td>
+<td align="center">三</td>
+<td align="right">3.1 task1<br>3.2 task2<br>3.3 task3<br></td>
+</tr>
+</tbody></table>
 <p><strong>任务列表</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- [x] Task 1</span><br><span class="line">- [ ] Task 2</span><br></pre></td></tr></table></figure>
+<ul>
+<li><input checked disabled type="checkbox"> Task 1</li>
+<li><input disabled type="checkbox"> Task 2</li>
+</ul>
+
       
     </div>
     
