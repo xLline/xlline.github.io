@@ -266,6 +266,39 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
       </tags>
   </entry>
   <entry>
+    <title>修改Hexo博客next主题文章页面宽度</title>
+    <url>/2019/06/19/hexo_postwidth/</url>
+    <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
+<p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// 以下为新增代码！！修改post宽度</span><br><span class="line">header{ width: 80% !important; }</span><br><span class="line">header.post-header {</span><br><span class="line">  width: auto !important;</span><br><span class="line">}</span><br><span class="line">.container .main-inner { width: 80%; }</span><br><span class="line">.content-wrap { width: calc(100% - 260px); }</span><br><span class="line"></span><br><span class="line">.header {</span><br><span class="line">  +tablet() {</span><br><span class="line">    width: auto !important;</span><br><span class="line">  }</span><br><span class="line">  +mobile() {</span><br><span class="line">    width: auto !important;</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">.container .main-inner {</span><br><span class="line">  +tablet() {</span><br><span class="line">    width: auto !important;</span><br><span class="line">  }</span><br><span class="line">  +mobile() {</span><br><span class="line">    width: auto !important;</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">.content-wrap {</span><br><span class="line">  +tablet() {</span><br><span class="line">    width: 100% !important;</span><br><span class="line">  }</span><br><span class="line">  +mobile() {</span><br><span class="line">    width: 100% !important;</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+      </categories>
+      <tags>
+        <tag>杂谈</tag>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>轻量级标记语言Markdown的语法（GFM）</title>
     <url>/2018/10/18/markdown_GFM/</url>
     <content><![CDATA[<p>Hexo下使用的MarkDown是Github的GFM，整理汇总常用语法命令方便后续查找。此篇包含常用的语法，当然也一些偶尔会用到的，基本上可以满足日常使用。</p>
