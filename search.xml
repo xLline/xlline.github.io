@@ -112,117 +112,6 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
       </tags>
   </entry>
   <entry>
-    <title>Hexo NexT主题添加字数统计阅读时长</title>
-    <url>/2019/06/19/hexo_add_wordcount/</url>
-    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
-<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<p>到这里就可以啦，快去试试吧。  </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-      </categories>
-      <tags>
-        <tag>杂谈</tag>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>修改Hexo博客next主题文章页面宽度</title>
-    <url>/2019/06/19/hexo_postwidth/</url>
-    <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
-<p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码即可</p>
-<pre><code>// 以下为新增代码！！修改post宽度
-header{ width: 80% !important; }
-header.post-header {
-  width: auto !important;
-}
-.container .main-inner { width: 80%; }
-.content-wrap { width: calc(100% - 260px); }
-
-.header {
-  +tablet() {
-    width: auto !important;
-  }
-  +mobile() {
-    width: auto !important;
-  }
-}
-
-.container .main-inner {
-  +tablet() {
-    width: auto !important;
-  }
-  +mobile() {
-    width: auto !important;
-  }
-}
-
-.content-wrap {
-  +tablet() {
-    width: 100% !important;
-  }
-  +mobile() {
-    width: 100% !important;
-  }
-}</code></pre><script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-      </categories>
-      <tags>
-        <tag>杂谈</tag>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用Hexo+GitHub搭建个人博客教程</title>
     <url>/2019/06/19/Hexo+GitHub/</url>
     <content><![CDATA[<p>开始搭建自己的小站吧。简单记录，方便后续翻阅。<br>从无到有的流程还是比较详细的，按步骤从头到尾跟着执行可以避免大部分问题。本次搭站 <a href="https://zhuanlan.zhihu.com/p/60578464" target="_blank" rel="noopener">参考文章</a> 人家写的已经很详细了，这里进行备份基础补充和常见问题的汇总。</p>
@@ -328,6 +217,117 @@ header.post-header {
         <tag>杂谈</tag>
         <tag>Hexo</tag>
         <tag>GitHub</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>修改Hexo博客next主题文章页面宽度</title>
+    <url>/2019/06/19/hexo_postwidth/</url>
+    <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
+<p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码即可</p>
+<pre><code>// 以下为新增代码！！修改post宽度
+header{ width: 80% !important; }
+header.post-header {
+  width: auto !important;
+}
+.container .main-inner { width: 80%; }
+.content-wrap { width: calc(100% - 260px); }
+
+.header {
+  +tablet() {
+    width: auto !important;
+  }
+  +mobile() {
+    width: auto !important;
+  }
+}
+
+.container .main-inner {
+  +tablet() {
+    width: auto !important;
+  }
+  +mobile() {
+    width: auto !important;
+  }
+}
+
+.content-wrap {
+  +tablet() {
+    width: 100% !important;
+  }
+  +mobile() {
+    width: 100% !important;
+  }
+}</code></pre><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+      </categories>
+      <tags>
+        <tag>杂谈</tag>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo NexT主题添加字数统计阅读时长</title>
+    <url>/2019/06/19/hexo_add_wordcount/</url>
+    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
+<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<p>到这里就可以啦，快去试试吧。  </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+      </categories>
+      <tags>
+        <tag>杂谈</tag>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
