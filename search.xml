@@ -172,6 +172,71 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
       </tags>
   </entry>
   <entry>
+    <title>修改Hexo博客next主题文章页面宽度</title>
+    <url>/2019/06/19/hexo_postwidth/</url>
+    <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
+<p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码即可</p>
+<pre><code>// 以下为新增代码！！修改post宽度
+header{ width: 80% !important; }
+header.post-header {
+  width: auto !important;
+}
+.container .main-inner { width: 80%; }
+.content-wrap { width: calc(100% - 260px); }
+
+.header {
+  +tablet() {
+    width: auto !important;
+  }
+  +mobile() {
+    width: auto !important;
+  }
+}
+
+.container .main-inner {
+  +tablet() {
+    width: auto !important;
+  }
+  +mobile() {
+    width: auto !important;
+  }
+}
+
+.content-wrap {
+  +tablet() {
+    width: 100% !important;
+  }
+  +mobile() {
+    width: 100% !important;
+  }
+}</code></pre><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+      </categories>
+      <tags>
+        <tag>杂谈</tag>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo添加emoji表情</title>
     <url>/2019/06/19/hexo_add_emjo/</url>
     <content><![CDATA[<p>废话不多说，直接动手干吧。</p>
@@ -239,71 +304,6 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
 
 <p>到这里就可以啦，快去试试吧。  </p>
 <script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-      </categories>
-      <tags>
-        <tag>杂谈</tag>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>修改Hexo博客next主题文章页面宽度</title>
-    <url>/2019/06/19/hexo_postwidth/</url>
-    <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
-<p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码即可</p>
-<pre><code>// 以下为新增代码！！修改post宽度
-header{ width: 80% !important; }
-header.post-header {
-  width: auto !important;
-}
-.container .main-inner { width: 80%; }
-.content-wrap { width: calc(100% - 260px); }
-
-.header {
-  +tablet() {
-    width: auto !important;
-  }
-  +mobile() {
-    width: auto !important;
-  }
-}
-
-.container .main-inner {
-  +tablet() {
-    width: auto !important;
-  }
-  +mobile() {
-    width: auto !important;
-  }
-}
-
-.content-wrap {
-  +tablet() {
-    width: 100% !important;
-  }
-  +mobile() {
-    width: 100% !important;
-  }
-}</code></pre><script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
