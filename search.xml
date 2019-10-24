@@ -83,7 +83,7 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// Github emojis class name</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">get_emoji_class() {</span><br><span class="line">  emoji_class = hexo-site-config('githubEmojis.className')</span><br><span class="line">  return emoji_class ? emoji_class : 'github-emoji'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$github-emojis-class-name   = get_emoji_class()</span><br></pre></td></tr></tbody></table></figure>
 <p>最后在自定义样式文件 <code>themes/next/source/css/_custom/custom.styl</code> 中添加：</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">img.{$github-emojis-class-name} {</span><br><span class="line">  display: inline;</span><br><span class="line">  height: 1.7em;</span><br><span class="line">  width: 1.7em;</span><br><span class="line">  vertical-align: -0.4em;</span><br><span class="line">  border: none !important;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span></p>
+<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span>  </p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -190,7 +190,7 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
 <li><p>博客添加图片<br>首先把blog（hexo）目录下的_config.yml里的post_asset_folder:设置为true<br>在blog（hexo）目录下执行 <code>npm install hexo-asset-image --save</code><br>在blog（hexo）目录下Git Bash Here，运行<code>hexo n "博客名"</code>来生成md博客时，会在_post目录下看到一个与博客同名的文件夹。<br>将想要上传的图片先扔到文件夹下，然后在博客中使用markdown的格式引入图片：<code>![你想要输入的替代文字](xxxx/图片名.jpg)</code></p>
 </li>
 </ol>
-<p>本篇就这样吧，拜拜喽。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/2728.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png?v8">✨</span><span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/2728.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png?v8">✨</span></p>
+<p>本篇就这样吧，拜拜喽。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/2728.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png?v8">✨</span><span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/2728.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png?v8">✨</span>  </p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -237,7 +237,7 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
 
 
-<p>到这里就可以啦，快去试试吧。</p>
+<p>到这里就可以啦，快去试试吧。  </p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -269,9 +269,41 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
     <title>修改Hexo博客next主题文章页面宽度</title>
     <url>/2019/06/19/hexo_postwidth/</url>
     <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
-<p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// 以下为新增代码！！修改post宽度</span><br><span class="line">header{ width: 80% !important; }</span><br><span class="line">header.post-header {</span><br><span class="line">  width: auto !important;</span><br><span class="line">}</span><br><span class="line">.container .main-inner { width: 80%; }</span><br><span class="line">.content-wrap { width: calc(100% - 260px); }</span><br><span class="line"></span><br><span class="line">.header {</span><br><span class="line">  +tablet() {</span><br><span class="line">    width: auto !important;</span><br><span class="line">  }</span><br><span class="line">  +mobile() {</span><br><span class="line">    width: auto !important;</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">.container .main-inner {</span><br><span class="line">  +tablet() {</span><br><span class="line">    width: auto !important;</span><br><span class="line">  }</span><br><span class="line">  +mobile() {</span><br><span class="line">    width: auto !important;</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">.content-wrap {</span><br><span class="line">  +tablet() {</span><br><span class="line">    width: 100% !important;</span><br><span class="line">  }</span><br><span class="line">  +mobile() {</span><br><span class="line">    width: 100% !important;</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<script>
+<p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码即可</p>
+<pre><code>// 以下为新增代码！！修改post宽度
+header{ width: 80% !important; }
+header.post-header {
+  width: auto !important;
+}
+.container .main-inner { width: 80%; }
+.content-wrap { width: calc(100% - 260px); }
+
+.header {
+  +tablet() {
+    width: auto !important;
+  }
+  +mobile() {
+    width: auto !important;
+  }
+}
+
+.container .main-inner {
+  +tablet() {
+    width: auto !important;
+  }
+  +mobile() {
+    width: auto !important;
+  }
+}
+
+.content-wrap {
+  +tablet() {
+    width: 100% !important;
+  }
+  +mobile() {
+    width: 100% !important;
+  }
+}</code></pre><script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
@@ -396,7 +428,7 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
 <li><input checked="" disabled="" type="checkbox"> Task 1</li>
 <li><input disabled="" type="checkbox"> Task 2</li>
 </ul>
-<p>本篇结束了，拜拜喽。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f490.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f490.png?v8">💐</span></p>
+<p>本篇结束了，拜拜喽。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f490.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f490.png?v8">💐</span>  </p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {

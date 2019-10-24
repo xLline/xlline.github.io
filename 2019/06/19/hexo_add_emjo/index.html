@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="理想国">
 <meta property="og:description" content="废话不多说，直接动手干吧。 安装123npm install hexo-filter-github-emojis --savenpm un hexo-renderer-stylus --savenpm i hexo-renderer-stylus-plus --save  打开 站点配置文件，添加以下内容123456githubEmojis:  enable: true  className: g">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-24T03:28:47.107Z">
+<meta property="og:updated_time" content="2019-10-24T03:43:09.530Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -403,7 +403,7 @@
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// Github emojis class name</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">get_emoji_class() {</span><br><span class="line">  emoji_class = hexo-site-config('githubEmojis.className')</span><br><span class="line">  return emoji_class ? emoji_class : 'github-emoji'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$github-emojis-class-name   = get_emoji_class()</span><br></pre></td></tr></tbody></table></figure>
 <p>最后在自定义样式文件 <code>themes/next/source/css/_custom/custom.styl</code> 中添加：</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">img.{$github-emojis-class-name} {</span><br><span class="line">  display: inline;</span><br><span class="line">  height: 1.7em;</span><br><span class="line">  width: 1.7em;</span><br><span class="line">  vertical-align: -0.4em;</span><br><span class="line">  border: none !important;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span></p>
+<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span>  </p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {

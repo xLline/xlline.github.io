@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="网上方法很多，我简单记录一种，手动修改样式，宽度自适应。 \themes\next\source&#x2F;css&#x2F;_schemes&#x2F;Picses&#x2F;_layout.styl文件末尾添加如下代码 12345678910111213141516171819202122232425262728293031323334&#x2F;&#x2F; 以下为新增代码！！修改post宽度header{ width: 80% !important">
+<meta name="description" content="网上方法很多，我简单记录一种，手动修改样式，宽度自适应。 \themes\next\source&#x2F;css&#x2F;_schemes&#x2F;Picses&#x2F;_layout.styl文件末尾添加如下代码即可 &#x2F;&#x2F; 以下为新增代码！！修改post宽度 header{ width: 80% !important; } header.post-header {   width: auto !important; } .co">
 <meta name="keywords" content="杂谈,Hexo">
 <meta property="og:type" content="article">
 <meta property="og:title" content="修改Hexo博客next主题文章页面宽度">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;06&#x2F;19&#x2F;hexo_postwidth&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="网上方法很多，我简单记录一种，手动修改样式，宽度自适应。 \themes\next\source&#x2F;css&#x2F;_schemes&#x2F;Picses&#x2F;_layout.styl文件末尾添加如下代码 12345678910111213141516171819202122232425262728293031323334&#x2F;&#x2F; 以下为新增代码！！修改post宽度header{ width: 80% !important">
+<meta property="og:description" content="网上方法很多，我简单记录一种，手动修改样式，宽度自适应。 \themes\next\source&#x2F;css&#x2F;_schemes&#x2F;Picses&#x2F;_layout.styl文件末尾添加如下代码即可 &#x2F;&#x2F; 以下为新增代码！！修改post宽度 header{ width: 80% !important; } header.post-header {   width: auto !important; } .co">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-24T03:38:21.752Z">
+<meta property="og:updated_time" content="2019-10-24T03:42:45.378Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -349,7 +349,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  157
+                  159
                 </span>
               
 
@@ -387,9 +387,41 @@
 
       
         <p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
-<p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">// 以下为新增代码！！修改post宽度</span><br><span class="line">header{ width: 80% !important; }</span><br><span class="line">header.post-header {</span><br><span class="line">  width: auto !important;</span><br><span class="line">}</span><br><span class="line">.container .main-inner { width: 80%; }</span><br><span class="line">.content-wrap { width: calc(100% - 260px); }</span><br><span class="line"></span><br><span class="line">.header {</span><br><span class="line">  +tablet() {</span><br><span class="line">    width: auto !important;</span><br><span class="line">  }</span><br><span class="line">  +mobile() {</span><br><span class="line">    width: auto !important;</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">.container .main-inner {</span><br><span class="line">  +tablet() {</span><br><span class="line">    width: auto !important;</span><br><span class="line">  }</span><br><span class="line">  +mobile() {</span><br><span class="line">    width: auto !important;</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">.content-wrap {</span><br><span class="line">  +tablet() {</span><br><span class="line">    width: 100% !important;</span><br><span class="line">  }</span><br><span class="line">  +mobile() {</span><br><span class="line">    width: 100% !important;</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<script>
+<p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码即可</p>
+<pre><code>// 以下为新增代码！！修改post宽度
+header{ width: 80% !important; }
+header.post-header {
+  width: auto !important;
+}
+.container .main-inner { width: 80%; }
+.content-wrap { width: calc(100% - 260px); }
+
+.header {
+  +tablet() {
+    width: auto !important;
+  }
+  +mobile() {
+    width: auto !important;
+  }
+}
+
+.container .main-inner {
+  +tablet() {
+    width: auto !important;
+  }
+  +mobile() {
+    width: auto !important;
+  }
+}
+
+.content-wrap {
+  +tablet() {
+    width: 100% !important;
+  }
+  +mobile() {
+    width: 100% !important;
+  }
+}</code></pre><script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
