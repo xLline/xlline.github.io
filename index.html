@@ -317,6 +317,28 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/" itemprop="url" rel="index">
+                    <span itemprop="name">拾级而上</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -346,14 +368,8 @@
       
         
           
-          
-title: Linux基础date: 2019-10-23 17:02:34categories: 拾级而上tags: 
-
-Linux
-基础
-
-
-操作系统:    1.客户端操作系统        windows 7,8,10    2.服务器端操作系统        1)windows ser
+          操作系统:    1.客户端操作系统        windows 7,8,10    2.服务器端操作系统        1)windows server 2019        2)linux操作系统        3)unix操作系统
+Linux操作系统:    1.centos    2.r
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -501,8 +517,8 @@ Linux
       
         
           
-          开始搭建自己的小站吧。简单记录，方便后续翻阅。本次搭站参考文章 人家写的已经很详细了，这里还是简单记录补充。
-准备工作Hexo 基于 Node.js，搭建过程中还需要使用 npm（Node.js 已带） 和 git，因此先搭建本地操作环境，安装 Node.js 和 Git。Node.js下载地址Gi
+          开始搭建自己的小站吧。简单记录，方便后续翻阅。从无到有的流程还是比较详细的，按步骤从头到尾跟着执行可以避免大部分问题。本次搭站 参考文章 人家写的已经很详细了，这里还是简单记录补充。也有常见问题的汇总。
+准备工作Hexo 基于 Node.js，搭建过程中还需要使用 npm（Node.js 已带） 和
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -649,7 +665,12 @@ Linux
 
       
         
-          <p>废话不多说，直接动手干吧。</p>
+          
+          废话不多说，直接动手干吧。
+安装123npm install hexo-filter-github-emojis --savenpm un hexo-renderer-stylus --savenpm i hexo-renderer-stylus-plus --save
+
+打开 站点配置文件，添加以
+          ...
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/06/19/%E6%B7%BB%E5%8A%A0emjo%E8%A1%A8%E6%83%85/#more" rel="contents">
@@ -796,18 +817,13 @@ Linux
       
         
           
-          Hexo下使用的MarkDown是Github的GFM，整理下常用的语法，方便后续写作。
+          Hexo下使用的MarkDown是Github的GFM，整理汇总常用语法命令方便后续查找。此篇包含常用的语法，当然也一些偶尔会用到的，基本上可以满足日常使用。
 常用基础字体相关斜体:用 * 或 _ 包裹，紧贴被强调文本 
 1*斜体文本*
 
 我这是测试斜体哦
 
-粗体:用 ** 或 __ 包裹，紧贴被强调文本 
-1**粗体文本**
-
-我这是测试粗体哦
-
-删除线： 用 ~~
+粗体:用 ** 或 __ 包裹，紧贴被强
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -917,7 +933,7 @@ Linux
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
