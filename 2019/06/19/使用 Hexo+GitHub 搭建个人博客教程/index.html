@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="理想国">
 <meta property="og:description" content="开始搭建自己的小站吧。简单记录，方便后续翻阅。本次搭站参考文章 人家写的已经很详细了，这里还是简单记录下。 准备工作Hexo 基于 Node.js，搭建过程中还需要使用 npm（Node.js 已带） 和 git，因此先搭建本地操作环境，安装 Node.js 和 Git。Node.js下载地址Git下载地址下载 Node.js 和 Git 程序并安装，一路点 “下一步” 按默认配置完成安装。安装完">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-24T02:01:06.825Z">
+<meta property="og:updated_time" content="2019-10-24T02:01:59.611Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -195,7 +195,7 @@
       
         
         <li class="menu-item menu-item-about">
-          <a href="/about%20" rel="section">
+          <a href="/about/%20" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-关于"></i> <br />
             
@@ -205,7 +205,7 @@
       
         
         <li class="menu-item menu-item-tags">
-          <a href="/tags%20" rel="section">
+          <a href="/tags/%20" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-标签"></i> <br />
             
@@ -215,7 +215,7 @@
       
         
         <li class="menu-item menu-item-categories">
-          <a href="/categories%20" rel="section">
+          <a href="/categories/%20" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-分类"></i> <br />
             
@@ -225,7 +225,7 @@
       
         
         <li class="menu-item menu-item-archives">
-          <a href="/archives%20" rel="section">
+          <a href="/archives/%20" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-存档"></i> <br />
             
@@ -235,7 +235,7 @@
       
         
         <li class="menu-item menu-item-search">
-          <a href="/search%20" rel="section">
+          <a href="/search/%20" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-搜索"></i> <br />
             
@@ -457,15 +457,13 @@
 </li>
 <li><p>自定义emoji 样式<br>在 <code>站点配置文件</code> 中，我们配置：</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
-
-</li>
-</ul>
 <p>在 <code>themes/next/source/css/_variables/base.styl</code> 中使用 hexo-site-config 方法获取 <code>站点配置文件</code> 中的值，我们添加</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// Github emojis class name</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">get_emoji_class() {</span><br><span class="line">  emoji_class = hexo-site-config('githubEmojis.className')</span><br><span class="line">  return emoji_class ? emoji_class : 'github-emoji'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$github-emojis-class-name   = get_emoji_class()</span><br></pre></td></tr></tbody></table></figure>
-
 <p>最后在自定义样式文件 <code>themes/next/source/css/_custom/custom.styl</code> 中添加：</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">img.{$github-emojis-class-name} {</span><br><span class="line">  display: inline;</span><br><span class="line">  height: 1.7em;</span><br><span class="line">  width: 1.7em;</span><br><span class="line">  vertical-align: -0.4em;</span><br><span class="line">  border: none !important;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>就可以了。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/2728.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png?v8">✨</span><span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/2728.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png?v8">✨</span></p>
+</li>
+</ul>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -605,7 +603,7 @@
             
               <div class="site-state-item site-state-posts">
               
-                <a href="/archives%20%7C%7C%20%E5%AD%98%E6%A1%A3">
+                <a href="/archives/%20%7C%7C%20%E5%AD%98%E6%A1%A3">
               
                   <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
