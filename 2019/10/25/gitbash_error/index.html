@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Linux,基础," />
+  <meta name="keywords" content="Git bash,Windows,tasklist,taskkill," />
 
 
 
@@ -86,15 +86,15 @@
 
 
 
-<meta name="description" content="操作系统:    1.客户端操作系统        windows 7,8,10    2.服务器端操作系统        1)windows server 2019        2)linux操作系统        3)unix操作系统 Linux操作系统:    1.centos    2.redhat enterprise linux rhel    3.ubuntu    4.debia">
-<meta name="keywords" content="Linux,基础">
+<meta name="description" content="使用Git bash未正常退出后，再次打开出现 Git bash Error: Could not fork child process: There are no available terminals (-1)报错。可以使用 tasklist命令 找到git-bash.exe和node.exe对应进程号后，使用taskkill结束进程即可。  win+r调出运行键入cmd后回车打开，使用tas">
+<meta name="keywords" content="Git bash,Windows,tasklist,taskkill">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Linux基础">
-<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;23&#x2F;linux_base&#x2F;index.html">
+<meta property="og:title" content="Git bash Error:Could not fork child process:There are no available terminals (-1)">
+<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;25&#x2F;gitbash_error&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="操作系统:    1.客户端操作系统        windows 7,8,10    2.服务器端操作系统        1)windows server 2019        2)linux操作系统        3)unix操作系统 Linux操作系统:    1.centos    2.redhat enterprise linux rhel    3.ubuntu    4.debia">
+<meta property="og:description" content="使用Git bash未正常退出后，再次打开出现 Git bash Error: Could not fork child process: There are no available terminals (-1)报错。可以使用 tasklist命令 找到git-bash.exe和node.exe对应进程号后，使用taskkill结束进程即可。  win+r调出运行键入cmd后回车打开，使用tas">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-25T02:36:49.065Z">
+<meta property="og:updated_time" content="2019-10-25T04:30:37.683Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -130,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="https://xlline.github.io/2019/10/23/linux_base/"/>
+  <link rel="canonical" href="https://xlline.github.io/2019/10/25/gitbash_error/"/>
 
 
 
 
 
-  <title>Linux基础 | 理想国</title>
+  <title>Git bash Error:Could not fork child process:There are no available terminals (-1) | 理想国</title>
   
 
 
@@ -297,7 +297,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/10/23/linux_base/">
+    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/10/25/gitbash_error/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xugz">
@@ -314,7 +314,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Linux基础</h1>
+          <h1 class="post-title" itemprop="name headline">Git bash Error:Could not fork child process:There are no available terminals (-1)</h1>
         
 
         <div class="post-meta">
@@ -326,8 +326,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-23T17:02:34+08:00">
-                2019-10-23
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-25T11:22:14+08:00">
+                2019-10-25
               </time>
             
 
@@ -380,7 +380,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.3k 字
+                  295 字
                 </span>
               
 
@@ -396,7 +396,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5分钟
+                  1分钟
                 </span>
               
             </div>
@@ -417,39 +417,16 @@
       
 
       
-        <p>操作系统:<br>    1.客户端操作系统<br>        windows 7,8,10<br>    2.服务器端操作系统<br>        1)windows server 2019<br>        2)linux操作系统<br>        3)unix操作系统</p>
-<p>Linux操作系统:<br>    1.centos<br>    2.redhat enterprise linux rhel<br>    3.ubuntu<br>    4.debian<br>    5.suse<br>    6.opensuse<br>    7.freebsd<br>    8.aliyun linux<br>    9.coreos</p>
-<h1 id="Linux查看版本当前操作系统内核信息"><a href="#Linux查看版本当前操作系统内核信息" class="headerlink" title="Linux查看版本当前操作系统内核信息"></a>Linux查看版本当前操作系统内核信息</h1><p>uname -a</p>
-<h1 id="Linux查看当前操作系统版本信息"><a href="#Linux查看当前操作系统版本信息" class="headerlink" title="Linux查看当前操作系统版本信息"></a>Linux查看当前操作系统版本信息</h1><p>cat /proc/version</p>
-<h1 id="Linux查看版本当前操作系统发行版信息"><a href="#Linux查看版本当前操作系统发行版信息" class="headerlink" title="Linux查看版本当前操作系统发行版信息"></a>Linux查看版本当前操作系统发行版信息</h1><p>cat /etc/redhat-release</p>
-<h1 id="———————–-init-———————–"><a href="#———————–-init-———————–" class="headerlink" title="———————– init ———————–"></a>———————– init ———————–</h1><p>init命令是Linux下的进程初始化工具，init进程是所有Linux进程的父进程，它的进程号为1。init命令是Linux操作系统中不可缺少的程序之一，init进程是Linux内核引导运行的，是系统中的第一个进程<br>init 3 # 到达字符界面<br>init 5 # 到达图形界面<br>init 6 # 重启<br>init 0 # 关机</p>
-<h1 id="———————–-Root用户破解流程-———————–"><a href="#———————–-Root用户破解流程-———————–" class="headerlink" title="———————– Root用户破解流程 ———————–"></a>———————– Root用户破解流程 ———————–</h1><p>1.开机后页面 按e进入LINUX内核编辑模式<br>2.在quiet后加入 rd.break<br>3.按ctrl+x进入swtch_root模式<br>4.使用命令 mount -o remount,rw /sysroot 重新挂载根分区<br>5.使用命令 chroot /sysroot 切换根分区<br>6.使用命令 passwd root 修改root的密码，必须是8位以上复杂密码 当前设置的是 xUGZ1030<br>7.使用命令 touch /.autorelabel 让selinux在重启后更新label 不执行该句新设置密码不会保存 等到进度条加载完成后可退出 验证新密码是否有效<br>8.使用命令 exit 退出<br>9.使用命令 reboot 重启系统<br>10.最后用root和新密码登录即可</p>
-<h1 id="———————–-防火墙-———————–"><a href="#———————–-防火墙-———————–" class="headerlink" title="———————– 防火墙 ———————–"></a>———————– 防火墙 ———————–</h1><p>Selinux防火墙: 文件级防火墙<br>    1.使用命令 sestatus 查看selinux防火墙状态<br>    2.关闭防火墙<br>    使用命令 vi /etc/selinux/config 进入selinux配置文件 将SELINUX状态改成关闭  使用命令 SELINUX=disabled<br>    3.使用命令 init 6 重启</p>
-<p>firewalld防火墙: 网络级防火墙<br>    1.使用命令  systemctl status firewalld 查看 firewalld防火墙状态<br>    2.使用命令 systemctl stop firewalld 关闭 该命令只能暂时关闭 开机关闭需要另设<br>    3.使用命令  systemctl disable firewalld 设置开机关闭</p>
-<p>iptables防火墙: 网络级防火墙 常用<br>    1.使用命令 iptables -L -n 查看规则<br>    2.使用命令 iptables -F 清空规则<br>    3.使用命令 service iptables save 保存规则 （如果不能保存 查询是否安装iptables-service包）</p>
-<h1 id="———————–-主机名管理-———————–"><a href="#———————–-主机名管理-———————–" class="headerlink" title="———————– 主机名管理 ———————–"></a>———————– 主机名管理 ———————–</h1><p>1.查看主机名(localhost)<br>hostname<br>2.查看主机名与系统详情<br>hostnamectl status<br>3.临时修改<br>hostname yzmedu<br>4.永久修改<br>    1)直接修改文件<br>    vi /etc/hostname<br>    2)hostnamectl方法<br>    hostnamectl set-hostname<br>    3)重启生效<br>    init 6</p>
-<h1 id="———————–-网络管理-———————–"><a href="#———————–-网络管理-———————–" class="headerlink" title="———————– 网络管理 ———————–"></a>———————– 网络管理 ———————–</h1><p>1.查看<br>ifconfig<br>ifconfig ens32</p>
-<p>2.临时修改<br>ifconfig ens32 192.168.10.1</p>
-<p>3.永久修改<br>1)修改文件<br>vi /etc/sysconfig/network-scripts/ifcfg-ens32<br>BOOTPROTO=dhcp | static<br>ONBOOT=yes | no<br>IPADDR=192.168.239.200<br>NETMASK=255.255.255.0<br>GATEWAY=192.168.239.2<br>DNS1=114.114.114.114<br>DNS2=8.8.8.8<br>修改完成成功重启即可</p>
-<p>参考<a href="https://blog.csdn.net/zyq_2014/article/details/79692181" target="_blank" rel="noopener">https://blog.csdn.net/zyq_2014/article/details/79692181</a></p>
-<p>2)nmcli方法<br>    a.查看网络设备状态<br>    nmcli device status<br>    b.设置静态ip地址<br>    nmcli connection modify ens32 ipv4.addresses ‘192.168.1.100’<br>    c.设置DNS<br>    nmcli connection modify ens32 ipv4.dns ‘114.114.114.114’<br>    d.设置网关<br>    nmcli connection modify ens32 ipv4.gateway ‘192.168.1.1’<br>    e.设置IP地址为手动指定<br>    nmcli connection modify ens32 ipv4.method manual<br>    f.设置IP地址为dhcp自动获取<br>    nmcli connection modify ens32 ipv4.method auto<br>    g.设置开机自动连接<br>    nmcli connection modify ens32 connection.autoconnect yes<br>3)重启网络服务<br>systemctl restart network</p>
-<p>查看dns:<br>1.网络自动获取<br>cat /etc/resolv.conf<br>#nameserver</p>
-<p>2.网络手动配置<br>cat /etc/sysconfig/network-scripts/ifcfg-ens32<br>#DNS1或DNS2</p>
-<p>cat /etc/resolv.conf<br>#nameserver</p>
-<p>查看网关 ：<br>1.网络自动获取<br>route -n</p>
-<p>2.网络手动配置<br>cat /etc/sysconfig/network-scripts/ifcfg-ens32<br>#GATEWAY</p>
-<p>通讯测试:<br>1.检测是否能正常通讯<br>ping <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a><br>#可测试ip、dns和网关是否都设置正确</p>
-<h1 id="———————–-yum-———————–"><a href="#———————–-yum-———————–" class="headerlink" title="———————– yum ———————–"></a>———————– yum ———————–</h1><p>yum（ Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。</p>
-<p>mount /dev/cdrom /media  // 使用该命令挂载光盘<br>使用命令 df 查看挂载<br>3.配置yum<br>    cd /etc/yum.repos.d/<br>    mv CentOS-Media.repo /mnt<br>    rm -rf *<br>    mv /mnt/CentOS-Media.repo ./</p>
-<p>4.vi CentOS-Media.repo 进行配置文件编辑 下面对应配置需要对照<br>    [c8-media-BaseOS]<br>    baseurl=file:///media/BaseOS<br>    gpgcheck=0<br>    enabled=1</p>
-<pre><code>[c8-media-AppStream]
-baseurl=file:///media/AppStream
-gpgcheck=0
-enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<br> yum list | grep iptables</p>
-<p>6.yum安装rpm软件包<br> yum -y install iptables-service</p>
-<p>yum check-update  // 列出所有可更新的软件清单<br>yum update // 更新所有软件<br>yum install <package_name> // 仅安装指定的软件<br>yum update <package_name>  // 仅更新指定的软件<br>yum list        // 列出所有可安裝的软件清单<br>yum remove <package_name> // 删除软件包<br>yum search <keyword>    // 查找软件包</keyword></package_name></package_name></package_name></p>
-<p>yum clean packages // 清除缓存目录下的软件包<br>yum clean headers // 清除缓存目录下的 headers<br>yum clean oldheaders // 清除缓存目录下旧的 headers</p>
-<h1 id="———————–-top-———————–"><a href="#———————–-top-———————–" class="headerlink" title="———————– top ———————–"></a>———————– top ———————–</h1><p>top命令用于实时显示 process 的动态<br>top     // 显示进程信息<br>top -c  // 显示完整命令<br>top -b  // 以批处理模式显示程序信息<br>top -s  // 以累积模式显示程序信息<br>top -p <pid> // 显示指定的进程信息<br>top -n 10  // 显示更新十次后退出</pid></p>
+        <p>使用Git bash未正常退出后，再次打开出现 <code>Git bash Error: Could not fork child process: There are no available terminals (-1)</code>报错。<br>可以使用 tasklist命令 找到git-bash.exe和node.exe对应进程号后，使用taskkill结束进程即可。</p>
+<ol>
+<li><p>win+r调出运行键入<code>cmd</code>后回车打开，使用<code>tasklist</code>查看本机进程。查询得到的字段有： 映像名称，PID(进程ID)，会话名，会话#，内存使用。如下图：<br>!gitbash_error/tasklist_ret.png<br>如图 smss.exe 的进程ID为 520(你看随便找个进程都是爱你的数字)，咳咳</p>
+</li>
+<li><p>找到git-bash.exe对应的进程号，比如我的是 12184，然后使用命令 <code>taskkill /pid 12184 -t -f</code> 终止ID为12184的进程。<br>!gitbash_error/taskkill_ret.png</p>
+</li>
+<li><p>找到node.exe对应的进程号，比如我的是 868，然后使用命令 <code>taskkill /pid 868 -t -f</code> 终止ID为868的进程。</p>
+</li>
+</ol>
+<p>终止后，即可打开git bash终端再次尝试。自测可以解决问题，希望对你有帮助。</p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -478,35 +455,6 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
 <div>
       
         
-<div class="my_post_copyright">
-  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
-  
-  <!-- JS库 sweetalert 可修改路径 -->
-  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/2019/10/23/linux_base/">Linux基础</a></p>
-  <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
-  <p><span>发布时间:</span>2019年10月23日 - 17:02</p>
-  <p><span>最后更新:</span>2019年10月25日 - 10:36</p>
-  <p><span>原始链接:</span><a href="/2019/10/23/linux_base/" title="Linux基础">https://xlline.github.io/2019/10/23/linux_base/</a>
-    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/10/23/linux_base/"  aria-label="复制成功！"></i></span>
-  </p>
-  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
-</div>
-<script> 
-    var clipboard = new Clipboard('.fa-clipboard');
-      $(".fa-clipboard").click(function(){
-      clipboard.on('success', function(){
-        swal({   
-          title: "",   
-          text: '复制成功',
-          icon: "success", 
-          showConfirmButton: true
-          });
-        });
-    });  
-</script>
-
       
 </div>
 
@@ -528,9 +476,13 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
       
         <div class="post-tags">
           
-            <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+            <a href="/tags/Git-bash/" rel="tag"><i class="fa fa-tag"></i> Git bash</a>
           
-            <a href="/tags/%E5%9F%BA%E7%A1%80/" rel="tag"><i class="fa fa-tag"></i> 基础</a>
+            <a href="/tags/Windows/" rel="tag"><i class="fa fa-tag"></i> Windows</a>
+          
+            <a href="/tags/tasklist/" rel="tag"><i class="fa fa-tag"></i> tasklist</a>
+          
+            <a href="/tags/taskkill/" rel="tag"><i class="fa fa-tag"></i> taskkill</a>
           
         </div>
       
@@ -543,8 +495,8 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/06/19/Hexo+GitHub/" rel="next" title="使用Hexo+GitHub搭建个人博客教程">
-                <i class="fa fa-chevron-left"></i> 使用Hexo+GitHub搭建个人博客教程
+              <a href="/2019/10/23/linux_base/" rel="next" title="Linux基础">
+                <i class="fa fa-chevron-left"></i> Linux基础
               </a>
             
           </div>
@@ -552,10 +504,6 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/10/25/gitbash_error/" rel="prev" title="Git bash Error:Could not fork child process:There are no available terminals (-1)">
-                Git bash Error:Could not fork child process:There are no available terminals (-1) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -607,17 +555,8 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -693,22 +632,6 @@ enabled=1</code></pre><p>5.查看yum可控制的软件包<br> yum list | wc -l<b
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux查看版本当前操作系统内核信息"><span class="nav-number">1.</span> <span class="nav-text">Linux查看版本当前操作系统内核信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux查看当前操作系统版本信息"><span class="nav-number">2.</span> <span class="nav-text">Linux查看当前操作系统版本信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux查看版本当前操作系统发行版信息"><span class="nav-number">3.</span> <span class="nav-text">Linux查看版本当前操作系统发行版信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#———————–-init-———————–"><span class="nav-number">4.</span> <span class="nav-text">———————– init ———————–</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#———————–-Root用户破解流程-———————–"><span class="nav-number">5.</span> <span class="nav-text">———————– Root用户破解流程 ———————–</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#———————–-防火墙-———————–"><span class="nav-number">6.</span> <span class="nav-text">———————– 防火墙 ———————–</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#———————–-主机名管理-———————–"><span class="nav-number">7.</span> <span class="nav-text">———————– 主机名管理 ———————–</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#———————–-网络管理-———————–"><span class="nav-number">8.</span> <span class="nav-text">———————– 网络管理 ———————–</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#———————–-yum-———————–"><span class="nav-number">9.</span> <span class="nav-text">———————– yum ———————–</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#———————–-top-———————–"><span class="nav-number">10.</span> <span class="nav-text">———————– top ———————–</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       

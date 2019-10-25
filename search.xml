@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Git bash Error:Could not fork child process:There are no available terminals (-1)</title>
+    <url>/2019/10/25/gitbash_error/</url>
+    <content><![CDATA[<p>使用Git bash未正常退出后，再次打开出现 <code>Git bash Error: Could not fork child process: There are no available terminals (-1)</code>报错。<br>可以使用 tasklist命令 找到git-bash.exe和node.exe对应进程号后，使用taskkill结束进程即可。</p>
+<ol>
+<li><p>win+r调出运行键入<code>cmd</code>后回车打开，使用<code>tasklist</code>查看本机进程。查询得到的字段有： 映像名称，PID(进程ID)，会话名，会话#，内存使用。如下图：<br>!gitbash_error/tasklist_ret.png<br>如图 smss.exe 的进程ID为 520(你看随便找个进程都是爱你的数字)，咳咳</p>
+</li>
+<li><p>找到git-bash.exe对应的进程号，比如我的是 12184，然后使用命令 <code>taskkill /pid 12184 -t -f</code> 终止ID为12184的进程。<br>!gitbash_error/taskkill_ret.png</p>
+</li>
+<li><p>找到node.exe对应的进程号，比如我的是 868，然后使用命令 <code>taskkill /pid 868 -t -f</code> 终止ID为868的进程。</p>
+</li>
+</ol>
+<p>终止后，即可打开git bash终端再次尝试。自测可以解决问题，希望对你有帮助。</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+      </categories>
+      <tags>
+        <tag>Git bash</tag>
+        <tag>Windows</tag>
+        <tag>tasklist</tag>
+        <tag>taskkill</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux基础</title>
     <url>/2019/10/23/linux_base/</url>
     <content><![CDATA[<p>操作系统:<br>    1.客户端操作系统<br>        windows 7,8,10<br>    2.服务器端操作系统<br>        1)windows server 2019<br>        2)linux操作系统<br>        3)unix操作系统</p>
@@ -425,8 +467,8 @@ header.post-header {
 <p><strong>任务列表</strong></p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">- [x] Task 1</span><br><span class="line">- [ ] Task 2</span><br></pre></td></tr></tbody></table></figure>
 <ul>
-<li><input checked disabled type="checkbox"> Task 1</li>
-<li><input disabled type="checkbox"> Task 2</li>
+<li><input checked="" disabled="" type="checkbox"> Task 1</li>
+<li><input disabled="" type="checkbox"> Task 2</li>
 </ul>
 <p>本篇结束了，拜拜喽。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f490.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f490.png?v8">💐</span>  </p>
 <script>
