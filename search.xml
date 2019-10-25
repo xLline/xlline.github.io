@@ -116,7 +116,7 @@
 <li>使用命令 <code>reboot</code> 重启系统</li>
 <li>最后用root和新密码登录即可</li>
 </ol>
-<p>#防火墙<br>Selinux防火墙: 文件级防火墙</p>
+<h1 id="防火墙"><a href="#防火墙" class="headerlink" title="防火墙"></a>防火墙</h1><p>Selinux防火墙: 文件级防火墙</p>
 <ol>
 <li>使用命令 <code>sestatus</code> 查看selinux防火墙状态</li>
 <li>关闭防火墙<br>使用命令 <code>vi /etc/selinux/config</code> 进入selinux配置文件 将SELINUX状态改成关闭  使用命令 <code>SELINUX=disabled</code></li>
@@ -134,15 +134,13 @@
 <li>使用命令 <code>iptables -F</code> 清空规则</li>
 <li>使用命令 <code>service iptables save</code> 保存规则 （如果不能保存 查询是否已安装iptables-service包）</li>
 </ol>
-<p>#主机名管理 </p>
-<ol>
+<h1 id="主机名管理"><a href="#主机名管理" class="headerlink" title="主机名管理"></a>主机名管理</h1><ol>
 <li>查看主机名(localhost)<br><code>hostname</code></li>
 <li>查看主机名与系统详情<br><code>hostnamectl status</code></li>
 <li>临时修改<br><code>hostname yzmedu</code></li>
 <li>永久修改<br> 1) 直接修改文件<br> vi /etc/hostname<br> 2) hostnamectl方法<br> <code>hostnamectl set-hostname</code><br> 3) 重启生效<br> <code>init 6</code></li>
 </ol>
-<p>#网络管理 </p>
-<ol>
+<h1 id="网络管理"><a href="#网络管理" class="headerlink" title="网络管理"></a>网络管理</h1><ol>
 <li>查看<br><code>ifconfig</code>或<code>ifconfig ens32</code></li>
 <li>临时修改<br><code>ifconfig ens32 192.168.10.1</code></li>
 <li>永久修改<ol>
@@ -178,18 +176,17 @@
 </li>
 </ol>
 <p>通讯测试:<br><code>ping www.baidu.com</code> // 检测是否能正常通讯 可测试ip、dns和网关是否都设置正确</p>
-<p>#yum命令<br>yum（ Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。<br><code>mount /dev/cdrom /media</code>  使用该命令挂载光盘<br>使用命令 <code>df</code> 查看挂载<br>下面为配置yum流程</p>
+<h1 id="yum命令"><a href="#yum命令" class="headerlink" title="yum命令"></a>yum命令</h1><p>yum（ Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。<br><code>mount /dev/cdrom /media</code>  使用该命令挂载光盘<br>使用命令 <code>df</code> 查看挂载<br>下面为配置yum流程</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">cd /etc/yum.repos.d/</span><br><span class="line">mv CentOS-Media.repo /mnt</span><br><span class="line">rm -rf *</span><br><span class="line">mv /mnt/CentOS-Media.repo ./</span><br></pre></td></tr></tbody></table></figure>
 <p><code>vi CentOS-Media.repo</code> 进行配置文件编辑 下面对应配置需要对照</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[c8-media-BaseOS]</span><br><span class="line">baseurl=file:///media/BaseOS</span><br><span class="line">gpgcheck=0</span><br><span class="line">enabled=1</span><br><span class="line"></span><br><span class="line">[c8-media-AppStream]</span><br><span class="line">baseurl=file:///media/AppStream</span><br><span class="line">gpgcheck=0</span><br><span class="line">enabled=1</span><br></pre></td></tr></tbody></table></figure>
 <p>查看yum可控制的软件包<br><code>yum list | wc -l</code> 或者 <code>yum list | grep iptables</code>  </p>
 <p>yum安装rpm软件包<br> <code>yum -y install iptables-service</code></p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">yum check-update  // 列出所有可更新的软件清单</span><br><span class="line">yum update // 更新所有软件</span><br><span class="line">yum install &lt;package_name&gt; // 仅安装指定的软件</span><br><span class="line">yum update &lt;package_name&gt;  // 仅更新指定的软件</span><br><span class="line">yum list        // 列出所有可安裝的软件清单</span><br><span class="line">yum remove &lt;package_name&gt; // 删除软件包</span><br><span class="line">yum search &lt;keyword&gt;    // 查找软件包</span><br><span class="line"></span><br><span class="line">yum clean packages // 清除缓存目录下的软件包</span><br><span class="line">yum clean headers // 清除缓存目录下的 headers</span><br><span class="line">yum clean oldheaders // 清除缓存目录下旧的 headers</span><br></pre></td></tr></tbody></table></figure>
-<p>#top命令<br>top命令用于实时显示 process 的动态</p>
+<h1 id="top命令"><a href="#top命令" class="headerlink" title="top命令"></a>top命令</h1><p>top命令用于实时显示 process 的动态</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">top     // 显示进程信息</span><br><span class="line">top -c  // 显示完整命令</span><br><span class="line">top -b  // 以批处理模式显示程序信息</span><br><span class="line">top -s  // 以累积模式显示程序信息</span><br><span class="line">top -p &lt;pid&gt; // 显示指定的进程信息</span><br><span class="line">top -n 10  // 显示更新十次后退出</span><br></pre></td></tr></tbody></table></figure>
 
-<p>#操作系统分类</p>
-<ol>
+<h1 id="操作系统分类"><a href="#操作系统分类" class="headerlink" title="操作系统分类"></a>操作系统分类</h1><ol>
 <li>客户端操作系统<br> windows 7,8,10</li>
 <li>服务器端操作系统<ol>
 <li>windows server 2019</li>
