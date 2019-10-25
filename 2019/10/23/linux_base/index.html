@@ -86,15 +86,15 @@
 
 
 
-<meta name="description" content="init命令init命令是Linux下的进程初始化工具，init进程是所有Linux进程的父进程，它的进程号为1。init命令是Linux操作系统中不可缺少的程序之一，init进程是Linux内核引导运行的，是系统中的第一个进程init 3 &#x2F;&#x2F; 到达字符界面init 5 &#x2F;&#x2F; 到达图形界面init 6 &#x2F;&#x2F; 重启init 0 &#x2F;&#x2F; 关机   Root用户破解流程 开机后页面 按e进入LINUX内">
+<meta name="description" content="最近在跟着沈逸学习Linux基础，发现有好多基础命令见面不相识……此篇就作为学习笔记，目前尚未完成课程学习，该篇仍会不定期添加常用命令以方便后续翻阅参考。 操作系统分类 客户端操作系统 windows 7,8,10等 服务器端操作系统 windows server 2019 linux操作系统 centos redhat enterprise linux rhel ubuntu debian su">
 <meta name="keywords" content="Linux,基础">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux基础">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;23&#x2F;linux_base&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="init命令init命令是Linux下的进程初始化工具，init进程是所有Linux进程的父进程，它的进程号为1。init命令是Linux操作系统中不可缺少的程序之一，init进程是Linux内核引导运行的，是系统中的第一个进程init 3 &#x2F;&#x2F; 到达字符界面init 5 &#x2F;&#x2F; 到达图形界面init 6 &#x2F;&#x2F; 重启init 0 &#x2F;&#x2F; 关机   Root用户破解流程 开机后页面 按e进入LINUX内">
+<meta property="og:description" content="最近在跟着沈逸学习Linux基础，发现有好多基础命令见面不相识……此篇就作为学习笔记，目前尚未完成课程学习，该篇仍会不定期添加常用命令以方便后续翻阅参考。 操作系统分类 客户端操作系统 windows 7,8,10等 服务器端操作系统 windows server 2019 linux操作系统 centos redhat enterprise linux rhel ubuntu debian su">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-25T07:49:06.759Z">
+<meta property="og:updated_time" content="2019-10-25T08:09:44.494Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -381,7 +381,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.3k 字
+                  1.4k 字
                 </span>
               
 
@@ -418,7 +418,29 @@
       
 
       
-        <h1 id="init命令"><a href="#init命令" class="headerlink" title="init命令"></a>init命令</h1><p>init命令是Linux下的进程初始化工具，init进程是所有Linux进程的父进程，它的进程号为1。init命令是Linux操作系统中不可缺少的程序之一，init进程是Linux内核引导运行的，是系统中的第一个进程<br><code>init 3</code> // 到达字符界面<br><code>init 5</code> // 到达图形界面<br><code>init 6</code> // 重启<br><code>init 0</code> // 关机  </p>
+        <p>最近在跟着沈逸学习Linux基础，发现有好多基础命令见面不相识……此篇就作为学习笔记，目前尚未完成课程学习，该篇仍会不定期添加常用命令以方便后续翻阅参考。</p>
+<h1 id="操作系统分类"><a href="#操作系统分类" class="headerlink" title="操作系统分类"></a>操作系统分类</h1><ol>
+<li>客户端操作系统<br> windows 7,8,10等</li>
+<li>服务器端操作系统<ol>
+<li>windows server 2019</li>
+<li>linux操作系统<ol>
+<li>centos</li>
+<li>redhat enterprise linux rhel</li>
+<li>ubuntu</li>
+<li>debian</li>
+<li>suse</li>
+<li>opensuse</li>
+<li>freebsd</li>
+<li>aliyun linux</li>
+<li>coreos</li>
+</ol>
+</li>
+<li>unix操作系统</li>
+</ol>
+</li>
+</ol>
+<p>Linux查看版本当前操作系统内核信息<br><code>uname -a</code><br>Linux查看当前操作系统版本信息<br><code>cat /proc/version</code><br>Linux查看版本当前操作系统发行版信息<br><code>cat /etc/redhat-release</code></p>
+<h1 id="init命令"><a href="#init命令" class="headerlink" title="init命令"></a>init命令</h1><p>init命令是Linux下的进程初始化工具，init进程是所有Linux进程的父进程，它的进程号为1。init命令是Linux操作系统中不可缺少的程序之一，init进程是Linux内核引导运行的，是系统中的第一个进程<br><code>init 3</code> // 到达字符界面<br><code>init 5</code> // 到达图形界面<br><code>init 6</code> // 重启<br><code>init 0</code> // 关机  </p>
 <h1 id="Root用户破解流程"><a href="#Root用户破解流程" class="headerlink" title="Root用户破解流程"></a>Root用户破解流程</h1><ol>
 <li>开机后页面 按e进入LINUX内核编辑模式</li>
 <li>在quiet后加入 rd.break</li>
@@ -501,27 +523,7 @@
 <h1 id="top命令"><a href="#top命令" class="headerlink" title="top命令"></a>top命令</h1><p>top命令用于实时显示 process 的动态</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">top     // 显示进程信息</span><br><span class="line">top -c  // 显示完整命令</span><br><span class="line">top -b  // 以批处理模式显示程序信息</span><br><span class="line">top -s  // 以累积模式显示程序信息</span><br><span class="line">top -p &lt;pid&gt; // 显示指定的进程信息</span><br><span class="line">top -n 10  // 显示更新十次后退出</span><br></pre></td></tr></tbody></table></figure>
 
-<h1 id="操作系统分类"><a href="#操作系统分类" class="headerlink" title="操作系统分类"></a>操作系统分类</h1><ol>
-<li>客户端操作系统<br> windows 7,8,10</li>
-<li>服务器端操作系统<ol>
-<li>windows server 2019</li>
-<li>linux操作系统<ol>
-<li>centos</li>
-<li>redhat enterprise linux rhel</li>
-<li>ubuntu</li>
-<li>debian</li>
-<li>suse</li>
-<li>opensuse</li>
-<li>freebsd</li>
-<li>aliyun linux</li>
-<li>coreos</li>
-</ol>
-</li>
-<li>unix操作系统</li>
-</ol>
-</li>
-</ol>
-<p>Linux查看版本当前操作系统内核信息<br><code>uname -a</code><br>Linux查看当前操作系统版本信息<br><code>cat /proc/version</code><br>Linux查看版本当前操作系统发行版信息<br><code>cat /etc/redhat-release</code></p>
+
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -559,7 +561,7 @@
   <p><span>本文标题:</span><a href="/2019/10/23/linux_base/">Linux基础</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年10月23日 - 17:02</p>
-  <p><span>最后更新:</span>2019年10月25日 - 15:49</p>
+  <p><span>最后更新:</span>2019年10月25日 - 16:09</p>
   <p><span>原始链接:</span><a href="/2019/10/23/linux_base/" title="Linux基础">https://xlline.github.io/2019/10/23/linux_base/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/10/23/linux_base/"  aria-label="复制成功！"></i></span>
   </p>
@@ -775,7 +777,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#init命令"><span class="nav-number">1.</span> <span class="nav-text">init命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Root用户破解流程"><span class="nav-number">2.</span> <span class="nav-text">Root用户破解流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#防火墙"><span class="nav-number">3.</span> <span class="nav-text">防火墙</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#主机名管理"><span class="nav-number">4.</span> <span class="nav-text">主机名管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#网络管理"><span class="nav-number">5.</span> <span class="nav-text">网络管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#yum命令"><span class="nav-number">6.</span> <span class="nav-text">yum命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#top命令"><span class="nav-number">7.</span> <span class="nav-text">top命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#操作系统分类"><span class="nav-number">8.</span> <span class="nav-text">操作系统分类</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#操作系统分类"><span class="nav-number">1.</span> <span class="nav-text">操作系统分类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#init命令"><span class="nav-number">2.</span> <span class="nav-text">init命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Root用户破解流程"><span class="nav-number">3.</span> <span class="nav-text">Root用户破解流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#防火墙"><span class="nav-number">4.</span> <span class="nav-text">防火墙</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#主机名管理"><span class="nav-number">5.</span> <span class="nav-text">主机名管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#网络管理"><span class="nav-number">6.</span> <span class="nav-text">网络管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#yum命令"><span class="nav-number">7.</span> <span class="nav-text">yum命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#top命令"><span class="nav-number">8.</span> <span class="nav-text">top命令</span></a></li></ol></div>
             
 
           </div>
@@ -817,7 +819,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 6.5k 字</span>
+  <span class="post-count">全站共 6.6k 字</span>
 </div>
         
 
