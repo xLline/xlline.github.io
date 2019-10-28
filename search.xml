@@ -1,6 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>虚拟机ping不通主机，但是主机可以ping通虚拟机</title>
+    <url>/2019/10/28/%E8%99%9A%E6%8B%9F%E6%9C%BAping%E4%B8%8D%E9%80%9A%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%BB%E6%9C%BA%E5%8F%AF%E4%BB%A5ping%E9%80%9A%E8%99%9A%E6%8B%9F%E6%9C%BA/</url>
+    <content><![CDATA[<p>在Windows10系统安装了虚拟机，设置的主机与虚拟机的连接方式是桥接，安装好后，发现虚拟机ping不通主机，但是主机可以ping通虚拟机。<br>上网查看资料，发现是因为Windows10防火墙阻止，防火墙没有打开ICMPv4-in这个规则。<br>那怎么打开呢？  </p>
+<h1 id="修改防火墙规则"><a href="#修改防火墙规则" class="headerlink" title="修改防火墙规则"></a>修改防火墙规则</h1><p>设置 &gt; 网络和Internet &gt; Windows防火墙 &gt; 高级设置 &gt; 入站规则中找到配置文件类型为“公用”的“文件和打印共享（回显请求 – ICMPv4-In）”规则，设置为启用规则。<br>这样虚拟机就可以ping通主机了。  </p>
+<p>如果确保安装无误且防火墙已关闭却还没解决问题,可能是这个原因，我们一般都是自动获取ip地址和网关，设置为手动就可以了。<br>步骤如下：<br>打开cmd查看你的IP地址，ipconfig，记住IP地址和默认网关。</p>
+<h1 id="更改适配器选项"><a href="#更改适配器选项" class="headerlink" title="更改适配器选项"></a>更改适配器选项</h1><p>设置  &gt; 网络和Internet &gt; 更改适配器选项 &gt; 选择主机连接的网络右键属性 &gt; Internet 协议4（TCP/IPv4）属性 中选择使用下面的DNS服务器地址进行自定义，填入IP地址 默认网关和子网掩码再试。</p>
+<p>防火墙是虚拟机ping不通本机ip的主要原因，但是如果开启了入站规则没管用那就是其他问题了，我的把自动获取改为手动就好了，之前设置的入站规则也管用了，现在防火墙也都开着。</p>
+<p>本文参考文章： <a href="https://blog.csdn.net/hskw444273663/article/details/81301470" target="_blank" rel="noopener">链接</a></p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>VMware</category>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>VMware</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo博客添加图片不显示问题</title>
     <url>/2019/10/25/hexo_add_pic/</url>
     <content><![CDATA[<p>本想在自己文章中加入图片进行详细说明，奈何这图片偏要与我玩躲猫猫死活不出来，在网上看了几篇博客之后才得以解决，浪费了一些不必要的时间。所以在这里记录一下，希望以后遇到这问题可以快速解决。 <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f6b4.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f6b4.png?v8">🚴</span></p>
@@ -546,44 +584,6 @@ header.post-header {
       </categories>
       <tags>
         <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>虚拟机ping不通主机，但是主机可以ping通虚拟机</title>
-    <url>/2018/10/28/%E8%99%9A%E6%8B%9F%E6%9C%BAping%E4%B8%8D%E9%80%9A%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%BB%E6%9C%BA%E5%8F%AF%E4%BB%A5ping%E9%80%9A%E8%99%9A%E6%8B%9F%E6%9C%BA/</url>
-    <content><![CDATA[<p>在Windows10系统安装了虚拟机，设置的主机与虚拟机的连接方式是桥接，安装好后，发现虚拟机ping不通主机，但是主机可以ping通虚拟机。<br>上网查看资料，发现是因为Windows10防火墙阻止，防火墙没有打开ICMPv4-in这个规则。<br>那怎么打开呢？  </p>
-<h1 id="修改防火墙规则"><a href="#修改防火墙规则" class="headerlink" title="修改防火墙规则"></a>修改防火墙规则</h1><p>设置 &gt; 网络和Internet &gt; Windows防火墙 &gt; 高级设置 &gt; 入站规则中找到配置文件类型为“公用”的“文件和打印共享（回显请求 – ICMPv4-In）”规则，设置为启用规则。<br>这样虚拟机就可以ping通主机了。  </p>
-<p>如果确保安装无误且防火墙已关闭却还没解决问题,可能是这个原因，我们一般都是自动获取ip地址和网关，设置为手动就可以了。<br>步骤如下：<br>打开cmd查看你的IP地址，ipconfig，记住IP地址和默认网关。</p>
-<h1 id="更改适配器选项"><a href="#更改适配器选项" class="headerlink" title="更改适配器选项"></a>更改适配器选项</h1><p>设置  &gt; 网络和Internet &gt; 更改适配器选项 &gt; 选择主机连接的网络右键属性 &gt; Internet 协议4（TCP/IPv4）属性 中选择使用下面的DNS服务器地址进行自定义，填入IP地址 默认网关和子网掩码再试。</p>
-<p>防火墙是虚拟机ping不通本机ip的主要原因，但是如果开启了入站规则没管用那就是其他问题了，我的把自动获取改为手动就好了，之前设置的入站规则也管用了，现在防火墙也都开着。</p>
-<p>本文参考文章： <a href="https://blog.csdn.net/hskw444273663/article/details/81301470" target="_blank" rel="noopener">链接</a></p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>VMware</category>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>VMware</tag>
-        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
