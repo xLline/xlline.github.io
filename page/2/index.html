@@ -296,7 +296,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/06/19/Hexo+GitHub/">
+    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/06/19/hexo_add_emjo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xugz">
@@ -315,7 +315,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/06/19/Hexo+GitHub/" itemprop="url">使用Hexo+GitHub搭建个人博客教程</a></h1>
+                <a class="post-title-link" href="/2019/06/19/hexo_add_emjo/" itemprop="url">Hexo添加emoji表情</a></h1>
         
 
         <div class="post-meta">
@@ -393,7 +393,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2k 字
+                  421 字
                 </span>
               
 
@@ -409,7 +409,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  7分钟
+                  2分钟
                 </span>
               
             </span>
@@ -432,13 +432,17 @@
       
         
           
-          开始搭建自己的小站吧。简单记录，方便后续翻阅。从无到有的流程还是比较详细的，按步骤从头到尾跟着执行可以避免大部分问题。本次搭站 参考文章 人家写的已经很详细了，这里进行备份基础补充和常见问题的汇总。
-准备工作Hexo 基于 Node.js，搭建过程中还需要使用 npm（Node.js 已带） 和 git，因此先搭建本地操作环境，安装 Node.js 和 Git。Node.js下载地址Git下载地址下载 Node.js 和 Git 程序并安装，一路点 “下一步” 按默认配置完成安装。安装完成后，Win+R 输入 cmd 并打开，依次输入 node -v、npm -v 和 git –version 并回车，出现程序版本号即可。
-连接 Github使用邮箱注
+          废话不多说，直接动手干吧。 具体表情参考 GFM 表情列表 😜 
+安装123npm install hexo-filter-github-emojis --savenpm un hexo-renderer-stylus --savenpm i hexo-renderer-stylus-plus --save
+
+打开 站点配置文件，添加以下内容123456githubEmojis:  enable: true  className: github-emoji  unicode: false  styles:  localEmojis:
+
+解决渲染错误问题
+修改 themes/next/layout/_partials/head.swig, 解决渲染错误
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2019/06/19/Hexo+GitHub/#more" rel="contents">
+            <a class="btn" href="/2019/06/19/hexo_add_emjo/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -704,7 +708,7 @@ header.post-header {
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/06/19/hexo_add_emjo/">
+    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/06/19/Hexo+GitHub/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xugz">
@@ -723,7 +727,7 @@ header.post-header {
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/06/19/hexo_add_emjo/" itemprop="url">Hexo添加emoji表情</a></h1>
+                <a class="post-title-link" href="/2019/06/19/Hexo+GitHub/" itemprop="url">使用Hexo+GitHub搭建个人博客教程</a></h1>
         
 
         <div class="post-meta">
@@ -801,7 +805,7 @@ header.post-header {
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  421 字
+                  2k 字
                 </span>
               
 
@@ -817,7 +821,7 @@ header.post-header {
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2分钟
+                  7分钟
                 </span>
               
             </span>
@@ -840,17 +844,13 @@ header.post-header {
       
         
           
-          废话不多说，直接动手干吧。 具体表情参考 GFM 表情列表 😜 
-安装123npm install hexo-filter-github-emojis --savenpm un hexo-renderer-stylus --savenpm i hexo-renderer-stylus-plus --save
-
-打开 站点配置文件，添加以下内容123456githubEmojis:  enable: true  className: github-emoji  unicode: false  styles:  localEmojis:
-
-解决渲染错误问题
-修改 themes/next/layout/_partials/head.swig, 解决渲染错误
+          开始搭建自己的小站吧。简单记录，方便后续翻阅。从无到有的流程还是比较详细的，按步骤从头到尾跟着执行可以避免大部分问题。本次搭站 参考文章 人家写的已经很详细了，这里进行备份基础补充和常见问题的汇总。
+准备工作Hexo 基于 Node.js，搭建过程中还需要使用 npm（Node.js 已带） 和 git，因此先搭建本地操作环境，安装 Node.js 和 Git。Node.js下载地址Git下载地址下载 Node.js 和 Git 程序并安装，一路点 “下一步” 按默认配置完成安装。安装完成后，Win+R 输入 cmd 并打开，依次输入 node -v、npm -v 和 git –version 并回车，出现程序版本号即可。
+连接 Github使用邮箱注
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2019/06/19/hexo_add_emjo/#more" rel="contents">
+            <a class="btn" href="/2019/06/19/Hexo+GitHub/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
