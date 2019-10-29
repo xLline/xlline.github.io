@@ -96,7 +96,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;29&#x2F;rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5&#x2F;conifg.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;29&#x2F;rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5&#x2F;opation.png">
-<meta property="og:updated_time" content="2019-10-29T06:34:24.284Z">
+<meta property="og:updated_time" content="2019-10-29T06:40:36.967Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;29&#x2F;rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5&#x2F;conifg.png">
 
@@ -406,7 +406,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  848 字
+                  850 字
                 </span>
               
 
@@ -462,8 +462,15 @@
  <img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/conifg.png" class="" title="/etc/rsyncd.conf配置说明">
 <p> 配置完成可使用<code>netstat -antup |grep 873</code> 查看是否有端口873在运行</p>
 </li>
-<li><p>以守护进程方式启动rsync </p>
-<figure class="highlight plain"><figcaption><span>--daemon```</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">4. 实时监控</span><br><span class="line">进入你要备份的目标路径 键入`watch ls -l`可实现实时监控。</span><br><span class="line"></span><br><span class="line">**192.168.2.98数据备份源上配置**</span><br><span class="line">1. 下载sersync到本地解压</span><br><span class="line">    ``` </span><br><span class="line">   # 我这里将sersync放在了/usr/local/sersync/目录下</span><br><span class="line">    cd /usr/local/</span><br><span class="line">    wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/sersync/sersync2.5.4_64bit_binary_stable_final.tar.gz</span><br><span class="line">    tar xzf sersync2.5.4_64bit_binary_stable_final.tar.gz</span><br><span class="line">    rm -rf sersync2.5.4_64bit_binary_stable_final.tar.gz</span><br><span class="line">    mv GNU-Linux-x86/ sersync</span><br><span class="line">    cd sersync</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>以守护进程方式启动rsync<br><code>/usr/bin/rsync --daemon</code></p>
+</li>
+<li><p>实时监控<br>进入你要备份的目标路径 键入<code>watch ls -l</code>可实现实时监控。</p>
+</li>
+</ol>
+<p><strong>192.168.2.98数据备份源上配置</strong></p>
+<ol>
+<li><p>下载sersync到本地解压</p>
+ <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 我这里将sersync放在了/usr/local/sersync/目录下</span><br><span class="line"> cd /usr/local/</span><br><span class="line"> wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/sersync/sersync2.5.4_64bit_binary_stable_final.tar.gz</span><br><span class="line"> tar xzf sersync2.5.4_64bit_binary_stable_final.tar.gz</span><br><span class="line"> rm -rf sersync2.5.4_64bit_binary_stable_final.tar.gz</span><br><span class="line"> mv GNU-Linux-x86/ sersync</span><br><span class="line"> cd sersync</span><br></pre></td></tr></tbody></table></figure></li>
 <li><p>修改confxml.xml文件</p>
  <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line">&lt;sersync&gt;</span><br><span class="line">24 &lt;localpath watch="监控目录路径"&gt;</span><br><span class="line">25 &lt;remote ip="rsync目标服务端IP地址" name="模块名"/&gt;</span><br><span class="line">......</span><br><span class="line">&lt;rsync&gt;</span><br><span class="line">30 &lt;commonParams params="-az"/&gt;</span><br><span class="line">31 &lt;auth start="true" users="rsync客户端用户名" passwordfile="rsync客户端密码文件"/&gt;</span><br><span class="line">......</span><br><span class="line">36 &lt;failLog path="指定Sersync日志文件路径" timeToExecute="60"/&gt;......</span><br></pre></td></tr></tbody></table></figure>
 </li>
@@ -514,7 +521,7 @@
   <p><span>本文标题:</span><a href="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/">rsync+sersync实现数据实时同步</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年10月29日 - 14:26</p>
-  <p><span>最后更新:</span>2019年10月29日 - 14:34</p>
+  <p><span>最后更新:</span>2019年10月29日 - 14:40</p>
   <p><span>原始链接:</span><a href="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/" title="rsync+sersync实现数据实时同步">https://xlline.github.io/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/"  aria-label="复制成功！"></i></span>
   </p>
