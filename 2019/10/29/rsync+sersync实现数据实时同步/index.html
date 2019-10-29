@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="rsync,Linux," />
+  <meta name="keywords" content="Linux,rsync," />
 
 
 
@@ -87,7 +87,7 @@
 
 
 <meta name="description" content="sersync是基于inotify+rsync的大量文件的多服务器自动同步程序使用 Linux 2.6 内核的 inotify 监控 Linux 文件系统事件，被监听目录下如果有文件发生修改，sersync 将通过内核自动捕获到事件，并将该文件利用 rsync 同步到多台远程服务器。sersync 仅仅同步发生增、删、改事件的单个文件或目录，不像rsync镜像同步那样需要比对双方服务器整个目录下数">
-<meta name="keywords" content="rsync,Linux">
+<meta name="keywords" content="Linux,rsync">
 <meta property="og:type" content="article">
 <meta property="og:title" content="rsync+sersync实现数据实时同步">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;29&#x2F;rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5&#x2F;index.html">
@@ -96,7 +96,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;29&#x2F;rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5&#x2F;conifg.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;29&#x2F;rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5&#x2F;opation.png">
-<meta property="og:updated_time" content="2019-10-29T09:51:24.061Z">
+<meta property="og:updated_time" content="2019-10-29T10:19:09.363Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;29&#x2F;rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5&#x2F;conifg.png">
 
@@ -465,7 +465,7 @@
 <p> 增加以下内容</p>
  <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">uid = root</span><br><span class="line">gid = root</span><br><span class="line">use chroot = yes</span><br><span class="line">hosts allow=*</span><br><span class="line">max connections = 5</span><br><span class="line">port = 873</span><br><span class="line">pid file = /var/run/rsyncd.pid</span><br><span class="line">lock file = /var/run/rsync.lock</span><br><span class="line">motd file = /etc/rsyncd.motd</span><br><span class="line">[backup]</span><br><span class="line">path = /var/www/backup</span><br><span class="line">comment = Hi</span><br><span class="line">read only = false</span><br><span class="line">list =yes</span><br><span class="line">auth users = rsyncuser</span><br><span class="line">secrets file =/etc/rsync.passwd</span><br></pre></td></tr></tbody></table></figure>
 <p> 编辑完成保存退出<br> 具体配置注释见下图</p>
- <img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/conifg.png" class="" title="/etc/rsyncd.conf配置说明">
+ <img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/conifg.png" class title="/etc/rsyncd.conf配置说明">
 <p> 配置完成可使用<code>netstat -antup |grep 873</code> 查看是否有端口873在运行</p>
 </li>
 <li><p>在secrets file指定的用户密码文件<br>vim /etc/rsync.passwd　　内容格式：用户名：密码,可以设置多个，每行一个用户名:密码<br>执行<code>echo "rsyncuser:password" &gt;&gt; /etc/rsync.passwd</code><br>把内容追加到rsync.passwd末尾<br>然后，更改文件的读写权限为600<br><code>chmod 600 /etc/rsync.passwd</code></p>
@@ -520,7 +520,7 @@ fi</code></pre></li>
 </ol>
 </li>
 </ol>
-<h1 id="rsync参数说明"><a href="#rsync参数说明" class="headerlink" title="rsync参数说明"></a>rsync参数说明</h1><img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/opation.png" class="">
+<h1 id="rsync参数说明"><a href="#rsync参数说明" class="headerlink" title="rsync参数说明"></a>rsync参数说明</h1><div style="width:80%;margin:left"><img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/opation.png" class></div>
 
 <h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p> <a href="https://blog.whsir.com/post-1097.html" target="_blank" rel="noopener">https://blog.whsir.com/post-1097.html</a><br><a href="https://blog.csdn.net/chrisjingu/article/details/78317907" target="_blank" rel="noopener">https://blog.csdn.net/chrisjingu/article/details/78317907</a><br><a href="https://www.jianshu.com/p/31a67de3f669" target="_blank" rel="noopener">https://www.jianshu.com/p/31a67de3f669</a></p>
 <script>
@@ -560,7 +560,7 @@ fi</code></pre></li>
   <p><span>本文标题:</span><a href="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/">rsync+sersync实现数据实时同步</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年10月29日 - 14:26</p>
-  <p><span>最后更新:</span>2019年10月29日 - 17:51</p>
+  <p><span>最后更新:</span>2019年10月29日 - 18:19</p>
   <p><span>原始链接:</span><a href="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/" title="rsync+sersync实现数据实时同步">https://xlline.github.io/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/"  aria-label="复制成功！"></i></span>
   </p>
@@ -601,9 +601,9 @@ fi</code></pre></li>
       
         <div class="post-tags">
           
-            <a href="/tags/rsync/" rel="tag"><i class="fa fa-tag"></i> rsync</a>
-          
             <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+          
+            <a href="/tags/rsync/" rel="tag"><i class="fa fa-tag"></i> rsync</a>
           
         </div>
       
