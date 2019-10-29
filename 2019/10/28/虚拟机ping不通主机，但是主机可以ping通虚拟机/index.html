@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="VMware,Linux," />
+  <meta name="keywords" content="Linux,VMware," />
 
 
 
@@ -87,14 +87,14 @@
 
 
 <meta name="description" content="在Windows10系统安装了虚拟机，设置的主机与虚拟机的连接方式是桥接，安装好后，发现虚拟机ping不通主机，但是主机可以ping通虚拟机。上网查看资料，发现是因为Windows10防火墙阻止，防火墙没有打开ICMPv4-in这个规则。那怎么打开呢？   修改防火墙规则设置 &amp;gt; 网络和Internet &amp;gt; Windows防火墙 &amp;gt; 高级设置 &amp;gt; 入站规则中找到配置文件类型">
-<meta name="keywords" content="VMware,Linux">
+<meta name="keywords" content="Linux,VMware">
 <meta property="og:type" content="article">
 <meta property="og:title" content="虚拟机ping不通主机，但是主机可以ping通虚拟机">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;28&#x2F;%E8%99%9A%E6%8B%9F%E6%9C%BAping%E4%B8%8D%E9%80%9A%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%BB%E6%9C%BA%E5%8F%AF%E4%BB%A5ping%E9%80%9A%E8%99%9A%E6%8B%9F%E6%9C%BA&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
 <meta property="og:description" content="在Windows10系统安装了虚拟机，设置的主机与虚拟机的连接方式是桥接，安装好后，发现虚拟机ping不通主机，但是主机可以ping通虚拟机。上网查看资料，发现是因为Windows10防火墙阻止，防火墙没有打开ICMPv4-in这个规则。那怎么打开呢？   修改防火墙规则设置 &amp;gt; 网络和Internet &amp;gt; Windows防火墙 &amp;gt; 高级设置 &amp;gt; 入站规则中找到配置文件类型">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-28T11:05:29.771Z">
+<meta property="og:updated_time" content="2019-10-29T00:50:08.382Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -442,8 +442,8 @@
       
         <p>在Windows10系统安装了虚拟机，设置的主机与虚拟机的连接方式是桥接，安装好后，发现虚拟机ping不通主机，但是主机可以ping通虚拟机。<br>上网查看资料，发现是因为Windows10防火墙阻止，防火墙没有打开ICMPv4-in这个规则。<br>那怎么打开呢？  </p>
 <h1 id="修改防火墙规则"><a href="#修改防火墙规则" class="headerlink" title="修改防火墙规则"></a>修改防火墙规则</h1><p>设置 &gt; 网络和Internet &gt; Windows防火墙 &gt; 高级设置 &gt; 入站规则中找到配置文件类型为“公用”的“文件和打印共享（回显请求 – ICMPv4-In）”规则，设置为启用规则。<br>这样虚拟机就可以ping通主机了。  </p>
-<p>如果确保安装无误且防火墙已关闭却还没解决问题,可能是这个原因，我们一般都是自动获取ip地址和网关，设置为手动就可以了。<br>步骤如下：<br>打开cmd查看你的IP地址，ipconfig，记住IP地址和默认网关。</p>
-<h1 id="更改适配器选项"><a href="#更改适配器选项" class="headerlink" title="更改适配器选项"></a>更改适配器选项</h1><p>设置  &gt; 网络和Internet &gt; 更改适配器选项 &gt; 选择主机连接的网络右键属性 &gt; Internet 协议4（TCP/IPv4）属性 中选择使用下面的DNS服务器地址进行自定义，填入IP地址 默认网关和子网掩码再试。</p>
+<h1 id="更改适配器选项"><a href="#更改适配器选项" class="headerlink" title="更改适配器选项"></a>更改适配器选项</h1><p>如果确保安装无误且防火墙已关闭却还没解决问题,可能是这个原因，我们一般都是自动获取ip地址和网关，设置为手动就可以了。<br>步骤如下：<br>打开cmd查看你的IP地址，ipconfig，记住IP地址和默认网关。</p>
+<p>设置  &gt; 网络和Internet &gt; 更改适配器选项 &gt; 选择主机连接的网络右键属性 &gt; Internet 协议4（TCP/IPv4）属性 中选择使用下面的DNS服务器地址进行自定义，填入IP地址 默认网关和子网掩码再试。</p>
 <p>防火墙是虚拟机ping不通本机ip的主要原因，但是如果开启了入站规则没管用那就是其他问题了，我的把自动获取改为手动就好了，之前设置的入站规则也管用了，现在防火墙也都开着。</p>
 <p>本文参考文章： <a href="https://blog.csdn.net/hskw444273663/article/details/81301470" target="_blank" rel="noopener">链接</a></p>
 <script>
@@ -483,7 +483,7 @@
   <p><span>本文标题:</span><a href="/2019/10/28/%E8%99%9A%E6%8B%9F%E6%9C%BAping%E4%B8%8D%E9%80%9A%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%BB%E6%9C%BA%E5%8F%AF%E4%BB%A5ping%E9%80%9A%E8%99%9A%E6%8B%9F%E6%9C%BA/">虚拟机ping不通主机，但是主机可以ping通虚拟机</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年10月28日 - 18:02</p>
-  <p><span>最后更新:</span>2019年10月28日 - 19:05</p>
+  <p><span>最后更新:</span>2019年10月29日 - 08:50</p>
   <p><span>原始链接:</span><a href="/2019/10/28/%E8%99%9A%E6%8B%9F%E6%9C%BAping%E4%B8%8D%E9%80%9A%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%BB%E6%9C%BA%E5%8F%AF%E4%BB%A5ping%E9%80%9A%E8%99%9A%E6%8B%9F%E6%9C%BA/" title="虚拟机ping不通主机，但是主机可以ping通虚拟机">https://xlline.github.io/2019/10/28/%E8%99%9A%E6%8B%9F%E6%9C%BAping%E4%B8%8D%E9%80%9A%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%BB%E6%9C%BA%E5%8F%AF%E4%BB%A5ping%E9%80%9A%E8%99%9A%E6%8B%9F%E6%9C%BA/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/10/28/%E8%99%9A%E6%8B%9F%E6%9C%BAping%E4%B8%8D%E9%80%9A%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%BB%E6%9C%BA%E5%8F%AF%E4%BB%A5ping%E9%80%9A%E8%99%9A%E6%8B%9F%E6%9C%BA/"  aria-label="复制成功！"></i></span>
   </p>
@@ -524,9 +524,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/VMware/" rel="tag"><i class="fa fa-tag"></i> VMware</a>
-          
             <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+          
+            <a href="/tags/VMware/" rel="tag"><i class="fa fa-tag"></i> VMware</a>
           
         </div>
       

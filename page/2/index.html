@@ -296,7 +296,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/06/19/hexo_add_emjo/">
+    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/06/19/hexo_add_wordcount/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xugz">
@@ -315,7 +315,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/06/19/hexo_add_emjo/" itemprop="url">Hexo添加emoji表情</a></h1>
+                <a class="post-title-link" href="/2019/06/19/hexo_add_wordcount/" itemprop="url">Hexo NexT主题添加字数统计阅读时长</a></h1>
         
 
         <div class="post-meta">
@@ -393,7 +393,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  421 字
+                  457 字
                 </span>
               
 
@@ -432,17 +432,12 @@
       
         
           
-          废话不多说，直接动手干吧。 具体表情参考 GFM 表情列表 😜 
-安装123npm install hexo-filter-github-emojis --savenpm un hexo-renderer-stylus --savenpm i hexo-renderer-stylus-plus --save
-
-打开 站点配置文件，添加以下内容123456githubEmojis:  enable: true  className: github-emoji  unicode: false  styles:  localEmojis:
-
-解决渲染错误问题
-修改 themes/next/layout/_partials/head.swig, 解决渲染错误
+          配置NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 _config.yml 中打开 wordcount 统计功能即可。如下所示：
+12345678# Post wordcount display settings# Dependencies: https://github.com/willin/hexo-wordcountpost_wordcount:  item_text: true  wordcount: true         # 单篇 字数统计  min2read: true          # 单篇 阅读时长  totalcount: false       # 网站 字数统计 
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2019/06/19/hexo_add_emjo/#more" rel="contents">
+            <a class="btn" href="/2019/06/19/hexo_add_wordcount/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
