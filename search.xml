@@ -32,7 +32,7 @@
 </li>
 </ol>
 <p>执行完成可以测试。</p>
-<h1 id="rsync参数说明"><a href="#rsync参数说明" class="headerlink" title="rsync参数说明"></a>rsync参数说明</h1><img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/opation.png" class="">
+<h1 id="rsync参数说明"><a href="#rsync参数说明" class="headerlink" title="rsync参数说明"></a>rsync参数说明</h1><img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/opation.png" class>
 
 <h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p>sersync下载安装及配置(<a href="https://blog.whsir.com/post-1097.html" target="_blank" rel="noopener">https://blog.whsir.com/post-1097.html</a>)<br>(<a href="https://www.jianshu.com/p/31a67de3f669" target="_blank" rel="noopener">https://www.jianshu.com/p/31a67de3f669</a>)</p>
 <script>
@@ -60,8 +60,8 @@
         <category>rsync</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>rsync</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -94,7 +94,6 @@
       </script>]]></content>
       <categories>
         <category>拾级而上</category>
-        <category>VMware</category>
         <category>Linux</category>
       </categories>
       <tags>
@@ -165,11 +164,11 @@
     <content><![CDATA[<p>使用Git bash未正常退出后，再次打开出现 <code>Git bash Error: Could not fork child process: There are no available terminals (-1)</code>报错。<br>可以使用 tasklist命令 找到git-bash.exe和node.exe对应进程号后，使用taskkill结束进程即可。</p>
 <ol>
 <li><p>win+r调出运行键入<code>cmd</code>后回车打开，使用<code>tasklist</code>查看本机进程。查询得到的字段有： 映像名称，PID(进程ID)，会话名，会话#，内存使用。如下图：</p>
-<img src="/2019/10/25/gitbash_error/tasklist_ret.jpg" class="" title="tasklist运行结果">
+<img src="/2019/10/25/gitbash_error/tasklist_ret.jpg" class title="tasklist运行结果">
 <p>如图 smss.exe 的进程ID为 520(你看随便找个进程都是爱你的数字)，咳咳</p>
 </li>
 <li><p>找到git-bash.exe对应的进程号，比如我的是 12184，然后使用命令 <code>taskkill /pid 12184 -t -f</code> 终止ID为12184的进程。</p>
-<img src="/2019/10/25/gitbash_error/taskkill_ret.png" class="" title="taskkill命令运行结果"></li>
+<img src="/2019/10/25/gitbash_error/taskkill_ret.png" class title="taskkill命令运行结果"></li>
 <li><p>找到node.exe对应的进程号，比如我的是 868，然后使用命令 <code>taskkill /pid 868 -t -f</code> 终止ID为868的进程。</p>
 </li>
 </ol>
@@ -202,6 +201,45 @@
         <tag>Windows</tag>
         <tag>tasklist</tag>
         <tag>taskkill</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux的crontab命令</title>
+    <url>/2019/10/23/linux_crontab/</url>
+    <content><![CDATA[<p>Linux下的任务调度分为两类：系统任务调度和用户任务调度。<br>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。<br>所有用户定义的crontab文件都被保存在/var/spool/cron目录中。其文件名与用户名一致，使用者权限文件如下：<br><code>/etc/cron.deny</code>     该文件中所列用户不允许使用crontab命令<br><code>/etc/cron.allow</code>   该文件中所列用户允许使用crontab命令<br><code>/var/spool/cron/</code>   所有用户crontab文件存放的目录,以用户名命名  </p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">分 时 日 月 星期 命令</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。  </p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/sbin/service crond start    // 启动服务   或者使用  service crond start 命令 手动启动crontab服务</span><br><span class="line">/sbin/service crond stop     // 关闭服务</span><br><span class="line">/sbin/service crond restart  // 重启服务</span><br><span class="line">/sbin/service crond reload   // 重新载入配置</span><br><span class="line"></span><br><span class="line">chkconfig –level 35 crond on // 加入开机自动启动</span><br><span class="line">service crond status // 查看crontab服务状态</span><br></pre></td></tr></tbody></table></figure>
+
+<p>crontab (选项 例如:-e)(参数 crontab文件)<br>-e：编辑该用户的计时器设置；<br>-l：列出该用户的计时器设置；<br>-r：删除该用户的计时器设置；<br>-u&lt;用户名称&gt;：指定要设定计时器的用户名称。    </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>基础</tag>
+        <tag>Linux</tag>
+        <tag>crontab</tag>
       </tags>
   </entry>
   <entry>
@@ -342,45 +380,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux的crontab命令</title>
-    <url>/2019/10/23/linux_crontab/</url>
-    <content><![CDATA[<p>Linux下的任务调度分为两类：系统任务调度和用户任务调度。<br>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。<br>所有用户定义的crontab文件都被保存在/var/spool/cron目录中。其文件名与用户名一致，使用者权限文件如下：<br><code>/etc/cron.deny</code>     该文件中所列用户不允许使用crontab命令<br><code>/etc/cron.allow</code>   该文件中所列用户允许使用crontab命令<br><code>/var/spool/cron/</code>   所有用户crontab文件存放的目录,以用户名命名  </p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">分 时 日 月 星期 命令</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></tbody></table></figure>
-
-<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。  </p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/sbin/service crond start    // 启动服务   或者使用  service crond start 命令 手动启动crontab服务</span><br><span class="line">/sbin/service crond stop     // 关闭服务</span><br><span class="line">/sbin/service crond restart  // 重启服务</span><br><span class="line">/sbin/service crond reload   // 重新载入配置</span><br><span class="line"></span><br><span class="line">chkconfig –level 35 crond on // 加入开机自动启动</span><br><span class="line">service crond status // 查看crontab服务状态</span><br></pre></td></tr></tbody></table></figure>
-
-<p>crontab (选项 例如:-e)(参数 crontab文件)<br>-e：编辑该用户的计时器设置；<br>-l：列出该用户的计时器设置；<br>-r：删除该用户的计时器设置；<br>-u&lt;用户名称&gt;：指定要设定计时器的用户名称。    </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>基础</tag>
-        <tag>Linux</tag>
-        <tag>crontab</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用Hexo+GitHub搭建个人博客教程</title>
     <url>/2019/06/19/Hexo+GitHub/</url>
     <content><![CDATA[<p>开始搭建自己的小站吧。简单记录，方便后续翻阅。<br>从无到有的流程还是比较详细的，按步骤从头到尾跟着执行可以避免大部分问题。本次搭站 <a href="https://zhuanlan.zhihu.com/p/60578464" target="_blank" rel="noopener">参考文章</a> 人家写的已经很详细了，这里进行备份基础补充和常见问题的汇总。</p>
@@ -489,54 +488,6 @@
       <tags>
         <tag>Hexo</tag>
         <tag>GitHub</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo添加emoji表情</title>
-    <url>/2019/06/19/hexo_add_emjo/</url>
-    <content><![CDATA[<p>废话不多说，直接动手干吧。 具体表情参考 <a href="https://github.com/caiyongji/emoji-list" target="_blank" rel="noopener">GFM 表情列表</a> <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8">😜</span> </p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install hexo-filter-github-emojis --save</span><br><span class="line">npm un hexo-renderer-stylus --save</span><br><span class="line">npm i hexo-renderer-stylus-plus --save</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="打开-站点配置文件，添加以下内容"><a href="#打开-站点配置文件，添加以下内容" class="headerlink" title="打开 站点配置文件，添加以下内容"></a>打开 站点配置文件，添加以下内容</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="解决渲染错误问题"><a href="#解决渲染错误问题" class="headerlink" title="解决渲染错误问题"></a>解决渲染错误问题</h1><ul>
-<li>修改 <code>themes/next/layout/_partials/head.swig</code>, 解决渲染错误问题，渲染 emoji 表情时会被自动加上 a 标签<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;script type="text/javascript" id="hexo.configurations"&gt;</span><br><span class="line">  var NexT = window.NexT || {};</span><br><span class="line">  var CONFIG = {</span><br><span class="line">    root: '{{ theme.root }}',</span><br><span class="line">    scheme: '{{ theme.scheme }}',</span><br><span class="line">    sidebar: {{ theme.sidebar | json_encode }},</span><br><span class="line">    fancybox: {{ theme.fancybox }},</span><br><span class="line">    tabs: {{ theme.tabs.enable }},</span><br><span class="line">    motion: {{ theme.use_motion }},</span><br><span class="line">    duoshuo: {</span><br><span class="line">      userId: '{{ theme.duoshuo_info.user_id | default() }}',</span><br><span class="line">      author: '{{ theme.duoshuo_info.admin_nickname | default(__('author'))}}'</span><br><span class="line">    },</span><br><span class="line">    algolia: {</span><br><span class="line">      applicationID: '{{ theme.algolia.applicationID }}',</span><br><span class="line">      apiKey: '{{ theme.algolia.apiKey }}',</span><br><span class="line">      indexName: '{{ theme.algolia.indexName }}',</span><br><span class="line">      hits: {{ theme.algolia_search.hits | json_encode }},</span><br><span class="line">      labels: {{ theme.algolia_search.labels | json_encode }}</span><br><span class="line">    },</span><br><span class="line">    *{# ↓ 在这里修改，其他未动 ↓ #}</span><br><span class="line">    {# 添加 emojis 参数 #}</span><br><span class="line">    emojis: {</span><br><span class="line">      className: '{{ config.githubEmojis.className | default('github-emoji') }}'</span><br><span class="line">    }*</span><br><span class="line">  };</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></tbody></table></figure></li>
-<li>修改 <code>themes/next/source/js/src/utils.js</code><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// 注意看 CONFIG.emojis.className 那一行，其他未动</span><br><span class="line">$('.content img')</span><br><span class="line">  .not('[hidden]')</span><br><span class="line">  .not('.group-picture img, .post-gallery img, *img.' + CONFIG.emojis.className*)</span><br><span class="line">  .each(function () {</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
-
-</li>
-</ul>
-<h1 id="自定义emoji-样式"><a href="#自定义emoji-样式" class="headerlink" title="自定义emoji 样式"></a>自定义emoji 样式</h1><p>在 <code>站点配置文件</code> 中，我们配置：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
-<p>在 <code>themes/next/source/css/_variables/base.styl</code> 中使用 hexo-site-config 方法获取 <code>站点配置文件</code> 中的值，我们添加</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// Github emojis class name</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">get_emoji_class() {</span><br><span class="line">  emoji_class = hexo-site-config('githubEmojis.className')</span><br><span class="line">  return emoji_class ? emoji_class : 'github-emoji'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$github-emojis-class-name   = get_emoji_class()</span><br></pre></td></tr></tbody></table></figure>
-<p>最后在自定义样式文件 <code>themes/next/source/css/_custom/custom.styl</code> 中添加：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">img.{$github-emojis-class-name} {</span><br><span class="line">  display: inline;</span><br><span class="line">  height: 1.7em;</span><br><span class="line">  width: 1.7em;</span><br><span class="line">  vertical-align: -0.4em;</span><br><span class="line">  border: none !important;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span>  </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -651,10 +602,58 @@ header.post-header {
       </tags>
   </entry>
   <entry>
+    <title>Hexo添加emoji表情</title>
+    <url>/2019/06/19/hexo_add_emjo/</url>
+    <content><![CDATA[<p>废话不多说，直接动手干吧。 具体表情参考 <a href="https://github.com/caiyongji/emoji-list" target="_blank" rel="noopener">GFM 表情列表</a> <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8">😜</span> </p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install hexo-filter-github-emojis --save</span><br><span class="line">npm un hexo-renderer-stylus --save</span><br><span class="line">npm i hexo-renderer-stylus-plus --save</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="打开-站点配置文件，添加以下内容"><a href="#打开-站点配置文件，添加以下内容" class="headerlink" title="打开 站点配置文件，添加以下内容"></a>打开 站点配置文件，添加以下内容</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="解决渲染错误问题"><a href="#解决渲染错误问题" class="headerlink" title="解决渲染错误问题"></a>解决渲染错误问题</h1><ul>
+<li>修改 <code>themes/next/layout/_partials/head.swig</code>, 解决渲染错误问题，渲染 emoji 表情时会被自动加上 a 标签<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;script type="text/javascript" id="hexo.configurations"&gt;</span><br><span class="line">  var NexT = window.NexT || {};</span><br><span class="line">  var CONFIG = {</span><br><span class="line">    root: '{{ theme.root }}',</span><br><span class="line">    scheme: '{{ theme.scheme }}',</span><br><span class="line">    sidebar: {{ theme.sidebar | json_encode }},</span><br><span class="line">    fancybox: {{ theme.fancybox }},</span><br><span class="line">    tabs: {{ theme.tabs.enable }},</span><br><span class="line">    motion: {{ theme.use_motion }},</span><br><span class="line">    duoshuo: {</span><br><span class="line">      userId: '{{ theme.duoshuo_info.user_id | default() }}',</span><br><span class="line">      author: '{{ theme.duoshuo_info.admin_nickname | default(__('author'))}}'</span><br><span class="line">    },</span><br><span class="line">    algolia: {</span><br><span class="line">      applicationID: '{{ theme.algolia.applicationID }}',</span><br><span class="line">      apiKey: '{{ theme.algolia.apiKey }}',</span><br><span class="line">      indexName: '{{ theme.algolia.indexName }}',</span><br><span class="line">      hits: {{ theme.algolia_search.hits | json_encode }},</span><br><span class="line">      labels: {{ theme.algolia_search.labels | json_encode }}</span><br><span class="line">    },</span><br><span class="line">    *{# ↓ 在这里修改，其他未动 ↓ #}</span><br><span class="line">    {# 添加 emojis 参数 #}</span><br><span class="line">    emojis: {</span><br><span class="line">      className: '{{ config.githubEmojis.className | default('github-emoji') }}'</span><br><span class="line">    }*</span><br><span class="line">  };</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></tbody></table></figure></li>
+<li>修改 <code>themes/next/source/js/src/utils.js</code><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// 注意看 CONFIG.emojis.className 那一行，其他未动</span><br><span class="line">$('.content img')</span><br><span class="line">  .not('[hidden]')</span><br><span class="line">  .not('.group-picture img, .post-gallery img, *img.' + CONFIG.emojis.className*)</span><br><span class="line">  .each(function () {</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
+
+</li>
+</ul>
+<h1 id="自定义emoji-样式"><a href="#自定义emoji-样式" class="headerlink" title="自定义emoji 样式"></a>自定义emoji 样式</h1><p>在 <code>站点配置文件</code> 中，我们配置：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
+<p>在 <code>themes/next/source/css/_variables/base.styl</code> 中使用 hexo-site-config 方法获取 <code>站点配置文件</code> 中的值，我们添加</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// Github emojis class name</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">get_emoji_class() {</span><br><span class="line">  emoji_class = hexo-site-config('githubEmojis.className')</span><br><span class="line">  return emoji_class ? emoji_class : 'github-emoji'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$github-emojis-class-name   = get_emoji_class()</span><br></pre></td></tr></tbody></table></figure>
+<p>最后在自定义样式文件 <code>themes/next/source/css/_custom/custom.styl</code> 中添加：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">img.{$github-emojis-class-name} {</span><br><span class="line">  display: inline;</span><br><span class="line">  height: 1.7em;</span><br><span class="line">  width: 1.7em;</span><br><span class="line">  vertical-align: -0.4em;</span><br><span class="line">  border: none !important;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span>  </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>网络工程师基础</title>
     <url>/2018/10/25/OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/</url>
     <content><![CDATA[<h1 id="OSI"><a href="#OSI" class="headerlink" title="OSI"></a>OSI</h1><p>OSI（开放系统互联(Open System Interconnection)），把网络通信的工作分为7层,分别是物理层,数据链路层,网络层,传输层,会话层,表示层和应用层。<br>通俗理解如下：<br>物理层就是布线、光纤和其它电子设备，用来把两台网络通信设备连接在一起的东西。<br>数据链路层就是MAC地址、交换机或者网卡和驱动程序，主要任务是把数据帧转换成二进制位供一层处理。<br>网络层最主要的设备是路由器，主要作用是为了在数据外围针对IP地址路由的交换。<br>传输层作用是每台计算机每台应用程序与他人发生通讯，互联端口的协议。<br>会话层，两者之间的通讯过程就是一次会话过程。<br>表示层，规范编码问题。负责转换为适合于OSI系统内部使用的传送语法。即提供格式化的表示和转换数据服务。数据的压缩和解压缩， 加密和解密等工作。<br>应用层用于应用程序，确定进程之间通信的性质以满足用户需要以及提供网络与用户应用软件之间的接口服务如果你的程序需要一种具体格式的数据。  </p>
-<img src="/2018/10/25/OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/osi_desc.png" class="" title="OSI的七层模型">  
+<img src="/2018/10/25/OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/osi_desc.png" class title="OSI的七层模型">  
 
 
 <h1 id="物理层"><a href="#物理层" class="headerlink" title="物理层"></a>物理层</h1><p>为数据端设备提供传送数据的通路，传输数据</p>
@@ -782,8 +781,8 @@ header.post-header {
 <p><strong>任务列表</strong></p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">- [x] Task 1</span><br><span class="line">- [ ] Task 2</span><br></pre></td></tr></tbody></table></figure>
 <ul>
-<li><input checked="" disabled="" type="checkbox"> Task 1</li>
-<li><input disabled="" type="checkbox"> Task 2</li>
+<li><input checked disabled type="checkbox"> Task 1</li>
+<li><input disabled type="checkbox"> Task 2</li>
 </ul>
 <p>本篇结束了，拜拜喽。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f490.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f490.png?v8">💐</span>  </p>
 <script>
