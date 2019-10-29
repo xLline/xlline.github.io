@@ -9,34 +9,43 @@
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">谷歌项目地址：(https://code.google.com/archive/p/sersync/)  </span><br><span class="line">64位下载地址：(https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/sersync/sersync2.5.4_64bit_binary_stable_final.tar.gz)  </span><br><span class="line">32位下载地址：(https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/sersync/sersync2.5_32bit_binary_stable_final.tar.gz)</span><br></pre></td></tr></tbody></table></figure>
 <p>上不去google的可以使用百度网盘我的备份包，这里只提供64位版本的：<br>链接：<a href="https://pan.baidu.com/s/19VRdMVEzvpOtJrR7wzN8_w" target="_blank" rel="noopener">https://pan.baidu.com/s/19VRdMVEzvpOtJrR7wzN8_w</a><br>提取码：<code>tjx2</code> </p>
 <p>注： 压缩包里面有两个文件confxml.xml和sersync2。前者是sersync配置文件，后者是sersync主程序。</p>
-<p><strong>确认当前系统关闭selinux及防火墙，或将873端口加入iptables白名单</strong>  </p>
-<h1 id="需求说明"><a href="#需求说明" class="headerlink" title="需求说明"></a>需求说明</h1><p>我这里有两台centos8的主机，IP分别是192.168.2.98和192.168.2.248。<br>我在192.168.2.98安装sersync，主动推送数据到192.168.2.248上。<br>也就是说 192.168.2.98作为数据备份源，192.168.2.248作为目标机器。</p>
+<p><strong>确认当前系统关闭selinux及防火墙，或将873端口加入iptables白名单</strong><br>注意： 该步骤需要在备份源服务器和目标服务器上都要操作</p>
+<ol>
+<li>关闭SELINUX  <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[root@rsync ~]# vim /etc/selinux/config #编辑防火墙配置文件</span><br><span class="line">#SELINUX=enforcing #注释掉</span><br><span class="line">#SELINUXTYPE=targeted #注释掉</span><br><span class="line">SELINUX=disabled #增加</span><br><span class="line">:wq! #保存，退出</span><br><span class="line">[root@rsync ~]# setenforce 0 #立即生效</span><br></pre></td></tr></tbody></table></figure></li>
+<li>开启防火墙tcp 873端口  <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[root@rsync ~]# vim /etc/sysconfig/iptables #编辑防火墙配置文件</span><br><span class="line">-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 873 -j ACCEPT</span><br><span class="line">:wq! #保存退出</span><br><span class="line">[root@rsync ~]# /etc/init.d/iptables restart #最后重启防火墙使配置生效</span><br></pre></td></tr></tbody></table></figure>
+<h1 id="需求说明"><a href="#需求说明" class="headerlink" title="需求说明"></a>需求说明</h1>我这里有两台centos8的主机，IP分别是192.168.2.98和192.168.2.248。<br>我在192.168.2.98安装sersync，主动推送数据到192.168.2.248上。<br>也就是说 192.168.2.98作为数据备份源，192.168.2.248作为目标机器。</li>
+</ol>
 <h1 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h1><p><strong>192.168.2.248目标机器上配置</strong></p>
 <ol>
-<li><p>安装rsync<br><code>yum -y install rsync</code></p>
+<li><p>安装rsync<br><code>yum install rsync</code> </p>
 </li>
 <li><p>创建rsync配置文件<br><code>vi /etc/rsyncd.conf</code></p>
 <p> 增加以下内容</p>
- <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">uid = root</span><br><span class="line">gid = root</span><br><span class="line">use chroot = no</span><br><span class="line">hosts allow=*</span><br><span class="line">max connections = 3</span><br><span class="line">pid file = /var/run/rsyncd.pid</span><br><span class="line">lock file = /var/run/rsync.lock</span><br><span class="line">motd file = /etc/rsyncd.motd</span><br><span class="line">[backup]</span><br><span class="line">path = /var/www/backup</span><br><span class="line">comment = Hi</span><br><span class="line">read only = false</span><br><span class="line">list =yes</span><br><span class="line">auth users = rsyncuser</span><br><span class="line">sercrets file =/etc/rsync.passwd</span><br></pre></td></tr></tbody></table></figure>
+ <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">uid = root</span><br><span class="line">gid = root</span><br><span class="line">use chroot = yes</span><br><span class="line">hosts allow=*</span><br><span class="line">max connections = 5</span><br><span class="line">port = 873</span><br><span class="line">pid file = /var/run/rsyncd.pid</span><br><span class="line">lock file = /var/run/rsync.lock</span><br><span class="line">motd file = /etc/rsyncd.motd</span><br><span class="line">[backup]</span><br><span class="line">path = /var/www/backup</span><br><span class="line">comment = Hi</span><br><span class="line">read only = false</span><br><span class="line">list =yes</span><br><span class="line">auth users = rsyncuser</span><br><span class="line">secrets file =/etc/rsync.passwd</span><br></pre></td></tr></tbody></table></figure>
 <p> 编辑完成保存退出<br> 具体配置注释见下图</p>
  <img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/conifg.png" class="" title="/etc/rsyncd.conf配置说明">
 <p> 配置完成可使用<code>netstat -antup |grep 873</code> 查看是否有端口873在运行</p>
 </li>
 </ol>
-<p>3.在secrets file指定的用户密码文件<br>vim /etc/rsyncd.secrets　　内容格式：用户名：密码<br>执行<code>echo “user:password” &gt;&gt; /etc/rsync.passwd</code><br>把内容追加到rsync.passwd末尾<br>然后，更改文件的读写权限为600<br><code>chmod 600 /etc/rsync.passwd</code></p>
+<p>3.在secrets file指定的用户密码文件<br>vim /etc/rsync.passwd　　内容格式：用户名：密码,可以设置多个，每行一个用户名:密码<br>执行<code>echo "rsyncuser:password" &gt;&gt; /etc/rsync.passwd</code><br>把内容追加到rsync.passwd末尾<br>然后，更改文件的读写权限为600<br><code>chmod 600 /etc/rsync.passwd</code></p>
 <ol start="4">
-<li><p>启动rsync<br><code>/usr/bin/rsync --daemon</code> # 以守护进程方式<br><code>rsync –daemon –config=/etc/rsyncd.conf</code>  # 加载配置文件rsyncd.conf启动rsync服务</p>
-</li>
-<li><p>配置rsync开机自启动<br>直接追加 <code>echo “rsync –daemon –config=/etc/rsyncd.conf” &gt;&gt; /etc/rc.d/rc.local</code></p>
+<li>启动rsync<br><code>/usr/bin/rsync --daemon</code> # 以守护进程方式<br><code>/usr/bin/rsync --daemon --config=/etc/rsyncd.conf</code>  # 加载配置文件rsyncd.conf启动rsync服务</li>
+</ol>
+<p>注： 可使用 killall rsync 杀掉进程</p>
+<ol start="5">
+<li><p>配置rsync开机自启动<br>直接追加 <code>echo "/usr/bin/rsync --daemon --config=/etc/rsyncd.conf" &gt;&gt; /etc/rc.d/rc.local</code></p>
 </li>
 <li><p>实时监控<br>进入你要备份的目标路径 键入<code>watch ls -l</code>可实现实时监控。</p>
 </li>
 </ol>
 <p><strong>192.168.2.98数据备份源上配置</strong></p>
 <ol>
+<li><p>安装rsync </p>
+ <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[root@rsync ~]# whereis rsync   #查看系统是否已安装rsync,出现下面的提示，说明已经安装</span><br><span class="line">rsync: /usr/bin/rsync /usr/share/man/man1/rsync.1.gz</span><br><span class="line">yum install rsync #如果默认没有rsync，运行此命令进行安装rsync</span><br></pre></td></tr></tbody></table></figure>
+</li>
 <li><p>下载sersync到本地解压</p>
  <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># 我这里将sersync放在了/usr/local/sersync/目录下</span><br><span class="line"> cd /usr/local/</span><br><span class="line"> wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/sersync/sersync2.5.4_64bit_binary_stable_final.tar.gz</span><br><span class="line"> tar xzf sersync2.5.4_64bit_binary_stable_final.tar.gz</span><br><span class="line"> rm -rf sersync2.5.4_64bit_binary_stable_final.tar.gz</span><br><span class="line"> mv GNU-Linux-x86/ sersync</span><br><span class="line"> cd sersync</span><br></pre></td></tr></tbody></table></figure></li>
-<li><p>创建密码文件<br>密码需和目标服务器配置的一致，且不需要用户名．将该文件的权限也更改为600<br><code>echo "password" &gt;&gt; /etc/rsync.passwd</code><br><code>chmod 600 /etc/rsync.passwd</code></p>
+<li><p>创建认证密码文件<br>密码需和目标服务器配置的一致，且不需要用户名．将该文件的权限也更改为600<br><code>echo "password" &gt;&gt; /etc/rsync.passwd</code><br><code>chmod 600 /etc/rsync.passwd</code></p>
 </li>
 <li><p>修改confxml.xml文件</p>
  <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">......</span><br><span class="line">&lt;sersync&gt;</span><br><span class="line">24 &lt;localpath watch="监控目录路径"&gt;</span><br><span class="line">25 &lt;remote ip="rsync目标服务端IP地址" name="模块名"/&gt;</span><br><span class="line">......</span><br><span class="line">&lt;rsync&gt;</span><br><span class="line">30 &lt;commonParams params="-az"/&gt;</span><br><span class="line">31 &lt;auth start="true" users="rsync客户端用户名" passwordfile="rsync客户端密码文件"/&gt;</span><br><span class="line">......</span><br><span class="line">36 &lt;failLog path="指定Sersync日志文件路径" timeToExecute="60"/&gt;......</span><br></pre></td></tr></tbody></table></figure>
@@ -46,7 +55,7 @@
 <li><p>读取指定路径配置文件启动sersync <code>/usr/local/serync/serync2 -d -r -o /usr/local//sersync/confxml.xml</code></p>
 <p> -n 启用线程数量<br> -d daemon方式启动<br> -o 指定配置文件<br> sersync整体同步一次 在sersync目录下运行./sersync2 -r</p>
 </li>
-<li><p>设置开机启动<br><code>echo "/usr/local/serync/serync2 -r -d -o /usr/local/sersync/conf/confxml.xml" &gt;&gt; /etc/rc.d/rc/local</code><br>执行完成可以测试。</p>
+<li><p>设置开机启动<br><code>echo "/usr/local/serync/serync2 -r -d -o /usr/local/sersync/confxml.xml" &gt;&gt; /etc/rc.d/rc.local</code><br>执行完成可以测试。</p>
 </li>
 <li><p>添加脚本监控sersync是否正常运行<br>编辑脚本<code>vi /usr/local/check_sersync.sh</code>，添加以下代码</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">sersync="/usr/local/serync/serync2"</span><br><span class="line">confxml="/usr/local//sersync/confxml.xml"</span><br><span class="line">status=$(ps aux |grep 'sersync2'|grep -v 'grep' |wc -l)</span><br><span class="line">if [ $status -eq 0];</span><br><span class="line">then</span><br><span class="line">$sersync -d -r -o $confxml &amp;</span><br><span class="line">else </span><br><span class="line">exit 0;</span><br><span class="line">fi</span><br></pre></td></tr></tbody></table></figure>
@@ -82,8 +91,8 @@
         <category>rsync</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>rsync</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -226,6 +235,45 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux的crontab命令</title>
+    <url>/2019/10/23/linux_crontab/</url>
+    <content><![CDATA[<p>Linux下的任务调度分为两类：系统任务调度和用户任务调度。<br>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。<br>所有用户定义的crontab文件都被保存在/var/spool/cron目录中。其文件名与用户名一致，使用者权限文件如下：<br><code>/etc/cron.deny</code>     该文件中所列用户不允许使用crontab命令<br><code>/etc/cron.allow</code>   该文件中所列用户允许使用crontab命令<br><code>/var/spool/cron/</code>   所有用户crontab文件存放的目录,以用户名命名  </p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">分 时 日 月 星期 命令</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。  </p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/sbin/service crond start    // 启动服务   或者使用  service crond start 命令 手动启动crontab服务</span><br><span class="line">/sbin/service crond stop     // 关闭服务</span><br><span class="line">/sbin/service crond restart  // 重启服务</span><br><span class="line">/sbin/service crond reload   // 重新载入配置</span><br><span class="line"></span><br><span class="line">chkconfig –level 35 crond on // 加入开机自动启动</span><br><span class="line">service crond status // 查看crontab服务状态</span><br></pre></td></tr></tbody></table></figure>
+
+<p>crontab (选项 例如:-e)(参数 crontab文件)<br>-e：编辑该用户的计时器设置；<br>-l：列出该用户的计时器设置；<br>-r：删除该用户的计时器设置；<br>-u&lt;用户名称&gt;：指定要设定计时器的用户名称。    </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>基础</tag>
+        <tag>Linux</tag>
+        <tag>crontab</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux基础</title>
     <url>/2019/10/23/linux_base/</url>
     <content><![CDATA[<p>最近在跟着沈逸学习Linux基础，发现有好多基础命令见面不相识……此篇就作为学习笔记，目前尚未完成课程学习，该篇仍会不定期添加常用命令以方便后续翻阅参考。</p>
@@ -363,45 +411,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux的crontab命令</title>
-    <url>/2019/10/23/linux_crontab/</url>
-    <content><![CDATA[<p>Linux下的任务调度分为两类：系统任务调度和用户任务调度。<br>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。<br>所有用户定义的crontab文件都被保存在/var/spool/cron目录中。其文件名与用户名一致，使用者权限文件如下：<br><code>/etc/cron.deny</code>     该文件中所列用户不允许使用crontab命令<br><code>/etc/cron.allow</code>   该文件中所列用户允许使用crontab命令<br><code>/var/spool/cron/</code>   所有用户crontab文件存放的目录,以用户名命名  </p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">分 时 日 月 星期 命令</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></tbody></table></figure>
-
-<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。  </p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/sbin/service crond start    // 启动服务   或者使用  service crond start 命令 手动启动crontab服务</span><br><span class="line">/sbin/service crond stop     // 关闭服务</span><br><span class="line">/sbin/service crond restart  // 重启服务</span><br><span class="line">/sbin/service crond reload   // 重新载入配置</span><br><span class="line"></span><br><span class="line">chkconfig –level 35 crond on // 加入开机自动启动</span><br><span class="line">service crond status // 查看crontab服务状态</span><br></pre></td></tr></tbody></table></figure>
-
-<p>crontab (选项 例如:-e)(参数 crontab文件)<br>-e：编辑该用户的计时器设置；<br>-l：列出该用户的计时器设置；<br>-r：删除该用户的计时器设置；<br>-u&lt;用户名称&gt;：指定要设定计时器的用户名称。    </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>基础</tag>
-        <tag>Linux</tag>
-        <tag>crontab</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo NexT主题添加字数统计阅读时长</title>
     <url>/2019/06/19/hexo_add_wordcount/</url>
     <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
@@ -420,54 +429,6 @@
 
 
 <p>到这里就可以啦，快去试试吧。  </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo添加emoji表情</title>
-    <url>/2019/06/19/hexo_add_emjo/</url>
-    <content><![CDATA[<p>废话不多说，直接动手干吧。 具体表情参考 <a href="https://github.com/caiyongji/emoji-list" target="_blank" rel="noopener">GFM 表情列表</a> <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8">😜</span> </p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install hexo-filter-github-emojis --save</span><br><span class="line">npm un hexo-renderer-stylus --save</span><br><span class="line">npm i hexo-renderer-stylus-plus --save</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="打开-站点配置文件，添加以下内容"><a href="#打开-站点配置文件，添加以下内容" class="headerlink" title="打开 站点配置文件，添加以下内容"></a>打开 站点配置文件，添加以下内容</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="解决渲染错误问题"><a href="#解决渲染错误问题" class="headerlink" title="解决渲染错误问题"></a>解决渲染错误问题</h1><ul>
-<li>修改 <code>themes/next/layout/_partials/head.swig</code>, 解决渲染错误问题，渲染 emoji 表情时会被自动加上 a 标签<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;script type="text/javascript" id="hexo.configurations"&gt;</span><br><span class="line">  var NexT = window.NexT || {};</span><br><span class="line">  var CONFIG = {</span><br><span class="line">    root: '{{ theme.root }}',</span><br><span class="line">    scheme: '{{ theme.scheme }}',</span><br><span class="line">    sidebar: {{ theme.sidebar | json_encode }},</span><br><span class="line">    fancybox: {{ theme.fancybox }},</span><br><span class="line">    tabs: {{ theme.tabs.enable }},</span><br><span class="line">    motion: {{ theme.use_motion }},</span><br><span class="line">    duoshuo: {</span><br><span class="line">      userId: '{{ theme.duoshuo_info.user_id | default() }}',</span><br><span class="line">      author: '{{ theme.duoshuo_info.admin_nickname | default(__('author'))}}'</span><br><span class="line">    },</span><br><span class="line">    algolia: {</span><br><span class="line">      applicationID: '{{ theme.algolia.applicationID }}',</span><br><span class="line">      apiKey: '{{ theme.algolia.apiKey }}',</span><br><span class="line">      indexName: '{{ theme.algolia.indexName }}',</span><br><span class="line">      hits: {{ theme.algolia_search.hits | json_encode }},</span><br><span class="line">      labels: {{ theme.algolia_search.labels | json_encode }}</span><br><span class="line">    },</span><br><span class="line">    *{# ↓ 在这里修改，其他未动 ↓ #}</span><br><span class="line">    {# 添加 emojis 参数 #}</span><br><span class="line">    emojis: {</span><br><span class="line">      className: '{{ config.githubEmojis.className | default('github-emoji') }}'</span><br><span class="line">    }*</span><br><span class="line">  };</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></tbody></table></figure></li>
-<li>修改 <code>themes/next/source/js/src/utils.js</code><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// 注意看 CONFIG.emojis.className 那一行，其他未动</span><br><span class="line">$('.content img')</span><br><span class="line">  .not('[hidden]')</span><br><span class="line">  .not('.group-picture img, .post-gallery img, *img.' + CONFIG.emojis.className*)</span><br><span class="line">  .each(function () {</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
-
-</li>
-</ul>
-<h1 id="自定义emoji-样式"><a href="#自定义emoji-样式" class="headerlink" title="自定义emoji 样式"></a>自定义emoji 样式</h1><p>在 <code>站点配置文件</code> 中，我们配置：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
-<p>在 <code>themes/next/source/css/_variables/base.styl</code> 中使用 hexo-site-config 方法获取 <code>站点配置文件</code> 中的值，我们添加</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// Github emojis class name</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">get_emoji_class() {</span><br><span class="line">  emoji_class = hexo-site-config('githubEmojis.className')</span><br><span class="line">  return emoji_class ? emoji_class : 'github-emoji'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$github-emojis-class-name   = get_emoji_class()</span><br></pre></td></tr></tbody></table></figure>
-<p>最后在自定义样式文件 <code>themes/next/source/css/_custom/custom.styl</code> 中添加：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">img.{$github-emojis-class-name} {</span><br><span class="line">  display: inline;</span><br><span class="line">  height: 1.7em;</span><br><span class="line">  width: 1.7em;</span><br><span class="line">  vertical-align: -0.4em;</span><br><span class="line">  border: none !important;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span>  </p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -534,6 +495,54 @@ header.post-header {
     width: 100% !important;
   }
 }</code></pre><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo添加emoji表情</title>
+    <url>/2019/06/19/hexo_add_emjo/</url>
+    <content><![CDATA[<p>废话不多说，直接动手干吧。 具体表情参考 <a href="https://github.com/caiyongji/emoji-list" target="_blank" rel="noopener">GFM 表情列表</a> <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8">😜</span> </p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install hexo-filter-github-emojis --save</span><br><span class="line">npm un hexo-renderer-stylus --save</span><br><span class="line">npm i hexo-renderer-stylus-plus --save</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="打开-站点配置文件，添加以下内容"><a href="#打开-站点配置文件，添加以下内容" class="headerlink" title="打开 站点配置文件，添加以下内容"></a>打开 站点配置文件，添加以下内容</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="解决渲染错误问题"><a href="#解决渲染错误问题" class="headerlink" title="解决渲染错误问题"></a>解决渲染错误问题</h1><ul>
+<li>修改 <code>themes/next/layout/_partials/head.swig</code>, 解决渲染错误问题，渲染 emoji 表情时会被自动加上 a 标签<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;script type="text/javascript" id="hexo.configurations"&gt;</span><br><span class="line">  var NexT = window.NexT || {};</span><br><span class="line">  var CONFIG = {</span><br><span class="line">    root: '{{ theme.root }}',</span><br><span class="line">    scheme: '{{ theme.scheme }}',</span><br><span class="line">    sidebar: {{ theme.sidebar | json_encode }},</span><br><span class="line">    fancybox: {{ theme.fancybox }},</span><br><span class="line">    tabs: {{ theme.tabs.enable }},</span><br><span class="line">    motion: {{ theme.use_motion }},</span><br><span class="line">    duoshuo: {</span><br><span class="line">      userId: '{{ theme.duoshuo_info.user_id | default() }}',</span><br><span class="line">      author: '{{ theme.duoshuo_info.admin_nickname | default(__('author'))}}'</span><br><span class="line">    },</span><br><span class="line">    algolia: {</span><br><span class="line">      applicationID: '{{ theme.algolia.applicationID }}',</span><br><span class="line">      apiKey: '{{ theme.algolia.apiKey }}',</span><br><span class="line">      indexName: '{{ theme.algolia.indexName }}',</span><br><span class="line">      hits: {{ theme.algolia_search.hits | json_encode }},</span><br><span class="line">      labels: {{ theme.algolia_search.labels | json_encode }}</span><br><span class="line">    },</span><br><span class="line">    *{# ↓ 在这里修改，其他未动 ↓ #}</span><br><span class="line">    {# 添加 emojis 参数 #}</span><br><span class="line">    emojis: {</span><br><span class="line">      className: '{{ config.githubEmojis.className | default('github-emoji') }}'</span><br><span class="line">    }*</span><br><span class="line">  };</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></tbody></table></figure></li>
+<li>修改 <code>themes/next/source/js/src/utils.js</code><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// 注意看 CONFIG.emojis.className 那一行，其他未动</span><br><span class="line">$('.content img')</span><br><span class="line">  .not('[hidden]')</span><br><span class="line">  .not('.group-picture img, .post-gallery img, *img.' + CONFIG.emojis.className*)</span><br><span class="line">  .each(function () {</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
+
+</li>
+</ul>
+<h1 id="自定义emoji-样式"><a href="#自定义emoji-样式" class="headerlink" title="自定义emoji 样式"></a>自定义emoji 样式</h1><p>在 <code>站点配置文件</code> 中，我们配置：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
+<p>在 <code>themes/next/source/css/_variables/base.styl</code> 中使用 hexo-site-config 方法获取 <code>站点配置文件</code> 中的值，我们添加</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// Github emojis class name</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">get_emoji_class() {</span><br><span class="line">  emoji_class = hexo-site-config('githubEmojis.className')</span><br><span class="line">  return emoji_class ? emoji_class : 'github-emoji'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$github-emojis-class-name   = get_emoji_class()</span><br></pre></td></tr></tbody></table></figure>
+<p>最后在自定义样式文件 <code>themes/next/source/css/_custom/custom.styl</code> 中添加：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">img.{$github-emojis-class-name} {</span><br><span class="line">  display: inline;</span><br><span class="line">  height: 1.7em;</span><br><span class="line">  width: 1.7em;</span><br><span class="line">  vertical-align: -0.4em;</span><br><span class="line">  border: none !important;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span>  </p>
+<script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
