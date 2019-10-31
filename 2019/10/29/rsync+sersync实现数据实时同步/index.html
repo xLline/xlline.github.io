@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Linux,rsync," />
+  <meta name="keywords" content="rsync,Linux," />
 
 
 
@@ -87,7 +87,7 @@
 
 
 <meta name="description" content="sersync是基于inotify+rsync的大量文件的多服务器自动同步程序使用 Linux 2.6 内核的 inotify 监控 Linux 文件系统事件，被监听目录下如果有文件发生修改，sersync 将通过内核自动捕获到事件，并将该文件利用 rsync 同步到多台远程服务器。sersync 仅仅同步发生增、删、改事件的单个文件或目录，不像rsync镜像同步那样需要比对双方服务器整个目录下数">
-<meta name="keywords" content="Linux,rsync">
+<meta name="keywords" content="rsync,Linux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="rsync+sersync实现数据实时同步">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;29&#x2F;rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5&#x2F;index.html">
@@ -96,7 +96,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;29&#x2F;rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5&#x2F;conifg.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;29&#x2F;rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5&#x2F;opation.png">
-<meta property="og:updated_time" content="2019-10-30T09:44:17.464Z">
+<meta property="og:updated_time" content="2019-10-31T06:22:13.647Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;29&#x2F;rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5&#x2F;conifg.png">
 
@@ -406,7 +406,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.4k 字
+                  1.5k 字
                 </span>
               
 
@@ -462,7 +462,7 @@
 </li>
 <li><p>创建rsync配置文件<br><code>vi /etc/rsyncd.conf</code></p>
 <p> 增加以下内容</p>
- <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">uid = root</span><br><span class="line">gid = root</span><br><span class="line">use chroot = yes</span><br><span class="line">hosts allow=*</span><br><span class="line">max connections = 5</span><br><span class="line">port = 873</span><br><span class="line">timeout = 900</span><br><span class="line">pid file = /var/run/rsyncd.pid</span><br><span class="line">lock file = /var/run/rsync.lock</span><br><span class="line">log file = /var/log/rsyncd.log</span><br><span class="line">motd file = /etc/rsyncd.motd</span><br><span class="line">[backup]</span><br><span class="line">path = /var/www/backup</span><br><span class="line">comment = Hi</span><br><span class="line">read only = false</span><br><span class="line">list =yes</span><br><span class="line">auth users = rsyncuser</span><br><span class="line">secrets file =/etc/rsync.passwd</span><br></pre></td></tr></tbody></table></figure>
+ <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">uid = root #这里是系统用户 需要有备份目标文件夹操作权限 这个注释后续需要删除</span><br><span class="line">gid = root</span><br><span class="line">use chroot = yes</span><br><span class="line">hosts allow=*</span><br><span class="line">max connections = 5</span><br><span class="line">port = 873</span><br><span class="line">timeout = 900</span><br><span class="line">pid file = /var/run/rsyncd.pid</span><br><span class="line">lock file = /var/run/rsync.lock</span><br><span class="line">log file = /var/log/rsyncd.log</span><br><span class="line">motd file = /etc/rsyncd.motd</span><br><span class="line">[backup]</span><br><span class="line">path = /var/www/backup</span><br><span class="line">comment = Hi</span><br><span class="line">read only = false</span><br><span class="line">list =yes</span><br><span class="line">auth users = rsyncuser</span><br><span class="line">secrets file =/etc/rsync.passwd</span><br></pre></td></tr></tbody></table></figure>
 <p> 编辑完成保存退出<br> 具体配置注释见下图</p>
  <img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/conifg.png" class="" title="/etc/rsyncd.conf配置说明">
 </li>
@@ -491,8 +491,8 @@
 </li>
 <li><p>修改权限 <code>chmod +x sersync2</code></p>
 </li>
-<li><p>读取指定路径配置文件启动sersync <code>/usr/local/serync/serync2 -d -r -o /usr/local/sersync/confxml.xml</code></p>
-<p> -n 启用线程数量<br> -d daemon方式启动<br> -o 指定配置文件<br> sersync整体同步一次 在sersync目录下运行./sersync2 -r</p>
+<li><p>读取指定路径配置文件启动sersync <code>/usr/local/serync/serync2 -d -r -o /usr/local/sersync/confxml.xml</code><br>耐心等待执行完成后进行后续操作。</p>
+<p> -n 启用线程数量<br> -d daemon方式启动<br> -o 指定配置文件<br> sersync整体同步一次 在sersync目录下运行 <code>./sersync2 -r</code><br> 开启实时同步命令 <code>./sersync2 -d</code>。 一般先运行完整体同步后，再进行该命令操作</p>
 </li>
 <li><p>设置开机启动<br><code>echo "/usr/local/sersync/sersync2 -r -d -o /usr/local/sersync/confxml.xml" &gt;&gt; /etc/rc.d/rc.local</code><br>执行完成可以测试。</p>
 </li>
@@ -558,7 +558,7 @@ fi</code></pre></li>
   <p><span>本文标题:</span><a href="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/">rsync+sersync实现数据实时同步</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年10月29日 - 14:26</p>
-  <p><span>最后更新:</span>2019年10月30日 - 17:44</p>
+  <p><span>最后更新:</span>2019年10月31日 - 14:22</p>
   <p><span>原始链接:</span><a href="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/" title="rsync+sersync实现数据实时同步">https://xlline.github.io/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/"  aria-label="复制成功！"></i></span>
   </p>
@@ -599,9 +599,9 @@ fi</code></pre></li>
       
         <div class="post-tags">
           
-            <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
-          
             <a href="/tags/rsync/" rel="tag"><i class="fa fa-tag"></i> rsync</a>
+          
+            <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
           
         </div>
       
@@ -703,7 +703,7 @@ fi</code></pre></li>
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -714,7 +714,7 @@ fi</code></pre></li>
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -725,7 +725,7 @@ fi</code></pre></li>
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -816,7 +816,7 @@ fi</code></pre></li>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 9.8k 字</span>
+  <span class="post-count">全站共 10.5k 字</span>
 </div>
         
 
