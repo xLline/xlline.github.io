@@ -94,8 +94,11 @@
 <meta property="og:site_name" content="理想国">
 <meta property="og:description" content="前言SSH 为 Secure Shell 的缩写，由 IETF 的网络小组（Network Working Group）所制定；SSH 为建立在应用层基础上的安全协议。SSH 是目前较可靠，专为远程登录会话和其他网络服务提供安全性的协议。利用 SSH 协议可以有效防止远程管理过程中的信息泄露问题。SSH最初是UNIX系统上的一个程序，后来又迅速扩展到其他操作平台。SSH在正确使用时可弥补网络中的漏">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-31T07:47:04.517Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;31&#x2F;SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C&#x2F;passwd.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;31&#x2F;SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C&#x2F;rsa.png">
+<meta property="og:updated_time" content="2019-10-31T07:49:27.221Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;31&#x2F;SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C&#x2F;passwd.png">
 
 
 
@@ -433,10 +436,10 @@
 <h1 id="验证方式"><a href="#验证方式" class="headerlink" title="验证方式"></a>验证方式</h1><p>从客户端来看，SSH提供两种级别的安全验证。  </p>
 <h2 id="第一种级别"><a href="#第一种级别" class="headerlink" title="第一种级别"></a>第一种级别</h2><p>基于口令的安全验证<br>只要你知道自己帐号和口令，就可以登录到远程主机。所有传输的数据都会被加密，但是不能保证你正在连接的服务器就是你想连接的服务器。可能会有别的服务器在冒充真正的服务器，也就是受到“中间人”这种方式的攻击。</p>
 <a id="more"></a>
-
+<img src="/2019/10/31/SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C/passwd.png" class title="基于口令的安全验证图解">
 
 <h2 id="第二种级别"><a href="#第二种级别" class="headerlink" title="第二种级别"></a>第二种级别</h2><p>基于密钥的安全验证<br>依靠密钥，为本地创建，公钥要放到需要访问的服务器上。使用SSH连接到服务器，客户端向服务器发出请求，请求用你的密钥进行安全验证。服务器收到请求后在你的目录下寻找属于你的公共密钥，找到后和你发过来的进行比较。如果密钥一致，服务器用你的公钥加密随机字符串给到客户端。客户端使用私钥解密得到随机字符串后MD5加密给到服务端，服务端拿随机字符串进行同样操作后验证两个字符是否一致的过程。</p>
-
+<img src="/2019/10/31/SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C/rsa.png" class title="基于密钥的安全验证图解">
 <h3 id="SSH密钥操作"><a href="#SSH密钥操作" class="headerlink" title="SSH密钥操作"></a>SSH密钥操作</h3><ol>
 <li><p>客户端生成密钥对<br><code>ssh-keygen -t rsa</code><br>Tips:一路回车就好~</p>
 </li>
@@ -488,7 +491,7 @@
   <p><span>本文标题:</span><a href="/2019/10/31/SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C/">SSH秘钥操作</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年10月31日 - 14:52</p>
-  <p><span>最后更新:</span>2019年10月31日 - 15:47</p>
+  <p><span>最后更新:</span>2019年10月31日 - 15:49</p>
   <p><span>原始链接:</span><a href="/2019/10/31/SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C/" title="SSH秘钥操作">https://xlline.github.io/2019/10/31/SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/10/31/SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C/"  aria-label="复制成功！"></i></span>
   </p>
