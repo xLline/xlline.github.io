@@ -46,14 +46,13 @@
 <a id="more"></a>
 <h1 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h1><p><strong>下载sersync</strong>  </p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">谷歌项目地址：(https://code.google.com/archive/p/sersync/)  </span><br><span class="line">64位下载地址：(https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/sersync/sersync2.5.4_64bit_binary_stable_final.tar.gz)  </span><br><span class="line">32位下载地址：(https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/sersync/sersync2.5_32bit_binary_stable_final.tar.gz)</span><br></pre></td></tr></tbody></table></figure>
-<p>上不去google的可以使用百度网盘我的备份包，这里只提供64位版本的：<br>链接：<a href="https://pan.baidu.com/s/19VRdMVEzvpOtJrR7wzN8_w" target="_blank" rel="noopener">https://pan.baidu.com/s/19VRdMVEzvpOtJrR7wzN8_w</a><br>提取码：<code>tjx2</code> </p>
+<p>上不去google的可以使用百度网盘我的备份包，这里只提供64位版本的：<br>链接：<a href="https://pan.baidu.com/s/1j3H7KBv4y3_DzOWb-rwpMQ" target="_blank" rel="noopener">https://pan.baidu.com/s/1j3H7KBv4y3_DzOWb-rwpMQ</a><br>提取码：<code>0g8a</code> </p>
 <p>注： 压缩包里面有两个文件confxml.xml和sersync2。前者是sersync配置文件，后者是sersync主程序。</p>
 <p><strong>确认当前系统关闭selinux及防火墙，或将873端口加入iptables白名单</strong><br>注意： 该步骤需要在备份源服务器和目标服务器上都要操作</p>
 <ol>
 <li>关闭SELINUX  <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[root@rsync ~]# vim /etc/selinux/config #编辑防火墙配置文件</span><br><span class="line">#SELINUX=enforcing #注释掉</span><br><span class="line">#SELINUXTYPE=targeted #注释掉</span><br><span class="line">SELINUX=disabled #增加</span><br><span class="line">:wq! #保存，退出</span><br><span class="line">[root@rsync ~]# setenforce 0 #立即生效</span><br></pre></td></tr></tbody></table></figure></li>
-<li>开启防火墙tcp 873端口  <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[root@rsync ~]# vim /etc/sysconfig/iptables #编辑防火墙配置文件</span><br><span class="line">-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 873 -j ACCEPT</span><br><span class="line">:wq! #保存退出</span><br><span class="line">[root@rsync ~]# /etc/init.d/iptables restart #最后重启防火墙使配置生效</span><br></pre></td></tr></tbody></table></figure>
-
-</li>
+<li>开启防火墙tcp 873端口  <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[root@rsync ~]# vim /etc/sysconfig/iptables #编辑防火墙配置文件</span><br><span class="line">-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 873 -j ACCEPT</span><br><span class="line">:wq! #保存退出</span><br><span class="line">[root@rsync ~]# /etc/init.d/iptables restart #最后重启防火墙使配置生效</span><br></pre></td></tr></tbody></table></figure></li>
+<li>开放873端口 比如阿里云服务器 要到后台设置哦</li>
 </ol>
 <h1 id="需求说明"><a href="#需求说明" class="headerlink" title="需求说明"></a>需求说明</h1><p>我这里有两台centos8的主机，IP分别是192.168.2.98和192.168.2.248。<br>我在192.168.2.98安装sersync，主动推送数据到192.168.2.248上。<br>也就是说 192.168.2.98作为数据备份源，192.168.2.248作为目标机器。</p>
 <h1 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h1><h2 id="目标机器配置"><a href="#目标机器配置" class="headerlink" title="目标机器配置"></a>目标机器配置</h2><ol>
@@ -61,17 +60,16 @@
 </li>
 <li><p>创建rsync配置文件<br><code>vi /etc/rsyncd.conf</code></p>
 <p> 增加以下内容</p>
- <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">uid = root</span><br><span class="line">gid = root</span><br><span class="line">use chroot = yes</span><br><span class="line">hosts allow=*</span><br><span class="line">max connections = 5</span><br><span class="line">port = 873</span><br><span class="line">pid file = /var/run/rsyncd.pid</span><br><span class="line">lock file = /var/run/rsync.lock</span><br><span class="line">motd file = /etc/rsyncd.motd</span><br><span class="line">[backup]</span><br><span class="line">path = /var/www/backup</span><br><span class="line">comment = Hi</span><br><span class="line">read only = false</span><br><span class="line">list =yes</span><br><span class="line">auth users = rsyncuser</span><br><span class="line">secrets file =/etc/rsync.passwd</span><br></pre></td></tr></tbody></table></figure>
+ <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">uid = root</span><br><span class="line">gid = root</span><br><span class="line">use chroot = yes</span><br><span class="line">hosts allow=*</span><br><span class="line">max connections = 5</span><br><span class="line">port = 873</span><br><span class="line">timeout = 900</span><br><span class="line">pid file = /var/run/rsyncd.pid</span><br><span class="line">lock file = /var/run/rsync.lock</span><br><span class="line">log file = /var/log/rsyncd.log</span><br><span class="line">motd file = /etc/rsyncd.motd</span><br><span class="line">[backup]</span><br><span class="line">path = /var/www/backup</span><br><span class="line">comment = Hi</span><br><span class="line">read only = false</span><br><span class="line">list =yes</span><br><span class="line">auth users = rsyncuser</span><br><span class="line">secrets file =/etc/rsync.passwd</span><br></pre></td></tr></tbody></table></figure>
 <p> 编辑完成保存退出<br> 具体配置注释见下图</p>
- <img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/conifg.png" class title="/etc/rsyncd.conf配置说明">
-<p> 配置完成可使用<code>netstat -antup |grep 873</code> 查看是否有端口873在运行</p>
+ <img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/conifg.png" class="" title="/etc/rsyncd.conf配置说明">
 </li>
 <li><p>在secrets file指定的用户密码文件<br>vim /etc/rsync.passwd　　内容格式：用户名：密码,可以设置多个，每行一个用户名:密码<br>执行<code>echo "rsyncuser:password" &gt;&gt; /etc/rsync.passwd</code><br>把内容追加到rsync.passwd末尾<br>然后，更改文件的读写权限为600<br><code>chmod 600 /etc/rsync.passwd</code></p>
 </li>
-<li><p>启动rsync<br><code>/usr/bin/rsync --daemon</code> # 以守护进程方式<br><code>/usr/bin/rsync --daemon --config=/etc/rsyncd.conf</code>  # 加载配置文件rsyncd.conf启动rsync服务</p>
+<li><p>启动rsync<br>配置完成可使用<code>netstat -antup |grep 873</code> 查看是否有端口873在运行没有的话启动<br><code>/usr/bin/rsync --daemon</code> # 以守护进程方式<br><code>/usr/bin/rsync --daemon --config=/etc/rsyncd.conf</code>  # 加载配置文件rsyncd.conf启动rsync服务</p>
 </li>
 </ol>
-<p>注： 可使用 killall rsync 杀掉进程</p>
+<p>注： 可使用 kill -9 <pid> 杀掉进程.(进程ID 可以通过 ps aux | grep rsync 方法得到)</pid></p>
 <ol start="5">
 <li><p>配置rsync开机自启动<br>直接追加 <code>echo "/usr/bin/rsync --daemon --config=/etc/rsyncd.conf" &gt;&gt; /etc/rc.d/rc.local</code></p>
 </li>
@@ -91,10 +89,10 @@
 </li>
 <li><p>修改权限 <code>chmod +x sersync2</code></p>
 </li>
-<li><p>读取指定路径配置文件启动sersync <code>/usr/local/serync/serync2 -d -r -o /usr/local//sersync/confxml.xml</code></p>
+<li><p>读取指定路径配置文件启动sersync <code>/usr/local/serync/serync2 -d -r -o /usr/local/sersync/confxml.xml</code></p>
 <p> -n 启用线程数量<br> -d daemon方式启动<br> -o 指定配置文件<br> sersync整体同步一次 在sersync目录下运行./sersync2 -r</p>
 </li>
-<li><p>设置开机启动<br><code>echo "/usr/local/serync/serync2 -r -d -o /usr/local/sersync/confxml.xml" &gt;&gt; /etc/rc.d/rc.local</code><br>执行完成可以测试。</p>
+<li><p>设置开机启动<br><code>echo "/usr/local/sersync/sersync2 -r -d -o /usr/local/sersync/confxml.xml" &gt;&gt; /etc/rc.d/rc.local</code><br>执行完成可以测试。</p>
 </li>
 <li><p>添加脚本监控sersync是否正常运行</p>
 <ol>
@@ -118,7 +116,7 @@ fi</code></pre></li>
 </ol>
 </li>
 </ol>
-<h1 id="rsync参数说明"><a href="#rsync参数说明" class="headerlink" title="rsync参数说明"></a>rsync参数说明</h1><div style="width:80%;margin:left"><img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/opation.png" class></div>
+<h1 id="rsync参数说明"><a href="#rsync参数说明" class="headerlink" title="rsync参数说明"></a>rsync参数说明</h1><div style="width:80%;margin:left"><img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/opation.png" class=""></div>
 
 <h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p> <a href="https://blog.whsir.com/post-1097.html" target="_blank" rel="noopener">https://blog.whsir.com/post-1097.html</a><br><a href="https://blog.csdn.net/chrisjingu/article/details/78317907" target="_blank" rel="noopener">https://blog.csdn.net/chrisjingu/article/details/78317907</a><br><a href="https://www.jianshu.com/p/31a67de3f669" target="_blank" rel="noopener">https://www.jianshu.com/p/31a67de3f669</a></p>
 <script>
@@ -466,6 +464,100 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
+    <title>Hexo NexT主题添加字数统计阅读时长</title>
+    <url>/2019/06/19/hexo_add_wordcount/</url>
+    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
+<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<p>到这里就可以啦，快去试试吧。  </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo添加emoji表情</title>
+    <url>/2019/06/19/hexo_add_emjo/</url>
+    <content><![CDATA[<p>废话不多说，直接动手干吧。 具体表情参考 <a href="https://github.com/caiyongji/emoji-list" target="_blank" rel="noopener">GFM 表情列表</a> <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8">😜</span> </p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install hexo-filter-github-emojis --save</span><br><span class="line">npm un hexo-renderer-stylus --save</span><br><span class="line">npm i hexo-renderer-stylus-plus --save</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="打开-站点配置文件，添加以下内容"><a href="#打开-站点配置文件，添加以下内容" class="headerlink" title="打开 站点配置文件，添加以下内容"></a>打开 站点配置文件，添加以下内容</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="解决渲染错误问题"><a href="#解决渲染错误问题" class="headerlink" title="解决渲染错误问题"></a>解决渲染错误问题</h1><ul>
+<li>修改 <code>themes/next/layout/_partials/head.swig</code>, 解决渲染错误问题，渲染 emoji 表情时会被自动加上 a 标签<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;script type="text/javascript" id="hexo.configurations"&gt;</span><br><span class="line">  var NexT = window.NexT || {};</span><br><span class="line">  var CONFIG = {</span><br><span class="line">    root: '{{ theme.root }}',</span><br><span class="line">    scheme: '{{ theme.scheme }}',</span><br><span class="line">    sidebar: {{ theme.sidebar | json_encode }},</span><br><span class="line">    fancybox: {{ theme.fancybox }},</span><br><span class="line">    tabs: {{ theme.tabs.enable }},</span><br><span class="line">    motion: {{ theme.use_motion }},</span><br><span class="line">    duoshuo: {</span><br><span class="line">      userId: '{{ theme.duoshuo_info.user_id | default() }}',</span><br><span class="line">      author: '{{ theme.duoshuo_info.admin_nickname | default(__('author'))}}'</span><br><span class="line">    },</span><br><span class="line">    algolia: {</span><br><span class="line">      applicationID: '{{ theme.algolia.applicationID }}',</span><br><span class="line">      apiKey: '{{ theme.algolia.apiKey }}',</span><br><span class="line">      indexName: '{{ theme.algolia.indexName }}',</span><br><span class="line">      hits: {{ theme.algolia_search.hits | json_encode }},</span><br><span class="line">      labels: {{ theme.algolia_search.labels | json_encode }}</span><br><span class="line">    },</span><br><span class="line">    *{# ↓ 在这里修改，其他未动 ↓ #}</span><br><span class="line">    {# 添加 emojis 参数 #}</span><br><span class="line">    emojis: {</span><br><span class="line">      className: '{{ config.githubEmojis.className | default('github-emoji') }}'</span><br><span class="line">    }*</span><br><span class="line">  };</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></tbody></table></figure></li>
+<li>修改 <code>themes/next/source/js/src/utils.js</code><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// 注意看 CONFIG.emojis.className 那一行，其他未动</span><br><span class="line">$('.content img')</span><br><span class="line">  .not('[hidden]')</span><br><span class="line">  .not('.group-picture img, .post-gallery img, *img.' + CONFIG.emojis.className*)</span><br><span class="line">  .each(function () {</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
+
+</li>
+</ul>
+<h1 id="自定义emoji-样式"><a href="#自定义emoji-样式" class="headerlink" title="自定义emoji 样式"></a>自定义emoji 样式</h1><p>在 <code>站点配置文件</code> 中，我们配置：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
+<p>在 <code>themes/next/source/css/_variables/base.styl</code> 中使用 hexo-site-config 方法获取 <code>站点配置文件</code> 中的值，我们添加</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// Github emojis class name</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">get_emoji_class() {</span><br><span class="line">  emoji_class = hexo-site-config('githubEmojis.className')</span><br><span class="line">  return emoji_class ? emoji_class : 'github-emoji'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$github-emojis-class-name   = get_emoji_class()</span><br></pre></td></tr></tbody></table></figure>
+<p>最后在自定义样式文件 <code>themes/next/source/css/_custom/custom.styl</code> 中添加：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">img.{$github-emojis-class-name} {</span><br><span class="line">  display: inline;</span><br><span class="line">  height: 1.7em;</span><br><span class="line">  width: 1.7em;</span><br><span class="line">  vertical-align: -0.4em;</span><br><span class="line">  border: none !important;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span>  </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>使用Hexo+GitHub搭建个人博客教程</title>
     <url>/2019/06/19/Hexo+GitHub/</url>
     <content><![CDATA[<p>开始搭建自己的小站吧。简单记录，方便后续翻阅。<br>从无到有的流程还是比较详细的，按步骤从头到尾跟着执行可以避免大部分问题。本次搭站 <a href="https://zhuanlan.zhihu.com/p/60578464" target="_blank" rel="noopener">参考文章</a> 人家写的已经很详细了，这里进行备份基础补充和常见问题的汇总。</p>
@@ -577,54 +669,6 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
-    <title>Hexo添加emoji表情</title>
-    <url>/2019/06/19/hexo_add_emjo/</url>
-    <content><![CDATA[<p>废话不多说，直接动手干吧。 具体表情参考 <a href="https://github.com/caiyongji/emoji-list" target="_blank" rel="noopener">GFM 表情列表</a> <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8">😜</span> </p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install hexo-filter-github-emojis --save</span><br><span class="line">npm un hexo-renderer-stylus --save</span><br><span class="line">npm i hexo-renderer-stylus-plus --save</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="打开-站点配置文件，添加以下内容"><a href="#打开-站点配置文件，添加以下内容" class="headerlink" title="打开 站点配置文件，添加以下内容"></a>打开 站点配置文件，添加以下内容</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="解决渲染错误问题"><a href="#解决渲染错误问题" class="headerlink" title="解决渲染错误问题"></a>解决渲染错误问题</h1><ul>
-<li>修改 <code>themes/next/layout/_partials/head.swig</code>, 解决渲染错误问题，渲染 emoji 表情时会被自动加上 a 标签<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;script type="text/javascript" id="hexo.configurations"&gt;</span><br><span class="line">  var NexT = window.NexT || {};</span><br><span class="line">  var CONFIG = {</span><br><span class="line">    root: '{{ theme.root }}',</span><br><span class="line">    scheme: '{{ theme.scheme }}',</span><br><span class="line">    sidebar: {{ theme.sidebar | json_encode }},</span><br><span class="line">    fancybox: {{ theme.fancybox }},</span><br><span class="line">    tabs: {{ theme.tabs.enable }},</span><br><span class="line">    motion: {{ theme.use_motion }},</span><br><span class="line">    duoshuo: {</span><br><span class="line">      userId: '{{ theme.duoshuo_info.user_id | default() }}',</span><br><span class="line">      author: '{{ theme.duoshuo_info.admin_nickname | default(__('author'))}}'</span><br><span class="line">    },</span><br><span class="line">    algolia: {</span><br><span class="line">      applicationID: '{{ theme.algolia.applicationID }}',</span><br><span class="line">      apiKey: '{{ theme.algolia.apiKey }}',</span><br><span class="line">      indexName: '{{ theme.algolia.indexName }}',</span><br><span class="line">      hits: {{ theme.algolia_search.hits | json_encode }},</span><br><span class="line">      labels: {{ theme.algolia_search.labels | json_encode }}</span><br><span class="line">    },</span><br><span class="line">    *{# ↓ 在这里修改，其他未动 ↓ #}</span><br><span class="line">    {# 添加 emojis 参数 #}</span><br><span class="line">    emojis: {</span><br><span class="line">      className: '{{ config.githubEmojis.className | default('github-emoji') }}'</span><br><span class="line">    }*</span><br><span class="line">  };</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></tbody></table></figure></li>
-<li>修改 <code>themes/next/source/js/src/utils.js</code><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// 注意看 CONFIG.emojis.className 那一行，其他未动</span><br><span class="line">$('.content img')</span><br><span class="line">  .not('[hidden]')</span><br><span class="line">  .not('.group-picture img, .post-gallery img, *img.' + CONFIG.emojis.className*)</span><br><span class="line">  .each(function () {</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
-
-</li>
-</ul>
-<h1 id="自定义emoji-样式"><a href="#自定义emoji-样式" class="headerlink" title="自定义emoji 样式"></a>自定义emoji 样式</h1><p>在 <code>站点配置文件</code> 中，我们配置：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
-<p>在 <code>themes/next/source/css/_variables/base.styl</code> 中使用 hexo-site-config 方法获取 <code>站点配置文件</code> 中的值，我们添加</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// Github emojis class name</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">get_emoji_class() {</span><br><span class="line">  emoji_class = hexo-site-config('githubEmojis.className')</span><br><span class="line">  return emoji_class ? emoji_class : 'github-emoji'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$github-emojis-class-name   = get_emoji_class()</span><br></pre></td></tr></tbody></table></figure>
-<p>最后在自定义样式文件 <code>themes/next/source/css/_custom/custom.styl</code> 中添加：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">img.{$github-emojis-class-name} {</span><br><span class="line">  display: inline;</span><br><span class="line">  height: 1.7em;</span><br><span class="line">  width: 1.7em;</span><br><span class="line">  vertical-align: -0.4em;</span><br><span class="line">  border: none !important;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span>  </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>修改Hexo博客next主题文章页面宽度</title>
     <url>/2019/06/19/hexo_postwidth/</url>
     <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
@@ -663,52 +707,6 @@ header.post-header {
     width: 100% !important;
   }
 }</code></pre><script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo NexT主题添加字数统计阅读时长</title>
-    <url>/2019/06/19/hexo_add_wordcount/</url>
-    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
-<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<p>到这里就可以啦，快去试试吧。  </p>
-<script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
