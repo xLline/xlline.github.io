@@ -88,10 +88,10 @@
 <h1 id="验证方式"><a href="#验证方式" class="headerlink" title="验证方式"></a>验证方式</h1><p>从客户端来看，SSH提供两种级别的安全验证。  </p>
 <h2 id="第一种级别"><a href="#第一种级别" class="headerlink" title="第一种级别"></a>第一种级别</h2><p>基于口令的安全验证<br>只要你知道自己帐号和口令，就可以登录到远程主机。所有传输的数据都会被加密，但是不能保证你正在连接的服务器就是你想连接的服务器。可能会有别的服务器在冒充真正的服务器，也就是受到“中间人”这种方式的攻击。</p>
 <a id="more"></a>
-<img src="/2019/10/31/SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C/passwd.png" class title="基于口令的安全验证图解">
+<img src="/2019/10/31/SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C/passwd.png" class="" title="基于口令的安全验证图解">
 
 <h2 id="第二种级别"><a href="#第二种级别" class="headerlink" title="第二种级别"></a>第二种级别</h2><p>基于密钥的安全验证<br>依靠密钥，为本地创建，公钥要放到需要访问的服务器上。使用SSH连接到服务器，客户端向服务器发出请求，请求用你的密钥进行安全验证。服务器收到请求后在你的目录下寻找属于你的公共密钥，找到后和你发过来的进行比较。如果密钥一致，服务器用你的公钥加密随机字符串给到客户端。客户端使用私钥解密得到随机字符串后MD5加密给到服务端，服务端拿随机字符串进行同样操作后验证两个字符是否一致的过程。</p>
-<img src="/2019/10/31/SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C/rsa.png" class title="基于密钥的安全验证图解">
+<img src="/2019/10/31/SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C/rsa.png" class="" title="基于密钥的安全验证图解">
 <h3 id="SSH密钥操作"><a href="#SSH密钥操作" class="headerlink" title="SSH密钥操作"></a>SSH密钥操作</h3><ol>
 <li><p>客户端生成密钥对<br><code>ssh-keygen -t rsa</code><br>Tips:一路回车就好~</p>
 </li>
@@ -195,7 +195,7 @@
 <p> 增加以下内容</p>
  <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">uid = root #这里是系统用户 需要有备份目标文件夹操作权限 这个注释后续需要删除</span><br><span class="line">gid = root</span><br><span class="line">use chroot = yes</span><br><span class="line">hosts allow=*</span><br><span class="line">max connections = 5</span><br><span class="line">port = 873</span><br><span class="line">timeout = 900</span><br><span class="line">pid file = /var/run/rsyncd.pid</span><br><span class="line">lock file = /var/run/rsync.lock</span><br><span class="line">log file = /var/log/rsyncd.log</span><br><span class="line">motd file = /etc/rsyncd.motd</span><br><span class="line">[backup]</span><br><span class="line">path = /var/www/backup</span><br><span class="line">comment = Hi</span><br><span class="line">read only = false</span><br><span class="line">list =yes</span><br><span class="line">auth users = rsyncuser</span><br><span class="line">secrets file =/etc/rsync.passwd</span><br></pre></td></tr></tbody></table></figure>
 <p> 编辑完成保存退出<br> 具体配置注释见下图</p>
- <img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/conifg.png" class title="/etc/rsyncd.conf配置说明">
+ <img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/conifg.png" class="" title="/etc/rsyncd.conf配置说明">
 </li>
 <li><p>在secrets file指定的用户密码文件<br>vim /etc/rsync.passwd　　内容格式：用户名：密码,可以设置多个，每行一个用户名:密码<br>执行<code>echo "rsyncuser:password" &gt;&gt; /etc/rsync.passwd</code><br>把内容追加到rsync.passwd末尾<br>然后，更改文件的读写权限为600<br><code>chmod 600 /etc/rsync.passwd</code></p>
 </li>
@@ -249,7 +249,7 @@ fi</code></pre></li>
 </ol>
 </li>
 </ol>
-<h1 id="rsync参数说明"><a href="#rsync参数说明" class="headerlink" title="rsync参数说明"></a>rsync参数说明</h1><div style="width:80%;margin:left"><img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/opation.png" class></div>
+<h1 id="rsync参数说明"><a href="#rsync参数说明" class="headerlink" title="rsync参数说明"></a>rsync参数说明</h1><div style="width:80%;margin:left"><img src="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/opation.png" class=""></div>
 
 <h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p> <a href="https://blog.whsir.com/post-1097.html" target="_blank" rel="noopener">https://blog.whsir.com/post-1097.html</a><br><a href="https://blog.csdn.net/chrisjingu/article/details/78317907" target="_blank" rel="noopener">https://blog.csdn.net/chrisjingu/article/details/78317907</a><br><a href="https://www.jianshu.com/p/31a67de3f669" target="_blank" rel="noopener">https://www.jianshu.com/p/31a67de3f669</a></p>
 <script>
@@ -381,11 +381,11 @@ fi</code></pre></li>
     <content><![CDATA[<p>使用Git bash未正常退出后，再次打开出现 <code>Git bash Error: Could not fork child process: There are no available terminals (-1)</code>报错。<br>可以使用 tasklist命令 找到git-bash.exe和node.exe对应进程号后，使用taskkill结束进程即可。</p>
 <ol>
 <li><p>win+r调出运行键入<code>cmd</code>后回车打开，使用<code>tasklist</code>查看本机进程。查询得到的字段有： 映像名称，PID(进程ID)，会话名，会话#，内存使用。如下图：</p>
-<img src="/2019/10/25/gitbash_error/tasklist_ret.jpg" class title="tasklist运行结果">
+<img src="/2019/10/25/gitbash_error/tasklist_ret.jpg" class="" title="tasklist运行结果">
 <p>如图 smss.exe 的进程ID为 520(你看随便找个进程都是爱你的数字)，咳咳</p>
 </li>
 <li><p>找到git-bash.exe对应的进程号，比如我的是 12184，然后使用命令 <code>taskkill /pid 12184 -t -f</code> 终止ID为12184的进程。</p>
-<img src="/2019/10/25/gitbash_error/taskkill_ret.png" class title="taskkill命令运行结果"></li>
+<img src="/2019/10/25/gitbash_error/taskkill_ret.png" class="" title="taskkill命令运行结果"></li>
 <li><p>找到node.exe对应的进程号，比如我的是 868，然后使用命令 <code>taskkill /pid 868 -t -f</code> 终止ID为868的进程。</p>
 </li>
 </ol>
@@ -421,48 +421,9 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
-    <title>Linux的crontab命令</title>
-    <url>/2019/10/23/linux_crontab/</url>
-    <content><![CDATA[<p>Linux下的任务调度分为两类：系统任务调度和用户任务调度。<br>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。<br>所有用户定义的crontab文件都被保存在/var/spool/cron目录中。其文件名与用户名一致，使用者权限文件如下：<br><code>/etc/cron.deny</code>     该文件中所列用户不允许使用crontab命令<br><code>/etc/cron.allow</code>   该文件中所列用户允许使用crontab命令<br><code>/var/spool/cron/</code>   所有用户crontab文件存放的目录,以用户名命名  </p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">分 时 日 月 星期 命令</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></tbody></table></figure>
-
-<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。  </p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/sbin/service crond start    // 启动服务   或者使用  service crond start 命令 手动启动crontab服务</span><br><span class="line">/sbin/service crond stop     // 关闭服务</span><br><span class="line">/sbin/service crond restart  // 重启服务</span><br><span class="line">/sbin/service crond reload   // 重新载入配置</span><br><span class="line"></span><br><span class="line">chkconfig –level 35 crond on // 加入开机自动启动</span><br><span class="line">service crond status // 查看crontab服务状态</span><br></pre></td></tr></tbody></table></figure>
-
-<p>crontab (选项 例如:-e)(参数 crontab文件)<br>-e：编辑该用户的计时器设置；<br>-l：列出该用户的计时器设置；<br>-r：删除该用户的计时器设置；<br>-u&lt;用户名称&gt;：指定要设定计时器的用户名称。    </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>基础</tag>
-        <tag>Linux</tag>
-        <tag>crontab</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux基础</title>
     <url>/2019/10/23/linux_base/</url>
-    <content><![CDATA[<p>最近在跟着沈逸老师视频学习Linux基础，发现有好多基础命令见面不相识……此篇就作为学习笔记，目前尚未完成课程学习，该篇仍会不定期添加常用命令以方便后续翻阅参考。</p>
+    <content><![CDATA[<p>最近在跟着沈逸老师视频学习Linux基础，发现有好多基础命令见面不相识……此篇作为学习笔记，利用零碎的时间终于完成课程学习，该篇添加常用命令以方便后续翻阅参考。</p>
 <h1 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h1><h2 id="操作系统分类"><a href="#操作系统分类" class="headerlink" title="操作系统分类"></a>操作系统分类</h2><ol>
 <li>客户端操作系统<br> windows 7,8,10等</li>
 <li>服务器端操作系统<ol>
@@ -479,7 +440,7 @@ fi</code></pre></li>
 <li>coreos</li>
 </ol>
 </li>
-<li>unix操作系统<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2>Linux查看版本当前操作系统内核信息<br><code>uname -a</code><br>Linux查看当前操作系统版本信息<br><code>cat /proc/version</code><br>Linux查看版本当前操作系统发行版信息<br><code>cat /etc/redhat-release</code></li>
+<li>unix操作系统<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2>Linux查看版本当前操作系统内核信息<br><code>uname -a</code><br>Linux查看当前操作系统版本信息<br><code>cat /proc/version</code><br>Linux查看版本当前操作系统发行版信息<br><code>cat /etc/redhat-release</code><br>查看centOS版本<br><code>cat /etc/centos-release</code><br>查看内存 <code>free</code> or <code>free -m</code> or <code>free -g</code><br>查看硬盘 <code>df</code> or <code>df -T</code> or <code>df -h</code><br>查看系统正在登录的用户 <code>who</code><br>查看系统最后一重要操作 <code>last</code><br>查看进程实时消耗的cpu和内存 <code>top</code><br>查看系统1分钟、5分钟和15分钟平均负载 <code>uptime</code><br>查看服务进程 <code>ps -ef</code> or <code>pstree</code> == <code>!ps</code><br>查看服务端口 <code>netstat -tunpl</code><br>杀掉进程 <code>kill -9 pid</code> or <code>pkill pname</code></li>
 </ol>
 </li>
 </ol>
@@ -599,7 +560,7 @@ fi</code></pre></li>
 
 </li>
 </ol>
-<h1 id="系统目录结构"><a href="#系统目录结构" class="headerlink" title="系统目录结构"></a>系统目录结构</h1><div style="width: 50%;margin: left"><img src="/2019/10/23/linux_base/dir_tree.png" class title="系统目录结构树"></div>
+<h1 id="系统目录结构"><a href="#系统目录结构" class="headerlink" title="系统目录结构"></a>系统目录结构</h1><div style="width: 50%;margin: left"><img src="/2019/10/23/linux_base/dir_tree.png" class="" title="系统目录结构树"></div>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/bin   存放二进制可执行文件(ls,cat,mkdir等)，存放系统命令</span><br><span class="line">/boot  核心系统启动文件，存放用于系统引导时使用的各种文件</span><br><span class="line">/dev   存放硬件设备，使用里面设备需要挂载,糖炒栗子：mount /dev/cdrom /media/</span><br><span class="line">/etc   存放系统程序管理和配置文件</span><br><span class="line">/home  存放除了root用户之外的所有用户文件的根目录，比如用户user的主目录就是/home/user，可以用~user表示</span><br><span class="line">/lib   存放跟文件系统中的程序运行所需要的共享库及内核模块。共享库又叫动态链接共享库，作用类似windows里的.dll文件，存放了根文件系统程序运行所需的共享文件。</span><br><span class="line">/media 空目录，不可删，用于挂在光盘使用</span><br><span class="line">/mnt   空测试目录，系统管理员安装临时文件系统的安装点，系统提供这个目录是让用户临时挂载其他的文件系统</span><br><span class="line">/opt   空测试目录，额外安装的可选应用程序包所放置的位置。一般情况下，我们可以把tomcat等都安装到这里。</span><br><span class="line">/proc  虚拟文件系统目录，是系统内存的映射。存放cpu、内存和硬盘等设备信息，可直接访问这个目录来获取系统信息。</span><br><span class="line">/root  超级用户（root）的主目录</span><br><span class="line">/run   程序进程PID </span><br><span class="line">/sbin  存放二进制可执行文件，只有root才能访问。这里存放的是系统管理员使用的系统级别的管理命令和程序。如ifconfig等</span><br><span class="line">/srv   自己的程序或源代码的放置目录</span><br><span class="line">/sys   内核信息文件</span><br><span class="line">/tmp   用于存放各种临时文件，是公用的临时文件存储点</span><br><span class="line">/usr   非系统程序用于存放系统应用程序，比较重要的目录/usr/local 本地系统管理员软件安装目录（安装系统级的应用）。这是最庞大的目录，要用到的应用程序和文件几乎都在这个目录。</span><br><span class="line">/var   用于存放运行时需要改变数据的文件，也是某些大文件的溢出区，比方说各种服务的日志文件（系统或程序日志等）</span><br></pre></td></tr></tbody></table></figure>
 
 <h1 id="基础命令"><a href="#基础命令" class="headerlink" title="基础命令"></a>基础命令</h1><ol>
@@ -621,7 +582,7 @@ fi</code></pre></li>
 <li>末行模式 :末行命令</li>
 <li>视图模式 visual</li>
 </ol>
-<h2 id="常用模式切换"><a href="#常用模式切换" class="headerlink" title="常用模式切换"></a>常用模式切换</h2><div style="width: 44%;margin: left"><img src="/2019/10/23/linux_base/vi_model.png" class title="简单的模式切换"></div>
+<h2 id="常用模式切换"><a href="#常用模式切换" class="headerlink" title="常用模式切换"></a>常用模式切换</h2><div style="width: 44%;margin: left"><img src="/2019/10/23/linux_base/vi_model.png" class="" title="简单的模式切换"></div>
 
 <p>命令模式 =&gt; 输入模式<br>输入模式 =&gt; 命令模式 按下<code>esc</code><br>命令模式 =&gt; 末行模式 使用 <code>shift+:</code>输入<code>x</code>保存退出<br>末行模式 =&gt; 命令模式 按下<code>esc</code><br>命令模式 =&gt; 视图模式 使用<code>v</code><br> 按<code>v</code>键再按上下左右进行视图选中，进行快速缩进</p>
 <h3 id="命令模式常用命令"><a href="#命令模式常用命令" class="headerlink" title="命令模式常用命令"></a>命令模式常用命令</h3><p> 上<code>k</code>下<code>j</code>左<code>h</code>右<code>l</code>撤销用<code>u</code>恢复用ctrl+<code>r</code>(撤销多了恢复，两个配合使用)<br> 复制当前行 <code>yy</code> 复制多行 <code>nyy</code>, 比如<code>3yy</code>为复制三行<br> 粘贴到下一行 <code>p</code>, 粘贴到下一行n次 <code>np</code>.  粘贴到上一行 <code>P</code>, 粘贴到上一行n次 <code>nP</code></p>
@@ -641,18 +602,53 @@ fi</code></pre></li>
 <h2 id="Zip压缩包管理"><a href="#Zip压缩包管理" class="headerlink" title="Zip压缩包管理"></a>Zip压缩包管理</h2><p>制作zip压缩包 <code>zip -r mydir1.zip mydir1</code><br>zip压缩包解压 <code>unzip mydir1.zip</code><br>查看zip压缩包 <code>unzip -l mydir1.zip</code></p>
 <h1 id="光盘管理"><a href="#光盘管理" class="headerlink" title="光盘管理"></a>光盘管理</h1><p>在linux系统中，可以使用mount命令挂载光盘镜像文件、移动硬盘、U盘以及Windows网络共享和UNIX NFS网络共享。<br>挂载光盘 <code>mount /dev/cdrom /media/</code><br>查看挂载情况 <code>df</code> <code>df -h</code> <code>df -Th</code><br>卸载光盘 <code>umount /media</code><br>开机挂载 <code>vi /etc/fstab</code>后追加<code>/dev/cdrom  /media   iso9660  defaults  0 0</code><br>开机挂载测试 <code>mount -a</code>成功后重启即可</p>
 <h1 id="RPM包管理"><a href="#RPM包管理" class="headerlink" title="RPM包管理"></a>RPM包管理</h1><p>RPM：redhat package management英文缩写，只适于于Redhat和Centos系统。</p>
-<p>安装RPM包 <code>rpm -ivh psmisc-23.1-3.el8.x86_64</code><br>查看RPM包 <code>rpm -qa</code> or <code>rpm -qa | grep psmisc-23.1</code><br>查看RPM包安装的文件 <code>rpm -ql psmisc-23.1</code> or <code>rpm -ql psmisc-23.1 | grep pstree</code><br>反查文件是否是由RPM包安装的 <code>rpm -qf /usr/bin/pstree</code><br>删除RPM安装程序 <code>rpm -e psmisc-23.1</code></p>
-<h1 id="yum命令"><a href="#yum命令" class="headerlink" title="yum命令"></a>yum命令</h1><p>yum（ Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。<br><code>mount /dev/cdrom /media</code>  使用该命令挂载光盘<br>使用命令 <code>df</code> 查看挂载<br>下面为配置yum流程</p>
+<p>安装RPM包 <code>rpm -ivh psmisc-23.1-3.el8.x86_64</code><br>查看RPM包 <code>rpm -qa</code> or <code>rpm -qa | grep psmisc-23.1</code> or 使用<code>rpm -qa |  wc -l</code>查看安装个数<br>查看RPM包安装的文件 <code>rpm -ql psmisc-23.1</code> or <code>rpm -ql psmisc-23.1 | grep pstree</code><br>反查文件是否是由RPM包安装的 <code>rpm -qf /usr/bin/pstree</code><br>删除RPM安装程序 <code>rpm -e psmisc-23.1</code></p>
+<h1 id="yum命令"><a href="#yum命令" class="headerlink" title="yum命令"></a>yum命令</h1><p>yum（ Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。<br>YUM仓库的前提是做准备光盘 检查光盘是否正常挂载 使用命令 <code>df</code><br><code>mount /dev/cdrom /media</code>  使用该命令挂载光盘<br>下面为配置yum流程</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">cd /etc/yum.repos.d/</span><br><span class="line">mv CentOS-Media.repo /mnt</span><br><span class="line">rm -rf *</span><br><span class="line">mv /mnt/CentOS-Media.repo ./</span><br></pre></td></tr></tbody></table></figure>
 <p><code>vi CentOS-Media.repo</code> 进行配置文件编辑 下面对应配置需要对照</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[c8-media-BaseOS]</span><br><span class="line">baseurl=file:///media/BaseOS</span><br><span class="line">gpgcheck=0</span><br><span class="line">enabled=1</span><br><span class="line"></span><br><span class="line">[c8-media-AppStream]</span><br><span class="line">baseurl=file:///media/AppStream</span><br><span class="line">gpgcheck=0</span><br><span class="line">enabled=1</span><br></pre></td></tr></tbody></table></figure>
 <p>查看yum可控制的软件包<br><code>yum list | wc -l</code> 或者 <code>yum list | grep iptables</code>  </p>
 <p>yum安装rpm软件包<br> <code>yum -y install iptables-service</code></p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">yum check-update  // 列出所有可更新的软件清单</span><br><span class="line">yum update // 更新所有软件</span><br><span class="line">yum install &lt;package_name&gt; // 仅安装指定的软件</span><br><span class="line">yum update &lt;package_name&gt;  // 仅更新指定的软件</span><br><span class="line">yum list        // 列出所有可安裝的软件清单</span><br><span class="line">yum remove &lt;package_name&gt; // 删除软件包</span><br><span class="line">yum search &lt;keyword&gt;    // 查找软件包</span><br><span class="line"></span><br><span class="line">yum clean packages // 清除缓存目录下的软件包</span><br><span class="line">yum clean headers // 清除缓存目录下的 headers</span><br><span class="line">yum clean oldheaders // 清除缓存目录下旧的 headers</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="权限管理"><a href="#权限管理" class="headerlink" title="权限管理"></a>权限管理</h1><p>查看文件权限 <code>ls -l fileName</code> or <code>ll</code><br>查看单个目录本身的权限 <code>ll -d dirName</code><br>权限类型 <code>r 读(4) w 写(2) x 执行(1) - 无权限(0)</code><br>权限详情</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">三段式</span><br><span class="line">drwxr-xr-x 2 root root 6 Oct 16 19:14 dir</span><br><span class="line">1.目录</span><br><span class="line">2.root对dir的权限:rwx:读+写+执行</span><br><span class="line">3.rootGroup对dir的权限:rx:读+执行</span><br><span class="line">4.other用户对dir的权限:rx:读+执行</span><br><span class="line"></span><br><span class="line">-rw-r--r-- 1 root root 0 Oct 16 19:14 file</span><br><span class="line">1.文件</span><br><span class="line">2.root对file的权限:rw:读+写</span><br><span class="line">3.root组对file的权限:r:读</span><br><span class="line">4.other对file的权限:r:读</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="umask权限掩码"><a href="#umask权限掩码" class="headerlink" title="umask权限掩码"></a>umask权限掩码</h2><p>默认权限: 文件:666，目录777<br>文件: 644(默认权限:666-权限掩码:022)<br>目录: 755(默认权限:777-权限掩码:022)</p>
+<h2 id="Chomd命令"><a href="#Chomd命令" class="headerlink" title="Chomd命令"></a>Chomd命令</h2><p>数字式 <code>chmod 755 /mnt</code><br>英文参数式 <code>chmod a+x file</code> 等价于 <code>chmod u+x,g+x,o+x linux.sh</code>  # a=u+g+o </p>
+<h2 id="ACL命令"><a href="#ACL命令" class="headerlink" title="ACL命令"></a>ACL命令</h2><p>查看权限 <code>getfacl test.sh</code><br>设置权限 <code>setfacl -m u:user1:rwx test.sh</code><br>设置acl的默认权限 <code>setfacl -m d:u:user1:rwx test.sh</code> or <code>setfacl -m default:u:user1:rwx test.sh</code><br>删除/test上的所有acl权限 <code>setfacl -b test.sh</code><br>删除user1在/test上的权限 <code>setfacl -x u:user1 test.sh</code></p>
+<h2 id="Sudo命令"><a href="#Sudo命令" class="headerlink" title="Sudo命令"></a>Sudo命令</h2><p>使用 root 用户修改文件<code>/etc/sudoers</code>添加可写权限后编辑，在root ALL=(ALL) ALL下一行加入以下内容：<code>你的账号ALL=(ALL)ALL</code> 保存退出。<br>分配用户对命令的权限</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">visudo</span><br><span class="line">xugz localhost=/usr/sbin/useradd // 完成后，指定用户 xugz 就可添加用户</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="Shell"><a href="#Shell" class="headerlink" title="Shell"></a>Shell</h1><h2 id="命令技巧"><a href="#命令技巧" class="headerlink" title="命令技巧"></a>命令技巧</h2><p>使用 <code>tab</code> 快速补全<br>调出历史命令中第1001号命令 <code>!1001</code><br>调出最后一次执行的以s开头的命令<code>!s</code><br>管道 <code>|</code> </p>
+<h2 id="帮助技巧"><a href="#帮助技巧" class="headerlink" title="帮助技巧"></a>帮助技巧</h2><p><code>ls --help</code><br><code>systemctl -h</code><br><code>man ls</code></p>
+<h2 id="shell编程概述"><a href="#shell编程概述" class="headerlink" title="shell编程概述"></a>shell编程概述</h2><h3 id="别名管理"><a href="#别名管理" class="headerlink" title="别名管理"></a>别名管理</h3><p>查看别名 <code>alias</code><br>新建别名 <code>alias myif='nmcli device show ens32'</code><br>删除别名 <code>unalias myif</code></p>
+<h3 id="日期管理-date"><a href="#日期管理-date" class="headerlink" title="日期管理-date"></a>日期管理-date</h3><p><code>date '+%Y-%m-%d %H:%M:%S'</code><br>Y 年 m 月 d 日 H 时 M 分 S 秒</p>
+<h3 id="Bash重定向"><a href="#Bash重定向" class="headerlink" title="Bash重定向"></a>Bash重定向</h3><p>正确输出 <code>&gt;</code><br>正确追加输出 <code>&gt;&gt;</code><br>错误输出 <code>2&gt;</code><br>错误追加输出 <code>2&gt;&gt;</code><br>正确和错误输出 <code>&amp;&gt;</code><br>正确和错误追加输出 <code>&amp;&gt;&gt;</code><br>正确或错误立即销毁 <code>&amp;&gt;/dev/null</code></p>
+<h3 id="Shell编程-基础操作"><a href="#Shell编程-基础操作" class="headerlink" title="Shell编程-基础操作"></a>Shell编程-基础操作</h3><p>变量定义 <code>name='user1'</code><br>输出变量 <code>echo $name</code> or <code>echo "my name is ${name}"</code></p>
+<h3 id="Shell编程-文件测试"><a href="#Shell编程-文件测试" class="headerlink" title="Shell编程-文件测试"></a>Shell编程-文件测试</h3><p><code>-d</code>：测试是否为目录（Directory）<br><code>-e</code>：测试目录或文件是否存在（Exist）<br><code>-f</code>：测试是否为文件（File）<br><code>-L</code>：测试是否为符号连接（Link）文件</p>
+<h3 id="Shell编程-字符串测试"><a href="#Shell编程-字符串测试" class="headerlink" title="Shell编程-字符串测试"></a>Shell编程-字符串测试</h3><p><code>=</code>： 字符串内容相同<br><code>!=</code>：字符串内容不同<br><code>-z</code>: 字符串为空</p>
+<h3 id="Shell编程-数学测试"><a href="#Shell编程-数学测试" class="headerlink" title="Shell编程-数学测试"></a>Shell编程-数学测试</h3><p><code>-eq</code>：等于（Equal）<br><code>-ne</code>：不等于（Not Equal）<br><code>-gt</code>：大于（Greater Than）<br><code>-lt</code>：小于（Lesser Than）<br><code>-ge</code>：大于或等于（Greater or Equal）<br><code>-le</code>：小于或等于（Lesser or Equal）</p>
+<h3 id="Shell编程-逻辑测试"><a href="#Shell编程-逻辑测试" class="headerlink" title="Shell编程-逻辑测试"></a>Shell编程-逻辑测试</h3><p><code>&amp;&amp;</code>：逻辑与<br><code>||</code>：逻辑或<br><code>!</code>： 逻辑否</p>
+<h3 id="Shell编程-用户交互"><a href="#Shell编程-用户交互" class="headerlink" title="Shell编程-用户交互"></a>Shell编程-用户交互</h3><p>read -p ‘please input your name: ‘ name<br>echo $name</p>
+<h3 id="Shell编程实例"><a href="#Shell编程实例" class="headerlink" title="Shell编程实例"></a>Shell编程实例</h3><p><strong>光盘挂载</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">if [ ! -e /media/BaseOS ]</span><br><span class="line">then</span><br><span class="line">	mount /dev/cdrom /media &amp;&gt; /dev/null</span><br><span class="line">	echo 'cdrom is ok'</span><br><span class="line">else</span><br><span class="line">	echo 'cdrom is ok'</span><br><span class="line">fi</span><br></pre></td></tr></tbody></table></figure>
+
+<p><strong>创建用户</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">read -p 'please input your name:' name</span><br><span class="line">if [ ! -z $name ]</span><br><span class="line">then</span><br><span class="line">	read -p 'please input your pass:' pass</span><br><span class="line">	if [ ! -z $pass ]</span><br><span class="line">	then</span><br><span class="line">		useradd $name</span><br><span class="line">		echo $pass | passwd --stdin $name &amp;&gt; /dev/null</span><br><span class="line">		echo "your name is ${name}，your pass is ${pass}，create is ok"</span><br><span class="line">	else</span><br><span class="line">		echo 'pass is empty'</span><br><span class="line">	fi</span><br><span class="line">else</span><br><span class="line">	echo 'name is empty'</span><br><span class="line">fi</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>内存判断</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">mem=`free -m |grep 'Mem'|awk '{print $4}'` # 执行`里的代码</span><br><span class="line"></span><br><span class="line">if [ $mem -lt 400 ]</span><br><span class="line">then</span><br><span class="line">	echo "mem is no,now is ${mem}"</span><br><span class="line">else</span><br><span class="line">	echo "mem is yes,now is ${mem}"</span><br><span class="line">fi</span><br></pre></td></tr></tbody></table></figure>
+
+<p><strong>循环输出</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">for name in `cat /etc/passwd | awk -F: '{print $1}'`</span><br><span class="line">do</span><br><span class="line">	echo $name</span><br><span class="line">	sleep 1</span><br><span class="line">done</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="crontab任务计划"><a href="#crontab任务计划" class="headerlink" title="crontab任务计划"></a>crontab任务计划</h1><p>cron是一个可以用来根据时间、日期、月份和星期的组合来调度对周期性任务执行的守护进程，利用cron所提供的功能，可以将需要周期性重复执行的任务设置为cron任务，并且设置为在主机较空闲的时间自动完成。</p>
+<p>查看Crontab服务状态 <code>systemctl status crond</code><br>任务计划格式 <code>(分) *(时) *(日) *(月) *(周) 周期执行的程序</code><br>查看cron任务计划 <code>crontab -l</code><br>编辑cron任务计划 <code>crontab -e</code><br>删除所有cron任务计划 <code>crontab -r</code></p>
+<p>每年1月2日晚上22:30执行time.sh脚本  <code>30 22 2 1 * time.sh</code><br>每周六晚上22:30执行time.sh脚本 <code>30 22 * * 6 time.sh</code><br>每周的周一、周三和周五晚上22:30执行time.sh脚本  <code>30 22 * * 1,3,5 time.sh</code><br>每周的周一到周五晚上22:30执行time.sh脚本 <code>30 22 * * 1-5 time.sh</code><br>每分钟执行一次time.sh脚本  <code>* * * * * time.sh</code><br>每五分钟执行一次time.sh脚本  <code>*/5 * * * * time.sh</code><br>每天晚上00点执行time.sh脚本  <code>00 00 * * * time.sh</code></p>
+<p> 该命令详见 <a href="https://xlline.github.io/2019/10/23/linux_crontab/#more">点我，我是链接地址</a></p>
 <h1 id="top命令"><a href="#top命令" class="headerlink" title="top命令"></a>top命令</h1><p>top命令用于实时显示 process 的动态</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">top     // 显示进程信息</span><br><span class="line">top -c  // 显示完整命令</span><br><span class="line">top -b  // 以批处理模式显示程序信息</span><br><span class="line">top -s  // 以累积模式显示程序信息</span><br><span class="line">top -p &lt;pid&gt; // 显示指定的进程信息</span><br><span class="line">top -n 10  // 显示更新十次后退出</span><br></pre></td></tr></tbody></table></figure>
 
-
+<h1 id="Cockpit-Web系统监控"><a href="#Cockpit-Web系统监控" class="headerlink" title="Cockpit Web系统监控"></a>Cockpit Web系统监控</h1><p>初始化 <code>systemctl enable --now cockpit.socket</code><br>开启cockpit服务 <code>systemctl start cockpit.service</code><br>查看cockpit状态 <code>systemctl status cockpit.service</code></p>
 <h1 id="自定义服务脚本流程"><a href="#自定义服务脚本流程" class="headerlink" title="自定义服务脚本流程"></a>自定义服务脚本流程</h1><p>需求：自定义startMyApp脚本，使用systemd服务管理放入开机自启动。用于练手systemcrl命令 </p>
 <ol>
 <li>创建文件 <code>vi /mnt/startMyApp.sh</code> # 路径可自指定  <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">i=0</span><br><span class="line">while true</span><br><span class="line">do</span><br><span class="line">    echo $i&gt;&gt;/mnt/MyApp.txt</span><br><span class="line">    ((i++))</span><br><span class="line">    sleep 1</span><br><span class="line">done</span><br></pre></td></tr></tbody></table></figure></li>
@@ -690,6 +686,45 @@ fi</code></pre></li>
       <tags>
         <tag>基础</tag>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux的crontab命令</title>
+    <url>/2019/10/23/linux_crontab/</url>
+    <content><![CDATA[<p>Linux下的任务调度分为两类：系统任务调度和用户任务调度。<br>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。<br>所有用户定义的crontab文件都被保存在/var/spool/cron目录中。其文件名与用户名一致，使用者权限文件如下：<br><code>/etc/cron.deny</code>     该文件中所列用户不允许使用crontab命令<br><code>/etc/cron.allow</code>   该文件中所列用户允许使用crontab命令<br><code>/var/spool/cron/</code>   所有用户crontab文件存放的目录,以用户名命名  </p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">分 时 日 月 星期 命令</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。  </p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/sbin/service crond start    // 启动服务   或者使用  service crond start 命令 手动启动crontab服务</span><br><span class="line">/sbin/service crond stop     // 关闭服务</span><br><span class="line">/sbin/service crond restart  // 重启服务</span><br><span class="line">/sbin/service crond reload   // 重新载入配置</span><br><span class="line"></span><br><span class="line">chkconfig –level 35 crond on // 加入开机自动启动</span><br><span class="line">service crond status // 查看crontab服务状态</span><br></pre></td></tr></tbody></table></figure>
+
+<p>crontab (选项 例如:-e)(参数 crontab文件)<br>-e：编辑该用户的计时器设置；<br>-l：列出该用户的计时器设置；<br>-r：删除该用户的计时器设置；<br>-u&lt;用户名称&gt;：指定要设定计时器的用户名称。    </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>基础</tag>
+        <tag>Linux</tag>
+        <tag>crontab</tag>
       </tags>
   </entry>
   <entry>
@@ -804,71 +839,6 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
-    <title>修改Hexo博客next主题文章页面宽度</title>
-    <url>/2019/06/19/hexo_postwidth/</url>
-    <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
-<p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码即可</p>
-<pre><code>// 以下为新增代码！！修改post宽度
-header{ width: 80% !important; }
-header.post-header {
-  width: auto !important;
-}
-.container .main-inner { width: 80%; }
-.content-wrap { width: calc(100% - 260px); }
-
-.header {
-  +tablet() {
-    width: auto !important;
-  }
-  +mobile() {
-    width: auto !important;
-  }
-}
-
-.container .main-inner {
-  +tablet() {
-    width: auto !important;
-  }
-  +mobile() {
-    width: auto !important;
-  }
-}
-
-.content-wrap {
-  +tablet() {
-    width: 100% !important;
-  }
-  +mobile() {
-    width: 100% !important;
-  }
-}</code></pre><script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo添加emoji表情</title>
     <url>/2019/06/19/hexo_add_emjo/</url>
     <content><![CDATA[<p>废话不多说，直接动手干吧。 具体表情参考 <a href="https://github.com/caiyongji/emoji-list" target="_blank" rel="noopener">GFM 表情列表</a> <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8">😜</span> </p>
@@ -963,10 +933,75 @@ header.post-header {
       </tags>
   </entry>
   <entry>
+    <title>修改Hexo博客next主题文章页面宽度</title>
+    <url>/2019/06/19/hexo_postwidth/</url>
+    <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
+<p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码即可</p>
+<pre><code>// 以下为新增代码！！修改post宽度
+header{ width: 80% !important; }
+header.post-header {
+  width: auto !important;
+}
+.container .main-inner { width: 80%; }
+.content-wrap { width: calc(100% - 260px); }
+
+.header {
+  +tablet() {
+    width: auto !important;
+  }
+  +mobile() {
+    width: auto !important;
+  }
+}
+
+.container .main-inner {
+  +tablet() {
+    width: auto !important;
+  }
+  +mobile() {
+    width: auto !important;
+  }
+}
+
+.content-wrap {
+  +tablet() {
+    width: 100% !important;
+  }
+  +mobile() {
+    width: 100% !important;
+  }
+}</code></pre><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>网络工程师基础</title>
     <url>/2018/10/25/OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/</url>
     <content><![CDATA[<h1 id="OSI"><a href="#OSI" class="headerlink" title="OSI"></a>OSI</h1><p>OSI（开放系统互联(Open System Interconnection)），把网络通信的工作分为7层,分别是物理层,数据链路层,网络层,传输层,会话层,表示层和应用层。<br>通俗理解如下：<br>物理层就是布线、光纤和其它电子设备，用来把两台网络通信设备连接在一起的东西。<br>数据链路层就是MAC地址、交换机或者网卡和驱动程序，主要任务是把数据帧转换成二进制位供一层处理。<br>网络层最主要的设备是路由器，主要作用是为了在数据外围针对IP地址路由的交换。<br>传输层作用是每台计算机每台应用程序与他人发生通讯，互联端口的协议。<br>会话层，两者之间的通讯过程就是一次会话过程。<br>表示层，规范编码问题。负责转换为适合于OSI系统内部使用的传送语法。即提供格式化的表示和转换数据服务。数据的压缩和解压缩， 加密和解密等工作。<br>应用层用于应用程序，确定进程之间通信的性质以满足用户需要以及提供网络与用户应用软件之间的接口服务如果你的程序需要一种具体格式的数据。  </p>
-<img src="/2018/10/25/OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/osi_desc.png" class title="OSI的七层模型">  
+<img src="/2018/10/25/OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/osi_desc.png" class="" title="OSI的七层模型">  
 
 
 <h1 id="物理层"><a href="#物理层" class="headerlink" title="物理层"></a>物理层</h1><p>为数据端设备提供传送数据的通路，传输数据</p>
@@ -1094,8 +1129,8 @@ header.post-header {
 <p><strong>任务列表</strong></p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">- [x] Task 1</span><br><span class="line">- [ ] Task 2</span><br></pre></td></tr></tbody></table></figure>
 <ul>
-<li><input checked disabled type="checkbox"> Task 1</li>
-<li><input disabled type="checkbox"> Task 2</li>
+<li><input checked="" disabled="" type="checkbox"> Task 1</li>
+<li><input disabled="" type="checkbox"> Task 2</li>
 </ul>
 <p>本篇结束了，拜拜喽。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f490.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f490.png?v8">💐</span>  </p>
 <script>

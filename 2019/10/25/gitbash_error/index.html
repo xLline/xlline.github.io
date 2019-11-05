@@ -435,11 +435,11 @@
         <p>使用Git bash未正常退出后，再次打开出现 <code>Git bash Error: Could not fork child process: There are no available terminals (-1)</code>报错。<br>可以使用 tasklist命令 找到git-bash.exe和node.exe对应进程号后，使用taskkill结束进程即可。</p>
 <ol>
 <li><p>win+r调出运行键入<code>cmd</code>后回车打开，使用<code>tasklist</code>查看本机进程。查询得到的字段有： 映像名称，PID(进程ID)，会话名，会话#，内存使用。如下图：</p>
-<img src="/2019/10/25/gitbash_error/tasklist_ret.jpg" class title="tasklist运行结果">
+<img src="/2019/10/25/gitbash_error/tasklist_ret.jpg" class="" title="tasklist运行结果">
 <p>如图 smss.exe 的进程ID为 520(你看随便找个进程都是爱你的数字)，咳咳</p>
 </li>
 <li><p>找到git-bash.exe对应的进程号，比如我的是 12184，然后使用命令 <code>taskkill /pid 12184 -t -f</code> 终止ID为12184的进程。</p>
-<img src="/2019/10/25/gitbash_error/taskkill_ret.png" class title="taskkill命令运行结果"></li>
+<img src="/2019/10/25/gitbash_error/taskkill_ret.png" class="" title="taskkill命令运行结果"></li>
 <li><p>找到node.exe对应的进程号，比如我的是 868，然后使用命令 <code>taskkill /pid 868 -t -f</code> 终止ID为868的进程。</p>
 </li>
 </ol>
@@ -541,8 +541,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/10/23/linux_crontab/" rel="next" title="Linux的crontab命令">
-                <i class="fa fa-chevron-left"></i> Linux的crontab命令
+              <a href="/2019/10/23/linux_base/" rel="next" title="Linux基础">
+                <i class="fa fa-chevron-left"></i> Linux基础
               </a>
             
           </div>
@@ -718,7 +718,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 13.8k 字</span>
+  <span class="post-count">全站共 15.1k 字</span>
 </div>
         
 
