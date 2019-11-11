@@ -1,6 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Ubuntu速学笔记</title>
+    <url>/2019/11/08/Ubuntu/</url>
+    <content><![CDATA[<p>为了学习docker来回顾Linux基础，本篇是基于Ubuntu操作系统安装部署遇到问题或有用知识点的汇总整理。</p>
+<h1 id="ifconfig命令找不到"><a href="#ifconfig命令找不到" class="headerlink" title="ifconfig命令找不到"></a>ifconfig命令找不到</h1><p>问题描述： 在Vmware安装完成Ubuntu后，输入ifconfig提示：<em>Command ‘ifconfig’ not found, but can be installed with: sudo apt install net-tools</em>。当然官方提醒我们可以使用<code>sudo apt install net-tools</code>安装net-tools，然而并不如预想。</p>
+<div style="width: 70%;margin: left"><img src="/2019/11/08/Ubuntu/ifconfig_error.png" class="" title="ifconfig命令不存在"></div>
+<a id="more"></a>
+解决方案： 执行语句 ` sudo apt-get update &amp;&amp; sudo apt-get install net-tools`
+再输入ifconfig就正常啦。(apt-get用于自动从互联网的软件仓库中搜索、安装、升级或卸载软件。我们需要顶起执行`apt-get update`，让我们缓存在系统中的软件列表源是最新的)
+<div style="width: 70%;margin: left"> <img src="/2019/11/08/Ubuntu/ifconfig_sess.png" class=""></div>
+
+<p>如果在过程中提示 <em>E: Could not get lock /var/lib/apt/lists/lock - open (11: Resource temporarily unavailable)</em>， 不用担心，这是因为上一次安装时异常退出导致锁残留，可直接删除掉这个锁文件，使用命令<code>sudo rm /var/lib/apt/lists/lock</code>。</p>
+<div style="width: 70%;margin: left"><img src="/2019/11/08/Ubuntu/ifconfig_lock.png" class=""></div>
+
+<h1 id="编译安装PHP"><a href="#编译安装PHP" class="headerlink" title="编译安装PHP"></a>编译安装PHP</h1><ol>
+<li><p>官网下载安装包到本地  </p>
+</li>
+<li><p>执行预编译，使用<code>./configure --prefix=/usr/local/php</code>(这个后面最好加上<code>--with-config-file-path=/usr/local/php/conf</code>，代表指定php.ini路径，否则后面需要自己去设置) 代表我要装到/usr/local/php里，配置文件放到conf里  </p>
+<p> a. 如果遇到错误：<em>error:xml2-config not found.Please check your libxml2 installation.</em> ，说明依赖包libxml2不存在，需要安装使用命令<code>apt-get install libxml2-dev -y</code>。<br> b. 如果安装libxml2过程又提示<em>Unable to fetch some archives, maybe run apt-get update or try with –fix-missing?</em>，可执行<code>apt-get install libxml2-dev -y --fix-missing</code>解决。<br> c. 如果又报错<em>configure: error: no acceptable C compiler found in $PATH</em>，是因为你本地没有可执行编译的源文件，需要执行<code>sudo apt-get update &amp;&amp; sudo apt-get install gcc -y</code>解决。</p>
+</li>
+<li><p>安装，执行完成之后最后一定要执行<code>make</code>，这一步是真正的编译。然后还要执行<code>sudo make install</code>，这一步是拷贝到你的目标文件夹，否则/usr/local/php是不会有的。  </p>
+</li>
+<li><p>验证，没有Hello world感觉不完整是不是。写个简单的PHP页面</p>
+<div style="width: 70%;margin: left"><img src="/2019/11/08/Ubuntu/php_ver.png" class=""></div>
+
+</li>
+</ol>
+<h1 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h1><p>基于用户级的环境变量设置 在home目录下的隐藏文件 .bashrc，输入<code>export name=xugz</code>设置个名字，使用<code>source .bashrc</code>执行。比如说我现在安装了Nodejs，但是只能在node安装目录下进行操作，如何处理呢？可以通过修改环境变量实现。在.bashrc文件中追加<code>export PATH=$PATH:/home/xugz/tool/node-v12.13.0-linux-x64/bin</code>后保存退出，使用<code>source .bashrc</code>执行就可以在任何文件目录下执行node操作了。<br>全局环境变量在<code>/etc/profile</code>文件下</p>
+<h1 id="Mysql8-0-18源码安装"><a href="#Mysql8-0-18源码安装" class="headerlink" title="Mysql8.0.18源码安装"></a>Mysql8.0.18源码安装</h1><ol>
+<li>官网下载源码 社区版  Compressed TAR Archive, Includes Boost Headers</li>
+<li>安装依赖编译工具<br>a. CMake(CMake是一个跨平台的安装（编译）工具，可以用简单的语句来描述所有平台的安装（编译过程）。他能够输出各种各样的makefile)。我这里直接使用<code>sudo apt-get update &amp;&amp; sudo apt-get install cmake -y</code>执行安装。如果版本过低，可以去<a href="https://cmake.org/files/v3.4/cmake-3.4.1.tar.gz" target="_blank" rel="noopener">https://cmake.org/files/v3.4/cmake-3.4.1.tar.gz</a>下载后手动编译安装。<br>b. GIT 安装 使用 <code>sudo apt-get update &amp;&amp; sudo apt-get install git -y</code><br>c. c/c++编译器 使用 <code>sudo apt-get update &amp;&amp; sudo apt-get install gcc g++ -y</code><br>d. Linux常用图形库 使用 <code>sudo apt-get update &amp;&amp; sudo apt-get install libncurses5 libncurses5-dev -y</code><br>e. 还有些其他的 <code>sudo apt install build-essential bison libssl-dev pkg-config</code></li>
+<li>新建 /usr/local/mysql文件, 修改归属用户权限</li>
+<li>编译 执行<code>cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DSYSCONFDIR=/etc -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DMYSQL_DATADIR=/var/lib/mysql/data -DWITH_BOOST=boost</code>，如果没有草错，执行<code>make</code>编译，然后开始漫长的等待，漫长的等待。完成后执行 <code>make install</code> 执行安装</li>
+</ol>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Linux</category>
+        <category>Ubuntu</category>
+      </categories>
+      <tags>
+        <tag>基础</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker学习笔记</title>
+    <url>/2019/11/06/Docker%E5%85%A5%E9%97%A8/</url>
+    <content><![CDATA[<h1 id="CentOS8安装Docker"><a href="#CentOS8安装Docker" class="headerlink" title="CentOS8安装Docker"></a>CentOS8安装Docker</h1><p><strong>卸载旧版本</strong><br>较旧的 Docker 版本称为 docker 或 docker-engine 。如果已安装这些程序，请卸载它们以及相关的依赖项</p>
+<p><strong>安装步骤</strong></p>
+<ol>
+<li>下载docker-ce的repo<br><code>curl https://download.docker.com/linux/centos/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo</code></li>
+<li>安装依赖（这是相比centos7的关键步骤）<br><code>yum install https://download.docker.com/linux/fedora/30/x86_64/stable/Packages/containerd.io-1.2.6-3.3.fc30.x86_64.rpm</code></li>
+<li>安装docker-ce<br><code>yum install docker-ce</code></li>
+<li>启动docker<br><code>systemctl start docker</code><br>启动成功，使用<code>systemctl status docker</code> 查看docker启动状态或者使用<code>docker version</code>验证。<a id="more"></a></li>
+</ol>
+<p><strong>普通用户运行docker命令不需要使用sudo</strong><br>在Linux系统中运行没有sudo密码的特定命令</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[xugz@xugz yum.repos.d]$ docker images</span><br><span class="line">Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.40/images/json: dial unix /var/run/docker.sock: connect: permission denied</span><br><span class="line">[xugz@xugz yum.repos.d]$ sudo docker images</span><br><span class="line">[sudo] password for xugz:</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">[xugz@xugz yum.repos.d]$ id xugz</span><br><span class="line">uid=1000(xugz) gid=1000(xugz) groups=1000(xugz),0(root)</span><br><span class="line">[xugz@xugz yum.repos.d]$ sudo usermod -aG docker $(whoami)</span><br><span class="line">[xugz@xugz yum.repos.d]$ id xugz</span><br><span class="line">uid=1000(xugz) gid=1000(xugz) groups=1000(xugz),984(docker),0(root)</span><br></pre></td></tr></tbody></table></figure>
+<p>注销并再次登录以使用没有sudo的Docker，可以使用docker version命令检查安装的Docker版本了。</p>
+<h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><h2 id="docker-安装完成后测试hello-world出现问题（Unable-to-find-image-‘hello-world-latest’-locally）"><a href="#docker-安装完成后测试hello-world出现问题（Unable-to-find-image-‘hello-world-latest’-locally）" class="headerlink" title="docker 安装完成后测试hello-world出现问题（Unable to find image ‘hello-world:latest’ locally）"></a>docker 安装完成后测试hello-world出现问题（Unable to find image ‘hello-world:latest’ locally）</h2><p>安装docker之后，测试hello-world镜像，终端卡在<code>Unable to find image 'hello-world:latest' locally</code>位置<br>docker在本地没有找到hello-world镜像，也没有从docker仓库中拉取镜像，出项这个问题的原因：是因为docker服务器再国外，我们在国内无法正常拉取镜像，所以就需要我们设置国内的镜像加速器。（我这里用的是阿里云，当然其他的也可以，大家可以自己选择。Docker 官方和国内很多云服务商都提供了国内加速器服务，例如： Docker官方提供的中国镜像库：<a href="https://registry.docker-cn.com" target="_blank" rel="noopener">https://registry.docker-cn.com</a>）。使用 systemd 的系统的同学，需要新增配置文件<code>/etc/docker/daemon.json</code>，添加以下内容保存退出</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{"registry-mirrors": ["https://alzgoonw.mirror.aliyuncs.com"]}</span><br></pre></td></tr></tbody></table></figure>
+<p>之后重新启动服务</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></tbody></table></figure>
+<p>重启之后，就可以正常拉取helloworld镜像了。</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>不要重复使用PHP的number_format函数</title>
     <url>/2019/11/04/PHP%E7%9A%84number_format%E5%87%BD%E6%95%B0/</url>
     <content><![CDATA[<p>  和其他朋友聊起来，说是他们公司临近双十一做了一套秒杀系统，价值三千多的商品，被三块钱卖出去了。这种情况大概率是金额精度操作或者格式化有误之类的问题。果不其然，最后发现是重复使用number_format函数造成金额截取。这坑没有必要跳进去，现在写下来加深下记忆力，希望自己不会犯类似错误。</p>
@@ -423,7 +532,7 @@ fi</code></pre></li>
   <entry>
     <title>Linux基础</title>
     <url>/2019/10/23/linux_base/</url>
-    <content><![CDATA[<p>最近在跟着沈逸老师视频学习Linux基础，发现有好多基础命令见面不相识……此篇作为学习笔记，利用零碎的时间终于完成课程学习，该篇添加常用命令以方便后续翻阅参考。</p>
+    <content><![CDATA[<p>最近在云之梦网站学习Linux基础，发现有好多基础命令见面不相识……此篇作为学习笔记，利用零碎的时间终于完成课程学习，该篇添加常用命令以方便后续翻阅参考。</p>
 <h1 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h1><h2 id="操作系统分类"><a href="#操作系统分类" class="headerlink" title="操作系统分类"></a>操作系统分类</h2><ol>
 <li>客户端操作系统<br> windows 7,8,10等</li>
 <li>服务器端操作系统<ol>
@@ -445,29 +554,21 @@ fi</code></pre></li>
 </li>
 </ol>
 <h1 id="系统启动流程"><a href="#系统启动流程" class="headerlink" title="系统启动流程"></a>系统启动流程</h1><ol>
-<li><p>BIOS加电自检</p>
-</li>
-<li><p>把MBR加载到内存</p>
-</li>
-<li><p>加载grub</p>
-</li>
-<li><p>Kernel自身初始化</p>
-</li>
-<li><p>启动第一个程序systemd</p>
-</li>
-<li><p>检查默认运行级别</p>
-<h2 id="Linux运行级别"><a href="#Linux运行级别" class="headerlink" title="Linux运行级别"></a>Linux运行级别</h2><pre><code>0 shutdown.target(关机)  
+<li>BIOS加电自检</li>
+<li>把MBR加载到内存</li>
+<li>加载grub</li>
+<li>Kernel自身初始化</li>
+<li>启动第一个程序systemd</li>
+<li>检查默认运行级别<h2 id="Linux运行级别"><a href="#Linux运行级别" class="headerlink" title="Linux运行级别"></a>Linux运行级别</h2><pre><code>0 shutdown.target(关机)  
 1 emergency.target(紧急救援模式)   
 2 rescue.target(救援模式)  
 3 multi-user.target(多用户模式|字符系统模式)  
 4 无  
 5 graphical.target(桌面系统)  
-6 无(重启) </code></pre><h2 id="常用命令-1"><a href="#常用命令-1" class="headerlink" title="常用命令"></a>常用命令</h2><p> 查看运行级别  <code>runlevel</code></p>
-<h3 id="init命令"><a href="#init命令" class="headerlink" title="init命令"></a>init命令</h3><pre><code>`init 0` // 关机   
+6 无(重启) </code></pre><h2 id="常用命令-1"><a href="#常用命令-1" class="headerlink" title="常用命令"></a>常用命令</h2> 查看运行级别  <code>runlevel</code><h3 id="init命令"><a href="#init命令" class="headerlink" title="init命令"></a>init命令</h3><pre><code>`init 0` // 关机   
 `init 3` // 到达字符界面  
 `init 5` // 到达图形界面  
-`init 6` // 重启  </code></pre><h3 id="systemd服务管理"><a href="#systemd服务管理" class="headerlink" title="systemd服务管理"></a>systemd服务管理</h3><p> 利用systemctl 进行服务控制。    </p>
-<pre><code>1. 查看默认级别    
+`init 6` // 重启  </code></pre><h3 id="systemd服务管理"><a href="#systemd服务管理" class="headerlink" title="systemd服务管理"></a>systemd服务管理</h3> 利用systemctl 进行服务控制。    <pre><code>1. 查看默认级别    
 `systemctl get-default`  
  Tips: 或者使用`cd /etc/systemd/system`后`ll`查看`default.target`字段  
 2. 设置默认级别  
@@ -497,14 +598,10 @@ fi</code></pre></li>
 `systemctl list-units --type=target --all`
 13. 查看系统中所有服务的启动状态
 `systemctl list-unit-files`</code></pre></li>
-<li><p>启动相应级别下的所有程序服务</p>
-</li>
-<li><p>加载/etc/rc.d/rc.local脚本<br>直接在/etc/rc.d/rc.local文件中追加即可，例如 <code>systemctl start sshd.service</code><br>Tips：在CentOS8版本改文件需要手动增加执行权限，使用命令<code>chmod +x /etc/rc.d/rc.local</code>  </p>
-</li>
-<li><p>systemd执行multi-user.target下的getty.target及登录服务</p>
-</li>
-<li><p>systemd执行graphical需要的服务</p>
-</li>
+<li>启动相应级别下的所有程序服务</li>
+<li>加载/etc/rc.d/rc.local脚本<br>直接在/etc/rc.d/rc.local文件中追加即可，例如 <code>systemctl start sshd.service</code><br>Tips：在CentOS8版本改文件需要手动增加执行权限，使用命令<code>chmod +x /etc/rc.d/rc.local</code>  </li>
+<li>systemd执行multi-user.target下的getty.target及登录服务</li>
+<li>systemd执行graphical需要的服务</li>
 </ol>
 <h1 id="Root用户破解流程"><a href="#Root用户破解流程" class="headerlink" title="Root用户破解流程"></a>Root用户破解流程</h1><ol>
 <li>开机后页面 按e进入LINUX内核编辑模式</li>
@@ -587,7 +684,7 @@ fi</code></pre></li>
 <p>命令模式 =&gt; 输入模式<br>输入模式 =&gt; 命令模式 按下<code>esc</code><br>命令模式 =&gt; 末行模式 使用 <code>shift+:</code>输入<code>x</code>保存退出<br>末行模式 =&gt; 命令模式 按下<code>esc</code><br>命令模式 =&gt; 视图模式 使用<code>v</code><br> 按<code>v</code>键再按上下左右进行视图选中，进行快速缩进</p>
 <h3 id="命令模式常用命令"><a href="#命令模式常用命令" class="headerlink" title="命令模式常用命令"></a>命令模式常用命令</h3><p> 上<code>k</code>下<code>j</code>左<code>h</code>右<code>l</code>撤销用<code>u</code>恢复用ctrl+<code>r</code>(撤销多了恢复，两个配合使用)<br> 复制当前行 <code>yy</code> 复制多行 <code>nyy</code>, 比如<code>3yy</code>为复制三行<br> 粘贴到下一行 <code>p</code>, 粘贴到下一行n次 <code>np</code>.  粘贴到上一行 <code>P</code>, 粘贴到上一行n次 <code>nP</code></p>
 <p> 单字符替换用<code>r</code> , 按过<code>r</code>后直接输入需要替换的字符即可<br> 查找用 <code>/</code>, 查找下一个结果用 <code>n</code></p>
-<p> 到最后一行首用<code>G</code>, 到指定行首用<code>nG</code> , 比如<code>3G</code>为到第三行行首<br> 从当前行删除到最后一行 <code>dG</code>(当前行也会删除哦), 从当前行删除到第n行 <code>dnG</code><br> 删除一个单词用 <code>dw</code><br> 删除并剪切一行用<code>dd</code><br> 从当前字符删除到行首用 <code>d^</code> , 从当前字符删除到行末用 <code>d$</code><br> 删除单个字符使用<code>x</code>, 删除指定个数的字符用 <code>nx</code>, 比如<code>3x</code>为删除当前光标所在位置的后三个字符</p>
+<p> 到最后一行首用<code>G</code>, 到指定行首用<code>nG</code> , 比如<code>3G</code>为到第三行行首<br> 从当前行删除到最后一行 <code>dG</code>(当前行也会删除哦), 从当前行删除到第n行 <code>dnG</code><br> 删除一个单词用 <code>dw</code>n<br> 删除并剪切一行用<code>dd</code><br> 从当前字符删除到行首用 <code>d^</code> , 从当前字符删除到行末用 <code>d$</code><br> 删除单个字符使用<code>x</code>, 删除指定个数的字符用 <code>nx</code>, 比如<code>3x</code>为删除当前光标所在位置的后三个字符</p>
 <p> 按<code>v</code>键再按上下左右进行视图选中，进行快速缩进</p>
 <h3 id="输入模式常用命令"><a href="#输入模式常用命令" class="headerlink" title="输入模式常用命令"></a>输入模式常用命令</h3><p> 使用<code>i</code>在光标当前所在字符的前面输入<br> 使用<code>a</code>在光标当前所在字符的后面输入<br> 使用<code>I</code>在光标所在当前行的前面开始输入<br> 使用<code>A</code>在光标所在当前行的后面开始输入</p>
 <p> 使用<code>s</code>删除光标所在的当前字符并输入<br> 使用<code>o</code>在当前字符所在行下方另起一行输入<br> 使用<code>S</code>删除光标所在当前行并输入<br> 使用<code>O</code>在当前字符所在行上方另起一行输入</p>
@@ -601,7 +698,7 @@ fi</code></pre></li>
 <h2 id="Bz2压缩包管理"><a href="#Bz2压缩包管理" class="headerlink" title="Bz2压缩包管理"></a>Bz2压缩包管理</h2><p>制作bz2压缩包 <code>tar cjf mydir1.tar.bz2 mydir1</code><br>解压bz2压缩包 <code>tar xjf mydir1.tar.bz2</code><br>查看bz2压缩包 <code>tar tf mydir1.tar.bz2</code></p>
 <h2 id="Zip压缩包管理"><a href="#Zip压缩包管理" class="headerlink" title="Zip压缩包管理"></a>Zip压缩包管理</h2><p>制作zip压缩包 <code>zip -r mydir1.zip mydir1</code><br>zip压缩包解压 <code>unzip mydir1.zip</code><br>查看zip压缩包 <code>unzip -l mydir1.zip</code></p>
 <h1 id="光盘管理"><a href="#光盘管理" class="headerlink" title="光盘管理"></a>光盘管理</h1><p>在linux系统中，可以使用mount命令挂载光盘镜像文件、移动硬盘、U盘以及Windows网络共享和UNIX NFS网络共享。<br>挂载光盘 <code>mount /dev/cdrom /media/</code><br>查看挂载情况 <code>df</code> <code>df -h</code> <code>df -Th</code><br>卸载光盘 <code>umount /media</code><br>开机挂载 <code>vi /etc/fstab</code>后追加<code>/dev/cdrom  /media   iso9660  defaults  0 0</code><br>开机挂载测试 <code>mount -a</code>成功后重启即可</p>
-<h1 id="RPM包管理"><a href="#RPM包管理" class="headerlink" title="RPM包管理"></a>RPM包管理</h1><p>RPM：redhat package management英文缩写，只适于于Redhat和Centos系统。</p>
+<h1 id="RPM包管理"><a href="#RPM包管理" class="headerlink" title="RPM包管理"></a>RPM包管理</h1><p>RPM：redhat package management英文缩写，只适用于Redhat和Centos系统。</p>
 <p>安装RPM包 <code>rpm -ivh psmisc-23.1-3.el8.x86_64</code><br>查看RPM包 <code>rpm -qa</code> or <code>rpm -qa | grep psmisc-23.1</code> or 使用<code>rpm -qa |  wc -l</code>查看安装个数<br>查看RPM包安装的文件 <code>rpm -ql psmisc-23.1</code> or <code>rpm -ql psmisc-23.1 | grep pstree</code><br>反查文件是否是由RPM包安装的 <code>rpm -qf /usr/bin/pstree</code><br>删除RPM安装程序 <code>rpm -e psmisc-23.1</code></p>
 <h1 id="yum命令"><a href="#yum命令" class="headerlink" title="yum命令"></a>yum命令</h1><p>yum（ Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。<br>YUM仓库的前提是做准备光盘 检查光盘是否正常挂载 使用命令 <code>df</code><br><code>mount /dev/cdrom /media</code>  使用该命令挂载光盘<br>下面为配置yum流程</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">cd /etc/yum.repos.d/</span><br><span class="line">mv CentOS-Media.repo /mnt</span><br><span class="line">rm -rf *</span><br><span class="line">mv /mnt/CentOS-Media.repo ./</span><br></pre></td></tr></tbody></table></figure>
@@ -720,6 +817,7 @@ fi</code></pre></li>
       <categories>
         <category>拾级而上</category>
         <category>Linux</category>
+        <category>crontab</category>
       </categories>
       <tags>
         <tag>基础</tag>
@@ -887,52 +985,6 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
-    <title>Hexo NexT主题添加字数统计阅读时长</title>
-    <url>/2019/06/19/hexo_add_wordcount/</url>
-    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
-<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<p>到这里就可以啦，快去试试吧。  </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>修改Hexo博客next主题文章页面宽度</title>
     <url>/2019/06/19/hexo_postwidth/</url>
     <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
@@ -971,6 +1023,52 @@ header.post-header {
     width: 100% !important;
   }
 }</code></pre><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo NexT主题添加字数统计阅读时长</title>
+    <url>/2019/06/19/hexo_add_wordcount/</url>
+    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
+<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<p>到这里就可以啦，快去试试吧。  </p>
+<script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
