@@ -94,7 +94,7 @@
 <meta property="og:site_name" content="理想国">
 <meta property="og:description" content="CentOS8安装Docker卸载旧版本较旧的 Docker 版本称为 docker 或 docker-engine 。如果已安装这些程序，请卸载它们以及相关的依赖项 安装步骤  下载docker-ce的repocurl https:&#x2F;&#x2F;download.docker.com&#x2F;linux&#x2F;centos&#x2F;docker-ce.repo -o &#x2F;etc&#x2F;yum.repos.d&#x2F;docker-ce.rep">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-08T03:33:47.356Z">
+<meta property="og:updated_time" content="2019-11-11T01:31:49.288Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -392,7 +392,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  615 字
+                  621 字
                 </span>
               
 
@@ -435,7 +435,7 @@
 <li>下载docker-ce的repo<br><code>curl https://download.docker.com/linux/centos/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo</code></li>
 <li>安装依赖（这是相比centos7的关键步骤）<br><code>yum install https://download.docker.com/linux/fedora/30/x86_64/stable/Packages/containerd.io-1.2.6-3.3.fc30.x86_64.rpm</code></li>
 <li>安装docker-ce<br><code>yum install docker-ce</code></li>
-<li>启动docker<br><code>systemctl start docker</code><br>启动成功，使用<code>systemctl status docker</code> 查看docker启动状态或者使用<code>docker version</code>验证。<a id="more"></a></li>
+<li>启动docker<br><code>systemctl start docker</code><br>启动成功，使用<code>systemctl status docker</code> 查看docker启动状态或者使用<code>docker version</code>验证是否安装成功。<a id="more"></a></li>
 </ol>
 <p><strong>普通用户运行docker命令不需要使用sudo</strong><br>在Linux系统中运行没有sudo密码的特定命令</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[xugz@xugz yum.repos.d]$ docker images</span><br><span class="line">Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.40/images/json: dial unix /var/run/docker.sock: connect: permission denied</span><br><span class="line">[xugz@xugz yum.repos.d]$ sudo docker images</span><br><span class="line">[sudo] password for xugz:</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">[xugz@xugz yum.repos.d]$ id xugz</span><br><span class="line">uid=1000(xugz) gid=1000(xugz) groups=1000(xugz),0(root)</span><br><span class="line">[xugz@xugz yum.repos.d]$ sudo usermod -aG docker $(whoami)</span><br><span class="line">[xugz@xugz yum.repos.d]$ id xugz</span><br><span class="line">uid=1000(xugz) gid=1000(xugz) groups=1000(xugz),984(docker),0(root)</span><br></pre></td></tr></tbody></table></figure>
@@ -482,7 +482,7 @@
   <p><span>本文标题:</span><a href="/2019/11/06/Docker%E5%85%A5%E9%97%A8/">Docker学习笔记</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年11月06日 - 16:27</p>
-  <p><span>最后更新:</span>2019年11月08日 - 11:33</p>
+  <p><span>最后更新:</span>2019年11月11日 - 09:31</p>
   <p><span>原始链接:</span><a href="/2019/11/06/Docker%E5%85%A5%E9%97%A8/" title="Docker学习笔记">https://xlline.github.io/2019/11/06/Docker%E5%85%A5%E9%97%A8/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/11/06/Docker%E5%85%A5%E9%97%A8/"  aria-label="复制成功！"></i></span>
   </p>
@@ -625,7 +625,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -636,7 +636,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -647,7 +647,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -738,7 +738,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 16.7k 字</span>
+  <span class="post-count">全站共 17.8k 字</span>
 </div>
         
 

@@ -86,19 +86,21 @@
 
 
 
-<meta name="description" content="为了学习docker来回顾Linux基础，本篇是基于Ubuntu操作系统安装部署遇到问题或有用知识点的汇总整理。 ifconfig命令找不到问题描述： 在Vmware安装完成Ubuntu后，输入ifconfig提示：Command ‘ifconfig’ not found, but can be installed with: sudo apt install net-tools。当然官方提醒我们">
+<meta name="description" content="为了学习docker来回顾Linux基础，本篇是基于Ubuntu操作系统18.04.3版本安装部署遇到问题或有用知识点的汇总整理。 ifconfig命令找不到问题描述： 在Vmware安装完成Ubuntu后，输入ifconfig提示：Command ‘ifconfig’ not found, but can be installed with: sudo apt install net-tools">
 <meta name="keywords" content="基础,Linux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Ubuntu速学笔记">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;08&#x2F;Ubuntu&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="为了学习docker来回顾Linux基础，本篇是基于Ubuntu操作系统安装部署遇到问题或有用知识点的汇总整理。 ifconfig命令找不到问题描述： 在Vmware安装完成Ubuntu后，输入ifconfig提示：Command ‘ifconfig’ not found, but can be installed with: sudo apt install net-tools。当然官方提醒我们">
+<meta property="og:description" content="为了学习docker来回顾Linux基础，本篇是基于Ubuntu操作系统18.04.3版本安装部署遇到问题或有用知识点的汇总整理。 ifconfig命令找不到问题描述： 在Vmware安装完成Ubuntu后，输入ifconfig提示：Command ‘ifconfig’ not found, but can be installed with: sudo apt install net-tools">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;08&#x2F;Ubuntu&#x2F;ifconfig_error.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;08&#x2F;Ubuntu&#x2F;ifconfig_sess.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;08&#x2F;Ubuntu&#x2F;ifconfig_lock.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;08&#x2F;Ubuntu&#x2F;php_ver.png">
-<meta property="og:updated_time" content="2019-11-08T10:36:55.190Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;08&#x2F;Ubuntu&#x2F;mysql_cnf.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;08&#x2F;Ubuntu&#x2F;memcache_install.png">
+<meta property="og:updated_time" content="2019-11-15T01:39:07.329Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;08&#x2F;Ubuntu&#x2F;ifconfig_error.png">
 
@@ -408,7 +410,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1k 字
+                  1.9k 字
                 </span>
               
 
@@ -424,7 +426,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4分钟
+                  8分钟
                 </span>
               
             </span>
@@ -445,36 +447,69 @@
       
 
       
-        <p>为了学习docker来回顾Linux基础，本篇是基于Ubuntu操作系统安装部署遇到问题或有用知识点的汇总整理。</p>
+        <p>为了学习docker来回顾Linux基础，本篇是基于Ubuntu操作系统18.04.3版本安装部署遇到问题或有用知识点的汇总整理。</p>
 <h1 id="ifconfig命令找不到"><a href="#ifconfig命令找不到" class="headerlink" title="ifconfig命令找不到"></a>ifconfig命令找不到</h1><p>问题描述： 在Vmware安装完成Ubuntu后，输入ifconfig提示：<em>Command ‘ifconfig’ not found, but can be installed with: sudo apt install net-tools</em>。当然官方提醒我们可以使用<code>sudo apt install net-tools</code>安装net-tools，然而并不如预想。</p>
 <div style="width: 70%;margin: left"><img src="/2019/11/08/Ubuntu/ifconfig_error.png" class="" title="ifconfig命令不存在"></div>
 <a id="more"></a>
-解决方案： 执行语句 ` sudo apt-get update &amp;&amp; sudo apt-get install net-tools`
-再输入ifconfig就正常啦。(apt-get用于自动从互联网的软件仓库中搜索、安装、升级或卸载软件。我们需要顶起执行`apt-get update`，让我们缓存在系统中的软件列表源是最新的)
+
+<p>解决方案： 执行语句 <code>sudo apt-get update &amp;&amp; sudo apt-get install net-tools</code><br>再输入ifconfig就正常啦。(apt-get用于自动从互联网的软件仓库中搜索、安装、升级或卸载软件。我们需要定期执行<code>apt-get update</code>，让我们缓存包在系统中的软件列表源是最新的)</p>
 <div style="width: 70%;margin: left"> <img src="/2019/11/08/Ubuntu/ifconfig_sess.png" class=""></div>
 
 <p>如果在过程中提示 <em>E: Could not get lock /var/lib/apt/lists/lock - open (11: Resource temporarily unavailable)</em>， 不用担心，这是因为上一次安装时异常退出导致锁残留，可直接删除掉这个锁文件，使用命令<code>sudo rm /var/lib/apt/lists/lock</code>。</p>
 <div style="width: 70%;margin: left"><img src="/2019/11/08/Ubuntu/ifconfig_lock.png" class=""></div>
 
-<h1 id="编译安装PHP"><a href="#编译安装PHP" class="headerlink" title="编译安装PHP"></a>编译安装PHP</h1><ol>
-<li><p>官网下载安装包到本地  </p>
-</li>
-<li><p>执行预编译，使用<code>./configure --prefix=/usr/local/php</code>(这个后面最好加上<code>--with-config-file-path=/usr/local/php/conf</code>，代表指定php.ini路径，否则后面需要自己去设置) 代表我要装到/usr/local/php里，配置文件放到conf里  </p>
-<p> a. 如果遇到错误：<em>error:xml2-config not found.Please check your libxml2 installation.</em> ，说明依赖包libxml2不存在，需要安装使用命令<code>apt-get install libxml2-dev -y</code>。<br> b. 如果安装libxml2过程又提示<em>Unable to fetch some archives, maybe run apt-get update or try with –fix-missing?</em>，可执行<code>apt-get install libxml2-dev -y --fix-missing</code>解决。<br> c. 如果又报错<em>configure: error: no acceptable C compiler found in $PATH</em>，是因为你本地没有可执行编译的源文件，需要执行<code>sudo apt-get update &amp;&amp; sudo apt-get install gcc -y</code>解决。</p>
-</li>
-<li><p>安装，执行完成之后最后一定要执行<code>make</code>，这一步是真正的编译。然后还要执行<code>sudo make install</code>，这一步是拷贝到你的目标文件夹，否则/usr/local/php是不会有的。  </p>
-</li>
-<li><p>验证，没有Hello world感觉不完整是不是。写个简单的PHP页面</p>
-<div style="width: 70%;margin: left"><img src="/2019/11/08/Ubuntu/php_ver.png" class=""></div>
+<h1 id="编译安装PHP7-3-11"><a href="#编译安装PHP7-3-11" class="headerlink" title="编译安装PHP7.3.11"></a>编译安装PHP7.3.11</h1><ol>
+<li>官网 <a href="http://php.net/downloads.php" target="_blank" rel="noopener">http://php.net/downloads.php</a> 下载安装包到本地或者使用wget <code>wget http://cn2.php.net/distributions/php-7.3.11.tar.gz</code></li>
+<li>安装依赖包 libxml2-dev和 gcc<br>a. 如果遇到错误：<em>error:xml2-config not found.Please check your libxml2 installation.</em> ，说明依赖包libxml2不存在，需要安装使用命令<code>sudo apt-get update &amp;&amp; sudo apt-get install libxml2-dev -y</code>。<br> b. 如果安装libxml2过程又提示<em>Unable to fetch some archives, maybe run apt-get update or try with –fix-missing?</em>，可执行<code>apt-get install libxml2-dev -y --fix-missing</code>解决。多次尝试无效时，保证当前网络连接正常的基础上，执行<code>sudo apt-get clean</code>再进行后续操作。<br> c. 如果又报错<em>configure: error: no acceptable C compiler found in $PATH</em>，是因为你本地没有可执行编译的源文件，需要执行<code>sudo apt-get update &amp;&amp; sudo apt-get install gcc -y</code>解决。</li>
+<li>执行预编译，使用<code>./configure --prefix=/usr/local/php</code>(这个后面最好加上<code>--with-config-file-path=/usr/local/php/conf</code>，代表指定php.ini路径，否则后面需要自己去设置) 代表我要装到/usr/local/php里，配置文件放到conf里  </li>
+<li>安装，执行完成之后最后一定要执行<code>make</code>，这一步是真正的编译。然后还要执行<code>sudo make install</code>，这一步是拷贝到你的目标文件夹，否则/usr/local/php是不会有的。  </li>
+<li>验证，没有Hello world感觉不完整是不是。写个简单的PHP页面<div style="width: 60%;margin: left"><img src="/2019/11/08/Ubuntu/php_ver.png" class=""></div>
 
 </li>
 </ol>
 <h1 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h1><p>基于用户级的环境变量设置 在home目录下的隐藏文件 .bashrc，输入<code>export name=xugz</code>设置个名字，使用<code>source .bashrc</code>执行。比如说我现在安装了Nodejs，但是只能在node安装目录下进行操作，如何处理呢？可以通过修改环境变量实现。在.bashrc文件中追加<code>export PATH=$PATH:/home/xugz/tool/node-v12.13.0-linux-x64/bin</code>后保存退出，使用<code>source .bashrc</code>执行就可以在任何文件目录下执行node操作了。<br>全局环境变量在<code>/etc/profile</code>文件下</p>
 <h1 id="Mysql8-0-18源码安装"><a href="#Mysql8-0-18源码安装" class="headerlink" title="Mysql8.0.18源码安装"></a>Mysql8.0.18源码安装</h1><ol>
-<li>官网下载源码 社区版  Compressed TAR Archive, Includes Boost Headers</li>
-<li>安装依赖编译工具<br>a. CMake(CMake是一个跨平台的安装（编译）工具，可以用简单的语句来描述所有平台的安装（编译过程）。他能够输出各种各样的makefile)。我这里直接使用<code>sudo apt-get update &amp;&amp; sudo apt-get install cmake -y</code>执行安装。如果版本过低，可以去<a href="https://cmake.org/files/v3.4/cmake-3.4.1.tar.gz" target="_blank" rel="noopener">https://cmake.org/files/v3.4/cmake-3.4.1.tar.gz</a>下载后手动编译安装。<br>b. GIT 安装 使用 <code>sudo apt-get update &amp;&amp; sudo apt-get install git -y</code><br>c. c/c++编译器 使用 <code>sudo apt-get update &amp;&amp; sudo apt-get install gcc g++ -y</code><br>d. Linux常用图形库 使用 <code>sudo apt-get update &amp;&amp; sudo apt-get install libncurses5 libncurses5-dev -y</code><br>e. 还有些其他的 <code>sudo apt install build-essential bison libssl-dev pkg-config</code></li>
-<li>新建 /usr/local/mysql文件, 修改归属用户权限</li>
-<li>编译 执行<code>cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DSYSCONFDIR=/etc -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DMYSQL_DATADIR=/var/lib/mysql/data -DWITH_BOOST=boost</code>，如果没有草错，执行<code>make</code>编译，然后开始漫长的等待，漫长的等待。完成后执行 <code>make install</code> 执行安装</li>
+<li><p>官网下载源码 源码包分为带boost版和不带boost版的，我这里直接下面自带boost版的。 社区版  Compressed TAR Archive, Includes Boost Headers。浏览器下载或者使用wget:</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-boost-8.0.18.tar.gz</span><br><span class="line">tar xzv -f mysql-boost-8.0.18.tar.gz</span><br><span class="line">cd mysql-8.0.18/</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>安装依赖编译工具<br><code>sudo apt install cmake build-essential bison libssl-dev pkg-config git gcc g++ libncurses5 libncurses5-dev -y</code><br><a href="https://dev.mysql.com/doc/refman/8.0/en/source-installation.html" target="_blank" rel="noopener">详细依赖列表参考点我</a></p>
+</li>
+<li><p>编译执行 <code>cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DSYSCONFDIR=/etc -DMYSQL_DATADIR=/usr/local/mysql/data -DWITH_BOOST=boost  -DFORCE_INSOURCE_BUILD=1</code> （<a href="https://dev.mysql.com/doc/refman/8.0/en/source-configuration-options.html" target="_blank" rel="noopener">cmake的完整选项列表点我</a>）。运行成功，会显示</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-- Configuring done</span><br><span class="line">-- Generating done</span><br><span class="line">-- Build files have been written to: /home/xugz/Downloads/mysql-8.0.18</span><br></pre></td></tr></tbody></table></figure>
+<p>如果没有报错，执行<code>make</code>编译，然后开始漫长的等待，等待……编译完成后执行 <code>make install</code> 安装</p>
+</li>
+<li><p>新建 /usr/local/mysql文件, 修改归属用户权限<code>chown xugz:xugz mysql</code></p>
+</li>
+<li><p>初始化配置<br>详细参考 <a href="https://dev.mysql.com/doc/refman/8.0/en/installing-source-distribution.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.0/en/installing-source-distribution.html</a><br>mysqld是最终需要运行的可执行程序，不过我们一般使用mysqld_safe这个脚本来执行。进入安装目录 <code>cd /usr/local/mysql</code>，进入bin目录我们执行<code>mysqld --verbose --help</code>生成所有mysqld选项和可配置变量的列表</p>
+<div style="width: 60%;margin: left"><img src="/2019/11/08/Ubuntu/mysql_cnf.png" class="" title="mysql查找配置文件的顺序"></div>
+
+<p>如上图所示，MySQL先去寻找/etc/mysql/my.cnf文件，如果没有再去寻找 /etc/my.cnf，还没有再去寻找~/.my.cnf。我们只需要三选一创建文件，这里我选择大众常用的 /etc/my.cnf。执行<code>sudo vi /etc/my.cnf</code>添加以下内容</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[client]</span><br><span class="line">port = 3306</span><br><span class="line">socket = /usr/local/mysql/data/mysql.sock</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">port  = 3306</span><br><span class="line">socket = /usr/local/mysql/data/mysql.sock</span><br><span class="line">basedir = /usr/local/mysql</span><br><span class="line">datadir = /usr/local/mysql/data</span><br></pre></td></tr></tbody></table></figure>
+<p>检查安装目录是否存在data文件夹，这个文件夹用来存放数据库文件的，没有的话需要手动创建，并修改当前用户所有权限。<br>回到bin目录初始化数据库，使用命令<br><code>./mysqld --initialize --user=xugz --basedir=/usr/local/mysql --datadir=/usr/local/mysql/data/</code><br>这一步会随机生成的root账号初始密码，记录备用 kacIL6Vxs*dX</p>
+</li>
+<li><p>启动&amp;连接<br>使用命令<code>/usr/local/mysql/bin/mysqld_safe</code> 启动，然后新开命令窗口执行<code>ps -ef | grep mysql</code> 验证<br>在/usr/local/mysql/bin目录下，使用<code>./mysql -u root -p</code>登陆，密码为刚才生成的随机字串。临时密码不可用，键入命令会提示修改。使用命令<code>alter user user() identified by 'qwe123';</code>退出后MySQL链接重进就可以正常操作了。</p>
+</li>
+<li><p>关闭数据库连接<br>使用命令 <code>./mysqladmin -u root -pqwe123 shutdown</code></p>
+</li>
+</ol>
+<p>CREATE USER  ‘xugz’@’%’ IDENTIFIED WITH mysql_native_password BY ‘qwe123’;</p>
+<h1 id="Memcached安装"><a href="#Memcached安装" class="headerlink" title="Memcached安装"></a>Memcached安装</h1><ol>
+<li><p>安装包下载 <a href="http://memcached.org/downloads" target="_blank" rel="noopener">官网地址</a> 或者使用wget。官网已经给我们详细说明</p>
+<div style="width: 55%;margin: left"><img src="/2019/11/08/Ubuntu/memcache_install.png" class=""></div>
+</li>
+<li><p>安装依赖 <code>sudo apt-get install libevent-dev -y</code> 灵活点根据官网提示修改</p>
+</li>
+<li><p>配置安装<br>进入memcache下载目录使用命令 <code>./configure --prefix=/usr/local/memcached</code> 完成后执行<code>make</code>，之后执行<code>make install</code>。这时我们就可以在/usr/local/memcached中看到bin目录了</p>
+</li>
+<li><p>启动</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/memcached/bin/memcached -d -m 512 -u xugz -l 127.0.0.1 -p 11211 -c 1024 -P /usr/local/memcached/memcached.pid</span><br><span class="line"></span><br><span class="line"> 备注：</span><br><span class="line"> -d 以守护进程 </span><br><span class="line"> -m 代表分配的内存（单位M）</span><br><span class="line"> -l 连接的IP地址。默认只有本机可以连。多个IP用,连接</span><br><span class="line"> -c 最大并发连接数</span><br><span class="line"> -P pid文件</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>连接<br><code>telnet 127.0.0.1 11211</code>进入。使用<code>set keyName flags 过期时间（秒） bytes(值的长度)</code>换行，键入值。使用<code>get keyName</code>获取</p>
+</li>
+</ol>
+<h1 id="Navicat安装"><a href="#Navicat安装" class="headerlink" title="Navicat安装"></a>Navicat安装</h1><p>下载安装包 <a href="https://www.navicat.com/en/download/direct-download?product=navicat_mysql_en_x64.tar.gz&amp;location=1" target="_blank" rel="noopener">官网地址</a>完成后解压。进入解压后的目录运行<code>./start_navicat</code>即可<br>破解方案：<br>执行start_navicat时，会在用户主目录下生成一个名为.navicat的隐藏文件夹。<br><code>cd /home/xugz/.navicat/</code><br>此文件夹下有一个system.reg文件。把此文件删除后，下次启动navicat 会重新生成此文件，规定试用期会按新的时间开始计算。</p>
+<h1 id="编译安装PHP下面的memcahed拓展"><a href="#编译安装PHP下面的memcahed拓展" class="headerlink" title="编译安装PHP下面的memcahed拓展"></a>编译安装PHP下面的memcahed拓展</h1><ol>
+<li>安装基本依赖 <code>sudo apt-get update &amp;&amp; sudo apt-get install autoconf igbinary msgpack zlib1g-dev -y</code></li>
+<li>安装依赖包 libmemcached。进入<a href="https://launchpad.net/libmemcached/+download" target="_blank" rel="noopener">官网下载地址</a>下载完成后解压进入解压目录执行 <code>./configure &amp;&amp; make &amp;&amp; make install</code>和memcached </li>
+<li>下载拓展包<br><code>git clone https://github.com/php-memcached-dev/php-memcached.git</code></li>
 </ol>
 <script>
         document.querySelectorAll('.github-emoji')
@@ -513,7 +548,7 @@
   <p><span>本文标题:</span><a href="/2019/11/08/Ubuntu/">Ubuntu速学笔记</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年11月08日 - 17:02</p>
-  <p><span>最后更新:</span>2019年11月08日 - 18:36</p>
+  <p><span>最后更新:</span>2019年11月15日 - 09:39</p>
   <p><span>原始链接:</span><a href="/2019/11/08/Ubuntu/" title="Ubuntu速学笔记">https://xlline.github.io/2019/11/08/Ubuntu/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/11/08/Ubuntu/"  aria-label="复制成功！"></i></span>
   </p>
@@ -578,6 +613,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/15/mysql8.0%E4%B9%8Bcaching_sha2_password/" rel="prev" title="mysql8.0之caching_sha2_password">
+                mysql8.0之caching_sha2_password <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -654,7 +693,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -665,7 +704,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -676,7 +715,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -725,7 +764,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ifconfig命令找不到"><span class="nav-number">1.</span> <span class="nav-text">ifconfig命令找不到</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#编译安装PHP"><span class="nav-number">2.</span> <span class="nav-text">编译安装PHP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#环境变量"><span class="nav-number">3.</span> <span class="nav-text">环境变量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mysql8-0-18源码安装"><span class="nav-number">4.</span> <span class="nav-text">Mysql8.0.18源码安装</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ifconfig命令找不到"><span class="nav-number">1.</span> <span class="nav-text">ifconfig命令找不到</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#编译安装PHP7-3-11"><span class="nav-number">2.</span> <span class="nav-text">编译安装PHP7.3.11</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#环境变量"><span class="nav-number">3.</span> <span class="nav-text">环境变量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mysql8-0-18源码安装"><span class="nav-number">4.</span> <span class="nav-text">Mysql8.0.18源码安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Memcached安装"><span class="nav-number">5.</span> <span class="nav-text">Memcached安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Navicat安装"><span class="nav-number">6.</span> <span class="nav-text">Navicat安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#编译安装PHP下面的memcahed拓展"><span class="nav-number">7.</span> <span class="nav-text">编译安装PHP下面的memcahed拓展</span></a></li></ol></div>
             
 
           </div>
@@ -767,7 +806,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 16.7k 字</span>
+  <span class="post-count">全站共 17.8k 字</span>
 </div>
         
 
