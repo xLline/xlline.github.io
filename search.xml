@@ -10,30 +10,33 @@
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">CREATE TABLE `employees` (</span><br><span class="line">  `emp_no` int(11) NOT NULL COMMENT '员工号',</span><br><span class="line">  `birth_date` date NOT NULL COMMENT '出生年月',</span><br><span class="line">  `first_name` varchar(14) NOT NULL COMMENT '名',</span><br><span class="line">  `last_name` varchar(16) NOT NULL COMMENT '姓',</span><br><span class="line">  `gender` enum('M','F') NOT NULL COMMENT '性别',</span><br><span class="line">  `hire_date` date NOT NULL COMMENT '雇佣时间',</span><br><span class="line">  `ids` char(18) DEFAULT NULL COMMENT '身份证号',</span><br><span class="line">  PRIMARY KEY (`emp_no`),</span><br><span class="line">  KEY `idx_last_first_name` (`last_name`,`first_name`)</span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure>
 <p>下面SQL是遵循了最左匹配原则的语句</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_1.png" class></div>
+<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_1.png" class=""></div>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones' ORDER BY last_name,first_name desc;</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_2.png" class></div>
+<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_2.png" class=""></div>
 
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones' AND first_name='John';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_3.png" class></div>
+<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_3.png" class=""></div>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">SELECT * FROM employees  WHERE last_name='Jones'  AND (first_name='John' OR first_name='Jon');</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_4.png" class></div>
+<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_4.png" class=""></div>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">SELECT * FROM employees  WHERE last_name='Jones'  AND first_name &gt;='M' AND first_name &lt; 'N';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_5.png" class></div>
+<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_5.png" class=""></div>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name ='M' ORDER BY first_name,last_name desc;</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_6.png" class></div>
+<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_6.png" class=""></div>
 
 
 <p>不走索引的语句类型有 </p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">SELECT * FROM employees WHERE first_name='John';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_error_1.png" class></div>
+<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_error_1.png" class=""></div>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones' OR first_name='John';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_error_2.png" class></div>
+<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_error_2.png" class=""></div>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones' ORDER BY first_name,last_name desc;</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_error_3.png" class></div>
+<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_error_3.png" class=""></div>
 
 
-<p>注意，排序时是否走索引还会根据数据类型变化，多种情况不一，目前尚未发现规律，后续再补。</p>
+<p>注意，排序时是否走索引受MySQL版本的影响，在MySQL8.0后，在排序查询中字段顺序不受影响。如图</p>
+<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/order_1.png" class=""></div>
+
+<p>但是在MySQL5.7及以下版本中，排序查询受字段顺序影响。</p>
 <p>参考文档</p>
 <ol>
 <li>MySQL联合索引 <a href="https://dev.mysql.com/doc/refman/5.7/en/multiple-column-indexes.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/multiple-column-indexes.html</a></li>
@@ -70,7 +73,7 @@
       </tags>
   </entry>
   <entry>
-    <title>mysql8.0之caching_sha2_password</title>
+    <title>MySQL8.0之caching_sha2_password</title>
     <url>/2019/11/15/mysql8.0%E4%B9%8Bcaching_sha2_password/</url>
     <content><![CDATA[<p>本地MySQL8.0.18安装完成在命令行中可以正常连接访问，使用Navicat测试连接报错<em>Authentication plugin ‘caching_sha2_password’ cannot be loaded</em>。导致异常的原因是MySQL不同版本使用的密码加密规则不一致。在MySQL8之前的版本使用的密码加密规则是mysql_native_password，但是在MySQL8则是caching_sha2_password。</p>
 <a id="more"></a>
@@ -196,12 +199,12 @@
         <category>Ubuntu</category>
       </categories>
       <tags>
-        <tag>基础</tag>
         <tag>Linux</tag>
+        <tag>基础</tag>
       </tags>
   </entry>
   <entry>
-    <title>Docker学习笔记</title>
+    <title>CentOS8安装Docker</title>
     <url>/2019/11/06/Docker%E5%85%A5%E9%97%A8/</url>
     <content><![CDATA[<h1 id="CentOS8安装Docker"><a href="#CentOS8安装Docker" class="headerlink" title="CentOS8安装Docker"></a>CentOS8安装Docker</h1><p><strong>卸载旧版本</strong><br>较旧的 Docker 版本称为 docker 或 docker-engine 。如果已安装这些程序，请卸载它们以及相关的依赖项</p>
 <p><strong>安装步骤</strong></p>
@@ -219,6 +222,16 @@
 <p>之后重新启动服务</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></tbody></table></figure>
 <p>重启之后，就可以正常拉取helloworld镜像了。</p>
+<h2 id="IPv4-forwarding-is-disabled-Networking-will-not-work"><a href="#IPv4-forwarding-is-disabled-Networking-will-not-work" class="headerlink" title="IPv4 forwarding is disabled. Networking will not work."></a>IPv4 forwarding is disabled. Networking will not work.</h2><p>解决办法：<br>sudo vi /etc/sysctl.conf   (Linux内核参数配置文件，可在运行时修改某些内核参数，使之永久生效)<br>加入net.ipv4.ip_forward=1<br>保存并退出后  执行systemctl restart network。并且需要确保8080端口已放行</p>
+<h1 id="简单操作拉取镜像"><a href="#简单操作拉取镜像" class="headerlink" title="简单操作拉取镜像"></a>简单操作拉取镜像</h1><ol>
+<li>选取我们需要的镜像，根据提示执行命令 <code>docker pull registry.cn-hangzhou.aliyuncs.com/lxepoo/apache-php5</code>或者 <code>docker build -t my-php-app .</code>命令</li>
+<li>等待执行成功，使用命令<code>docker images</code>查看镜像</li>
+<li>启动镜像 使用命令 <code>docker run -d -p 8080:80 registry.cn-hangzhou.aliyuncs.com/lxepoo/apache-php5</code> or <code>docker run -it --rm --name my-running-app my-php-app</code>  <em>-d 后台运行  -p 端口映射</em></li>
+<li>列出所有运行中容器 <code>docker ps</code> 列出所有镜像使用命令 <code>docker ps -a</code></li>
+<li>停止镜像 <code>docker stop registry.cn-hangzhou.aliyuncs.com/lxepoo/apache-php5</code></li>
+<li>启动镜像 <code>docker start imageId</code></li>
+</ol>
+<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><p>官方文档 <a href="https://docs.docker.com/engine/installation/linux/docker-ce/centos/" target="_blank" rel="noopener">https://docs.docker.com/engine/installation/linux/docker-ce/centos/</a><br>阿里云的帮助文档 <a href="https://yq.aliyun.com/articles/110806?spm=5176.8351553.0.0.1e5e1991TGJNNN" target="_blank" rel="noopener">https://yq.aliyun.com/articles/110806?spm=5176.8351553.0.0.1e5e1991TGJNNN</a><br>阿里云开源镜像地址 <a href="https://cr.console.aliyun.com/cn-shenzhen/instances/images" target="_blank" rel="noopener">https://cr.console.aliyun.com/cn-shenzhen/instances/images</a></p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -701,8 +714,8 @@ fi</code></pre></li>
         <category>crontab</category>
       </categories>
       <tags>
-        <tag>基础</tag>
         <tag>Linux</tag>
+        <tag>基础</tag>
         <tag>crontab</tag>
       </tags>
   </entry>
@@ -928,7 +941,7 @@ fi</code></pre></li>
 <li>创建文件 <code>vi /mnt/startMyApp.sh</code> # 路径可自指定  <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">i=0</span><br><span class="line">while true</span><br><span class="line">do</span><br><span class="line">    echo $i&gt;&gt;/mnt/MyApp.txt</span><br><span class="line">    ((i++))</span><br><span class="line">    sleep 1</span><br><span class="line">done</span><br></pre></td></tr></tbody></table></figure></li>
 <li>给脚本设置执行权限<code>chmod a+x startMyApp.sh</code></li>
 <li>自定义myapp服务脚本<code>vi /etc/systemd/system/myapp.service</code><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[Unit] # 服务单元</span><br><span class="line">Description=myapp service  </span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">WorkingDirectory=/mnt # 工作目录</span><br><span class="line">ExecStart=/mnt/startMyApp.sh</span><br><span class="line">ExecStop=/bin/kill -s TERM $MAINPID  </span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target # 设置开机启动放到哪个运行级别</span><br></pre></td></tr></tbody></table></figure></li>
-<li>systemctl服务重载<br><code>systemctl daemon-reload</code></li>
+<li>重载所有修改过的配置文件,扫描新的或有变动的单元<br><code>systemctl daemon-reload</code></li>
 <li>把myapp服务加入开机启动<br><code>systemctl enable myapp.service</code></li>
 <li>启动myapp服务后程序执行<br><code>systemctl start myapp.service</code></li>
 <li>关闭myapp服务<br><code>systemctl stop myapp.service</code></li>
@@ -958,8 +971,8 @@ fi</code></pre></li>
         <category>Linux</category>
       </categories>
       <tags>
-        <tag>基础</tag>
         <tag>Linux</tag>
+        <tag>基础</tag>
       </tags>
   </entry>
   <entry>
@@ -1122,52 +1135,6 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
-    <title>Hexo NexT主题添加字数统计阅读时长</title>
-    <url>/2019/06/19/hexo_add_wordcount/</url>
-    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
-<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<p>到这里就可以啦，快去试试吧。  </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>修改Hexo博客next主题文章页面宽度</title>
     <url>/2019/06/19/hexo_postwidth/</url>
     <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
@@ -1206,6 +1173,52 @@ header.post-header {
     width: 100% !important;
   }
 }</code></pre><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo NexT主题添加字数统计阅读时长</title>
+    <url>/2019/06/19/hexo_add_wordcount/</url>
+    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
+<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<p>到这里就可以啦，快去试试吧。  </p>
+<script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }

@@ -89,12 +89,12 @@
 <meta name="description" content="CentOS8安装Docker卸载旧版本较旧的 Docker 版本称为 docker 或 docker-engine 。如果已安装这些程序，请卸载它们以及相关的依赖项 安装步骤  下载docker-ce的repocurl https:&#x2F;&#x2F;download.docker.com&#x2F;linux&#x2F;centos&#x2F;docker-ce.repo -o &#x2F;etc&#x2F;yum.repos.d&#x2F;docker-ce.rep">
 <meta name="keywords" content="Docker">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Docker学习笔记">
+<meta property="og:title" content="CentOS8安装Docker">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;06&#x2F;Docker%E5%85%A5%E9%97%A8&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
 <meta property="og:description" content="CentOS8安装Docker卸载旧版本较旧的 Docker 版本称为 docker 或 docker-engine 。如果已安装这些程序，请卸载它们以及相关的依赖项 安装步骤  下载docker-ce的repocurl https:&#x2F;&#x2F;download.docker.com&#x2F;linux&#x2F;centos&#x2F;docker-ce.repo -o &#x2F;etc&#x2F;yum.repos.d&#x2F;docker-ce.rep">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-11T01:31:49.288Z">
+<meta property="og:updated_time" content="2019-11-20T10:07:00.127Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -136,7 +136,7 @@
 
 
 
-  <title>Docker学习笔记 | 理想国</title>
+  <title>CentOS8安装Docker | 理想国</title>
   
 
 
@@ -314,7 +314,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Docker学习笔记</h1>
+          <h1 class="post-title" itemprop="name headline">CentOS8安装Docker</h1>
         
 
         <div class="post-meta">
@@ -392,7 +392,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  621 字
+                  901 字
                 </span>
               
 
@@ -408,7 +408,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2分钟
+                  4分钟
                 </span>
               
             </span>
@@ -445,6 +445,16 @@
 <p>之后重新启动服务</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></tbody></table></figure>
 <p>重启之后，就可以正常拉取helloworld镜像了。</p>
+<h2 id="IPv4-forwarding-is-disabled-Networking-will-not-work"><a href="#IPv4-forwarding-is-disabled-Networking-will-not-work" class="headerlink" title="IPv4 forwarding is disabled. Networking will not work."></a>IPv4 forwarding is disabled. Networking will not work.</h2><p>解决办法：<br>sudo vi /etc/sysctl.conf   (Linux内核参数配置文件，可在运行时修改某些内核参数，使之永久生效)<br>加入net.ipv4.ip_forward=1<br>保存并退出后  执行systemctl restart network。并且需要确保8080端口已放行</p>
+<h1 id="简单操作拉取镜像"><a href="#简单操作拉取镜像" class="headerlink" title="简单操作拉取镜像"></a>简单操作拉取镜像</h1><ol>
+<li>选取我们需要的镜像，根据提示执行命令 <code>docker pull registry.cn-hangzhou.aliyuncs.com/lxepoo/apache-php5</code>或者 <code>docker build -t my-php-app .</code>命令</li>
+<li>等待执行成功，使用命令<code>docker images</code>查看镜像</li>
+<li>启动镜像 使用命令 <code>docker run -d -p 8080:80 registry.cn-hangzhou.aliyuncs.com/lxepoo/apache-php5</code> or <code>docker run -it --rm --name my-running-app my-php-app</code>  <em>-d 后台运行  -p 端口映射</em></li>
+<li>列出所有运行中容器 <code>docker ps</code> 列出所有镜像使用命令 <code>docker ps -a</code></li>
+<li>停止镜像 <code>docker stop registry.cn-hangzhou.aliyuncs.com/lxepoo/apache-php5</code></li>
+<li>启动镜像 <code>docker start imageId</code></li>
+</ol>
+<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><p>官方文档 <a href="https://docs.docker.com/engine/installation/linux/docker-ce/centos/" target="_blank" rel="noopener">https://docs.docker.com/engine/installation/linux/docker-ce/centos/</a><br>阿里云的帮助文档 <a href="https://yq.aliyun.com/articles/110806?spm=5176.8351553.0.0.1e5e1991TGJNNN" target="_blank" rel="noopener">https://yq.aliyun.com/articles/110806?spm=5176.8351553.0.0.1e5e1991TGJNNN</a><br>阿里云开源镜像地址 <a href="https://cr.console.aliyun.com/cn-shenzhen/instances/images" target="_blank" rel="noopener">https://cr.console.aliyun.com/cn-shenzhen/instances/images</a></p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -479,11 +489,11 @@
   <!-- JS库 sweetalert 可修改路径 -->
   <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/2019/11/06/Docker%E5%85%A5%E9%97%A8/">Docker学习笔记</a></p>
+  <p><span>本文标题:</span><a href="/2019/11/06/Docker%E5%85%A5%E9%97%A8/">CentOS8安装Docker</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年11月06日 - 16:27</p>
-  <p><span>最后更新:</span>2019年11月11日 - 09:31</p>
-  <p><span>原始链接:</span><a href="/2019/11/06/Docker%E5%85%A5%E9%97%A8/" title="Docker学习笔记">https://xlline.github.io/2019/11/06/Docker%E5%85%A5%E9%97%A8/</a>
+  <p><span>最后更新:</span>2019年11月20日 - 18:07</p>
+  <p><span>原始链接:</span><a href="/2019/11/06/Docker%E5%85%A5%E9%97%A8/" title="CentOS8安装Docker">https://xlline.github.io/2019/11/06/Docker%E5%85%A5%E9%97%A8/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/11/06/Docker%E5%85%A5%E9%97%A8/"  aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
@@ -696,7 +706,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CentOS8安装Docker"><span class="nav-number">1.</span> <span class="nav-text">CentOS8安装Docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见问题"><span class="nav-number">2.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-安装完成后测试hello-world出现问题（Unable-to-find-image-‘hello-world-latest’-locally）"><span class="nav-number">2.1.</span> <span class="nav-text">docker 安装完成后测试hello-world出现问题（Unable to find image ‘hello-world:latest’ locally）</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CentOS8安装Docker"><span class="nav-number">1.</span> <span class="nav-text">CentOS8安装Docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见问题"><span class="nav-number">2.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-安装完成后测试hello-world出现问题（Unable-to-find-image-‘hello-world-latest’-locally）"><span class="nav-number">2.1.</span> <span class="nav-text">docker 安装完成后测试hello-world出现问题（Unable to find image ‘hello-world:latest’ locally）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPv4-forwarding-is-disabled-Networking-will-not-work"><span class="nav-number">2.2.</span> <span class="nav-text">IPv4 forwarding is disabled. Networking will not work.</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简单操作拉取镜像"><span class="nav-number">3.</span> <span class="nav-text">简单操作拉取镜像</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文档"><span class="nav-number">4.</span> <span class="nav-text">参考文档</span></a></li></ol></div>
             
 
           </div>
@@ -738,7 +748,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 18.4k 字</span>
+  <span class="post-count">全站共 18.7k 字</span>
 </div>
         
 
