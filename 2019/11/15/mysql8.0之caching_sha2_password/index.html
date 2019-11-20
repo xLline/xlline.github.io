@@ -94,7 +94,7 @@
 <meta property="og:site_name" content="理想国">
 <meta property="og:description" content="本地MySQL8.0.18安装完成在命令行中可以正常连接访问，使用Navicat测试连接报错Authentication plugin ‘caching_sha2_password’ cannot be loaded。导致异常的原因是MySQL不同版本使用的密码加密规则不一致。在MySQL8之前的版本使用的密码加密规则是mysql_native_password，但是在MySQL8则是cachin">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-15T01:54:42.443Z">
+<meta property="og:updated_time" content="2019-11-20T03:05:52.656Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -392,7 +392,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  239 字
+                  250 字
                 </span>
               
 
@@ -431,7 +431,7 @@
       
         <p>本地MySQL8.0.18安装完成在命令行中可以正常连接访问，使用Navicat测试连接报错<em>Authentication plugin ‘caching_sha2_password’ cannot be loaded</em>。导致异常的原因是MySQL不同版本使用的密码加密规则不一致。在MySQL8之前的版本使用的密码加密规则是mysql_native_password，但是在MySQL8则是caching_sha2_password。</p>
 <a id="more"></a>
-<p>解决方案：<br>一、指定加密规则为mysql_native_password<br>使用语句修改用户加密方式<code>ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';</code><br>创建了一个新用户并指定，在命令行中执行语句<code>CREATE USER  'your username'@'%' IDENTIFIED WITH mysql_native_password BY 'your password';</code>，完成后使用新用户账号密码连接Navicat。<br>二、将默认密码规则设置为mysql_native_password，刷新权限并重置root密码</p>
+<p>解决方案：<br>一、指定加密规则为mysql_native_password<br>使用语句修改用户加密方式<code>ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';</code>  后重置密码<code>alter user user() identified by 'qwe123';</code><br>创建了一个新用户并指定，在命令行中执行语句<code>CREATE USER  'your username'@'%' IDENTIFIED WITH mysql_native_password BY 'your password';</code>，完成后使用新用户账号密码连接Navicat。<br>二、将默认密码规则设置为mysql_native_password，刷新权限并重置root密码</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">default_authentication_plugin=mysql_native_password</span><br><span class="line">flush privileges;</span><br></pre></td></tr></tbody></table></figure>
 
 <script>
@@ -471,7 +471,7 @@
   <p><span>本文标题:</span><a href="/2019/11/15/mysql8.0%E4%B9%8Bcaching_sha2_password/">mysql8.0之caching_sha2_password</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年11月15日 - 17:02</p>
-  <p><span>最后更新:</span>2019年11月15日 - 09:54</p>
+  <p><span>最后更新:</span>2019年11月20日 - 11:05</p>
   <p><span>原始链接:</span><a href="/2019/11/15/mysql8.0%E4%B9%8Bcaching_sha2_password/" title="mysql8.0之caching_sha2_password">https://xlline.github.io/2019/11/15/mysql8.0%E4%B9%8Bcaching_sha2_password/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/11/15/mysql8.0%E4%B9%8Bcaching_sha2_password/"  aria-label="复制成功！"></i></span>
   </p>
@@ -536,6 +536,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/" rel="prev" title="MySQL之联合索引最左原则">
+                MySQL之联合索引最左原则 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -603,7 +607,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -625,7 +629,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -700,7 +704,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 17.8k 字</span>
+  <span class="post-count">全站共 18.4k 字</span>
 </div>
         
 
