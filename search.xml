@@ -36,17 +36,28 @@
 <h1 id="配置远程访问"><a href="#配置远程访问" class="headerlink" title="配置远程访问"></a>配置远程访问</h1><p>我们发现docker默认连接方式为unix:///var/run/docker/sock。编辑docker文件修改服务启动运行方法，增加TCP连接配置，保存后重启Docker。再次查看发现已配置成功。具体命令如下</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">ps -ef | grep docker</span><br><span class="line">sudo vim /usr/lib/systemd/system/docker.service</span><br><span class="line"># 将原来`ExecStart=/usr/bin/dockerd`改成`ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock`</span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart docker</span><br><span class="line">ps -ef | grep docker</span><br></pre></td></tr></tbody></table></figure>
 
+<h1 id="Docker管理工具portainer"><a href="#Docker管理工具portainer" class="headerlink" title="Docker管理工具portainer"></a>Docker管理工具portainer</h1><p>Docker API必须通过TCP公开，确保已经开放TCP连接2375端口<br>拉取镜像 <code>docker pull portainer/portainer</code><br>运行容器 <code>docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name mydocker portainer/portainer</code><br>运行成功后，浏览器输入虚拟机IP+9000即可进入对应可视化界面。初次进入portainer会让你先创建用户，密码要大于八位。而后配置将Portainer连接到要管理的Docker环境。</p>
+<div style="width: 68%;margin: left"><img src="/2019/11/21/docker%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/portainer_enter.png" class=""></div>
+如果在此时报错:*Get http://192.168.2.156:2375/_ping: dial tcp 192.168.2.156:2375: connect: no route to host*，关闭防火墙即可。
 
+<p>github地址：<a href="https://github.com/portainer/portainer" target="_blank" rel="noopener">https://github.com/portainer/portainer</a><br>portainer官网地址: <a href="https://portainer.readthedocs.io/en/latest/deployment.html" target="_blank" rel="noopener">https://portainer.readthedocs.io/en/latest/deployment.html</a></p>
+<h1 id="使用portainer创建MySQL容器"><a href="#使用portainer创建MySQL容器" class="headerlink" title="使用portainer创建MySQL容器"></a>使用portainer创建MySQL容器</h1><p>在搭建好的可视化界面中，找到App Templates选择需要的镜像，填写必要配置后点击部署。这里我安装的是MySQL。需要注意的是，创建完成后自动帮我们启动这个镜像，MySQL官方提醒使用命令<code>docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag</code>进行运行需要注意。记录密码 <code>docker run --name mysql -p 3307:3306 -e MYSQL_ROOT_PASSWORD=123123 -d mysql</code>。之后就可以使用本地进行来连接了。当然我们也可以使用命令行<code>docker exec -it mysql bash</code>进入docker的MySQL容器。</p>
+<div style="width: 68%;margin: left"><img src="/2019/11/21/docker%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/docker_mysql.png" class=""></div>
+
+<p>官方文档: <a href="https://hub.docker.com/_/mysql/" target="_blank" rel="noopener">https://hub.docker.com/_/mysql/</a></p>
 <h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><h2 id="普通用户运行docker命令不需要使用sudo"><a href="#普通用户运行docker命令不需要使用sudo" class="headerlink" title="普通用户运行docker命令不需要使用sudo"></a>普通用户运行docker命令不需要使用sudo</h2><p>使用root账号，修改文件 <code>/etc/sudoers</code>，在roo<br>在Linux系统中运行没有sudo密码的特定命令</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[xugz@xugz yum.repos.d]$ docker images</span><br><span class="line">Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.40/images/json: dial unix /var/run/docker.sock: connect: permission denied</span><br><span class="line">[xugz@xugz yum.repos.d]$ sudo docker images</span><br><span class="line">[sudo] password for xugz:</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">[xugz@xugz yum.repos.d]$ id xugz</span><br><span class="line">uid=1000(xugz) gid=1000(xugz) groups=1000(xugz),0(root)</span><br><span class="line">[xugz@xugz yum.repos.d]$ sudo usermod -aG docker $(whoami)</span><br><span class="line">[xugz@xugz yum.repos.d]$ id xugz</span><br><span class="line">uid=1000(xugz) gid=1000(xugz) groups=1000(xugz),984(docker),0(root)</span><br></pre></td></tr></tbody></table></figure>
 <p>注销并再次登录或者使用命令 <code>newgrp - docker</code> 改变当前用户的有效群组，完成后可以使用 <code>docker version</code> 命令检查安装的Docker版本了。</p>
 <h2 id="docker-安装完成后测试hello-world出现问题（Unable-to-find-image-‘hello-world-latest’-locally）"><a href="#docker-安装完成后测试hello-world出现问题（Unable-to-find-image-‘hello-world-latest’-locally）" class="headerlink" title="docker 安装完成后测试hello-world出现问题（Unable to find image ‘hello-world:latest’ locally）"></a>docker 安装完成后测试hello-world出现问题（Unable to find image ‘hello-world:latest’ locally）</h2><p>安装docker之后，测试hello-world镜像，终端卡在<code>Unable to find image 'hello-world:latest' locally</code>位置<br>docker在本地没有找到hello-world镜像，也没有从docker仓库中拉取镜像，出项这个问题的原因：是因为docker服务器再国外，我们在国内无法正常拉取镜像，所以就需要我们设置国内的镜像加速器。我这里用的是阿里云，当然其他的也可以，大家可以自己选择。Docker 官方和国内很多云服务商都提供了国内加速器服务，例如： Docker官方提供的中国镜像库<a href="https://registry.docker-cn.com" target="_blank" rel="noopener">https://registry.docker-cn.com</a>。<br>参考本篇<a href="xlline.github.io/2019/11/21/docker基础及常见问题/#配置镜像加速器">配置镜像加速器</a></p>
-<h2 id="IPv4-forwarding-is-disabled-Networking-will-not-work"><a href="#IPv4-forwarding-is-disabled-Networking-will-not-work" class="headerlink" title="IPv4 forwarding is disabled. Networking will not work."></a>IPv4 forwarding is disabled. Networking will not work.</h2><p>解决办法：<br><code>sudo vi /etc/sysctl.conf</code>   (Linux内核参数配置文件，可在运行时修改某些内核参数，使之永久生效)<br>加入<code>net.ipv4.ip_forward=1</code><br>保存并退出后  执行<code>systemctl restart network</code>。并且需要确保8080端口已放行</p>
+<h2 id="IPv4-forwarding-is-disabled-Networking-will-not-work"><a href="#IPv4-forwarding-is-disabled-Networking-will-not-work" class="headerlink" title="IPv4 forwarding is disabled. Networking will not work."></a>IPv4 forwarding is disabled. Networking will not work.</h2><p>解决办法：<br><code>sudo vi /etc/sysctl.conf</code>   (Linux内核参数配置文件，可在运行时修改某些内核参数，使之永久生效)<br>加入<code>net.ipv4.ip_forward=1</code><br>保存并退出后  执行<code>sudo systemctl restart network</code>。并且需要确保8080端口已放行 <code>sudo iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT</code></p>
 <h2 id="Failed-to-get-D-Bus-connection-Operation-not-permitted。"><a href="#Failed-to-get-D-Bus-connection-Operation-not-permitted。" class="headerlink" title="Failed to get D-Bus connection: Operation not permitted。"></a>Failed to get D-Bus connection: Operation not permitted。</h2><p>使用命令<code>docker run -d -p 8080:80 --name myhttpd centos:httpd</code> 运行后<br>报错 Failed to get D-Bus connection: Operation not permitted。<br>使用 <code>docker run --privileged -d -p 8080:80 --name myhttpd centos:httpd</code> 运行解决。<br>–privileged 参数，给容器加特权,否则交互式方式进入容器无法操作一些譬如修改内核、修改系统参数、甚至启动服务等</p>
 <p>参考<br><a href="https://docs.docker.com/engine/reference/commandline/run/#capture-container-id-cidfile" target="_blank" rel="noopener">https://docs.docker.com/engine/reference/commandline/run/#capture-container-id-cidfile</a><br><a href="https://github.com/moby/moby/issues/7459" target="_blank" rel="noopener">https://github.com/moby/moby/issues/7459</a><br><a href="https://developers.redhat.com/blog/2014/05/05/running-systemd-within-docker-container/" target="_blank" rel="noopener">https://developers.redhat.com/blog/2014/05/05/running-systemd-within-docker-container/</a></p>
 <h2 id="使用Dockerfile成功启动Apache但浏览器拒绝访问"><a href="#使用Dockerfile成功启动Apache但浏览器拒绝访问" class="headerlink" title="使用Dockerfile成功启动Apache但浏览器拒绝访问"></a>使用Dockerfile成功启动Apache但浏览器拒绝访问</h2><p>如果是防火墙的问题，出现的报错提示应该是无法连接之类的，一般出现404  403那说明能连上。<br>因为默认的容器里可能没有设置默认主页配置，所以先将apache的默认主页index.html或index.htm 在浏览器输全尝试。<br>若还不行，进入容器，<code>curl http://localhost/index.html</code>尝试，确保浏览器地址没有输错。<br>若还不行，进入apache配置文件 /etc/httpd/conf/httpd.conf 找到默认目录DocumentRoot然后查看 这个目录是否有，且对应文件是否存在。<br>我这里的问题是，安装的这个apache镜像没有默认主页，新建就可以了……</p>
 <h2 id="docker-log-报错-SELinux-Could-not-open-policy-file-lt-etc-selinux-targeted-policy-policy-31-No-such-file-or-directory"><a href="#docker-log-报错-SELinux-Could-not-open-policy-file-lt-etc-selinux-targeted-policy-policy-31-No-such-file-or-directory" class="headerlink" title="docker log 报错 SELinux:  Could not open policy file <= /etc/selinux/targeted/policy/policy.31:  No such file or directory"></a>docker log <container>报错 SELinux:  Could not open policy file &lt;= /etc/selinux/targeted/policy/policy.31:  No such file or directory</container></h2><p>因为使用centos镜像的问题，需要处理SELinux。实际开发中使用镜像alpine，这里就先放过这个问题，以后再表。</p>
-<h1 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h1><p><a href="https://yq.aliyun.com/articles/110806?spm=a2c1q.8351553.0.0.11b720beQRyGTx" target="_blank" rel="noopener">阿里云docker安装帮助文档</a><br><a href="https://docs.docker.com/engine/reference/commandline/docker/" target="_blank" rel="noopener">官方文档基本命令参考地址</a><br><a href="https://cr.console.aliyun.com/cn-shenzhen/instances/mirrors" target="_blank" rel="noopener">配置镜像加速器阿里云文档</a></p>
+<h1 id="启动容器时报错Error-response-from-daemon-driver-failed-programming-external-connectivity-on-endpoint-mysql"><a href="#启动容器时报错Error-response-from-daemon-driver-failed-programming-external-connectivity-on-endpoint-mysql" class="headerlink" title="启动容器时报错Error response from daemon: driver failed programming external connectivity on endpoint mysql"></a>启动容器时报错Error response from daemon: driver failed programming external connectivity on endpoint mysql</h1><p>docker服务启动时定义的自定义链DOCKER由于某种原因被清掉，重启docker服务及可重新生成自定义链DOCKER。使用命令<code>systemctl restart docker</code>在重新启动容器即可。如图</p>
+<div style="width: 68%;margin: left"><img src="/2019/11/21/docker%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/docker_run_error.png" class=""></div>
+
+<h1 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h1><p><a href="https://yq.aliyun.com/articles/110806?spm=a2c1q.8351553.0.0.11b720beQRyGTx" target="_blank" rel="noopener">阿里云docker安装帮助文档</a><br><a href="https://docs.docker.com/engine/reference/commandline/docker/" target="_blank" rel="noopener">官方文档基本命令参考地址</a><br><a href="https://cr.console.aliyun.com/cn-shenzhen/instances/mirrors" target="_blank" rel="noopener">配置镜像加速器阿里云文档</a><br><a href="https://github.com/portainer/portainer" target="_blank" rel="noopener">管理工具portainer仓库地址</a><br><a href="https://portainer.readthedocs.io/en/latest/deployment.html" target="_blank" rel="noopener">管理工具portainer官网地址</a></p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -698,6 +709,46 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
+    <title>Linux的crontab命令</title>
+    <url>/2019/10/23/linux_crontab/</url>
+    <content><![CDATA[<p>Linux下的任务调度分为两类：系统任务调度和用户任务调度。<br>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。<br>所有用户定义的crontab文件都被保存在/var/spool/cron目录中。其文件名与用户名一致，使用者权限文件如下：<br><code>/etc/cron.deny</code>     该文件中所列用户不允许使用crontab命令<br><code>/etc/cron.allow</code>   该文件中所列用户允许使用crontab命令<br><code>/var/spool/cron/</code>   所有用户crontab文件存放的目录,以用户名命名  </p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">分 时 日 月 星期 命令</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/sbin/service crond start    // 启动服务   或者使用  service crond start 命令 手动启动crontab服务</span><br><span class="line">/sbin/service crond stop     // 关闭服务</span><br><span class="line">/sbin/service crond restart  // 重启服务</span><br><span class="line">/sbin/service crond reload   // 重新载入配置</span><br><span class="line"></span><br><span class="line">chkconfig –level 35 crond on // 加入开机自动启动</span><br><span class="line">service crond status // 查看crontab服务状态</span><br></pre></td></tr></tbody></table></figure>
+
+<p>crontab (选项 例如:-e)(参数 crontab文件)<br>-e：编辑该用户的计时器设置；<br>-l：列出该用户的计时器设置；<br>-r：删除该用户的计时器设置；<br>-u&lt;用户名称&gt;：指定要设定计时器的用户名称。    </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Linux</category>
+        <category>crontab</category>
+      </categories>
+      <tags>
+        <tag>基础</tag>
+        <tag>Linux</tag>
+        <tag>crontab</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux基础</title>
     <url>/2019/10/23/linux_base/</url>
     <content><![CDATA[<p>最近在云之梦网站学习Linux基础，发现有好多基础命令见面不相识……此篇作为学习笔记，利用零碎的时间终于完成课程学习，该篇添加常用命令以方便后续翻阅参考。</p>
@@ -951,46 +1002,6 @@ fi</code></pre></li>
       <tags>
         <tag>基础</tag>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux的crontab命令</title>
-    <url>/2019/10/23/linux_crontab/</url>
-    <content><![CDATA[<p>Linux下的任务调度分为两类：系统任务调度和用户任务调度。<br>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。<br>所有用户定义的crontab文件都被保存在/var/spool/cron目录中。其文件名与用户名一致，使用者权限文件如下：<br><code>/etc/cron.deny</code>     该文件中所列用户不允许使用crontab命令<br><code>/etc/cron.allow</code>   该文件中所列用户允许使用crontab命令<br><code>/var/spool/cron/</code>   所有用户crontab文件存放的目录,以用户名命名  </p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">分 时 日 月 星期 命令</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></tbody></table></figure>
-
-<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/sbin/service crond start    // 启动服务   或者使用  service crond start 命令 手动启动crontab服务</span><br><span class="line">/sbin/service crond stop     // 关闭服务</span><br><span class="line">/sbin/service crond restart  // 重启服务</span><br><span class="line">/sbin/service crond reload   // 重新载入配置</span><br><span class="line"></span><br><span class="line">chkconfig –level 35 crond on // 加入开机自动启动</span><br><span class="line">service crond status // 查看crontab服务状态</span><br></pre></td></tr></tbody></table></figure>
-
-<p>crontab (选项 例如:-e)(参数 crontab文件)<br>-e：编辑该用户的计时器设置；<br>-l：列出该用户的计时器设置；<br>-r：删除该用户的计时器设置；<br>-u&lt;用户名称&gt;：指定要设定计时器的用户名称。    </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Linux</category>
-        <category>crontab</category>
-      </categories>
-      <tags>
-        <tag>基础</tag>
-        <tag>Linux</tag>
-        <tag>crontab</tag>
       </tags>
   </entry>
   <entry>
