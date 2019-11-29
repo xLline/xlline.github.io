@@ -3,65 +3,6 @@
   <entry>
     <title>Docker-Machine</title>
     <url>/2019/11/28/Docker-Machine/</url>
-    <content><![CDATA[<article class="markdown-body"><hr>
-<p>title: Docker-Machine<br>
-date: 2019-11-28 15:40:26<br>
-categories: <br>
-- 拾级而上 <br>
-- Docker <br>
-tags: <br>
-- Docker<br>
-copyright: true</p>
-<hr>
-<p>我们常说的Docker是指Docker引擎(Engine),主要包含<br>
-1、Docker Daemon — docker守护进程(Server)<br>
-2、Docker REST API — 和docker daemon交互的REST API (用python或Go程序调用API和Daemon交互)<br>
-3、Docker CLI —  命令行应用 （我们执行docker run 等命令，用来和Daemon交互）</p>
-<p>Docker Machine 简化的Docker安装的命令行工具,通过命令行即可在相应的平台上(目前支持在本机运行virtualbox虚拟主机，Hyper-V虚拟主机，VMware虚拟主机，AWS EC2，Azure，DigitalOcean，Google等公有云主机)安装Docker。（好比在你机器上装个虚拟机，老外帮你准备好了专门的ISO，docker 都帮你弄好了）</p>
-<a id="more"></a>
-
-<h1 id="_1"><a name="user-content-_1" href="#_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>安装</h1>
-<p>使用如下命令，或者直接到 <a href="https://github.com/docker/machine/releases" target="_blank" rel="noopener">对应github</a>下载，保证最后拷贝到环境变量相关目录里(/usr/local/bin/)即可。<br>
-</p><pre><code>curl -L https://github.com/docker/machine/releases/download/v0.13.0/docker-machine-`uname -s`-`uname -m` &gt;/tmp/docker-machine &amp;&amp; \
-chmod +x /tmp/docker-machine &amp;&amp; \
-sudo cp /tmp/docker-machine /usr/local/bin/docker-machine
-</code></pre><br>
-<a href="https://docs.docker.com/machine/install-machine/" target="_blank" rel="noopener">Docker Machine安装参考文档</a><p></p>
-<h1 id="docker"><a name="user-content-docker" href="#docker" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>创建Docker主机</h1>
-<h2 id="virtualbox"><a name="user-content-virtualbox" href="#virtualbox" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>安装virtualbox</h2>
-<p>首先我们需要安装virtualbox，<a href="https://www.virtualbox.org/wiki/Linux_Downloads" target="_blank" rel="noopener">官方下载地址点我</a>，选择对应版本的rpm下载包，通过ftp方式拷贝到服务器，进行<code>yum install</code> 安装即可。<br>
-同时，oracle也告诉我我们其他方法 <a href="http://yum.oracle.com/getting-started.html" target="_blank" rel="noopener">参考地址</a>，如下<br>
-</p><pre><code>wget   http://yum.oracle.com/public-yum-ol7.repo
-然后把下载下来的文件拷贝到/etc/yum.repos.d中
-yum install VirtualBox-5.2
-</code></pre><br>
-<span style="font-size: 13px; color: #777;"> 如果是在VMware中的Linux，需要在关机状态的虚拟机进行配置: 虚拟机&gt;设置&gt;处理器中勾选虚拟化 Intel VT-x/EPT 或 AMD-V/RVI(V)</span><br>
-<a href="https://docs.docker.com/machine/drivers/virtualbox/" target="_blank" rel="noopener">创建Docker主机安装virtualbox参考地址</a><p></p>
-<p>完成可以执行 <code>docker-machine create --driver=virtualbox vbox-test</code> 创建，他首先检查 /home/xugz/.docker/machine/cache 是否存在，没有则创建文件夹<br>
-寻找该文件夹下是否有 boot2docker.iso（一个基于Tiny Core Linux的系统，里面Docker啥的都帮你搞定了），另外会默认会创建一个虚拟网卡 （vboxnet0）。所以如果太慢，我们可以去<a href="https://github.com/boot2docker/boot2docker/releases/" target="_blank" rel="noopener">gitHub</a>手工下载用ftp传到目标服务器。</p>
-<h1 id="_2"><a name="user-content-_2" href="#_2" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>常用命令</h1></article><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":200,"height":400},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script><script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-  </entry>
-  <entry>
-    <title>Docker-Machine</title>
-    <url>/2019/11/28/Docker-Machine/</url>
     <content><![CDATA[<p>Docker Machine是简化的Docker安装的命令行工具,通过命令行即可在相应的平台上(目前支持在本机运行virtualbox虚拟主机，Hyper-V虚拟主机，VMware虚拟主机，AWS EC2，Azure，DigitalOcean，Google等公有云主机)安装Docker。（好比在你机器上装个虚拟机，老外帮你准备好了专门的ISO，docker 都帮你弄好了）</p>
 <p>本篇主要涉及Docker-Machine创建虚拟Docker主机、创建私有镜像仓库，利用Docker-Machine在虚拟主机中使用compose启动Nginx负载均衡、设置IP转发在windows中访问。</p>
 <a id="more"></a>
@@ -72,7 +13,7 @@ yum install VirtualBox-5.2
 <h1 id="创建Docker主机"><a href="#创建Docker主机" class="headerlink" title="创建Docker主机"></a>创建Docker主机</h1><p>首先我们需要安装virtualbox <a href="https://www.virtualbox.org/wiki/Linux_Downloads" target="_blank" rel="noopener">官方下载地址点我</a>。选择对应版本的rpm下载包，通过ftp方式拷贝到服务器，进行<code>yum install &lt;包名&gt; -y</code> 安装即可。同时，oracle也告诉我们存在其他方法 <a href="http://yum.oracle.com/getting-started.html" target="_blank" rel="noopener">参考地址</a>，如下</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">wget   http://yum.oracle.com/public-yum-ol7.repo</span><br><span class="line">然后把下载下来的文件拷贝到/etc/yum.repos.d中</span><br><span class="line">yum install VirtualBox-5.2</span><br></pre></td></tr></tbody></table></figure>
 <p><a href="https://docs.docker.com/machine/drivers/virtualbox/" target="_blank" rel="noopener">创建Docker主机安装virtualbox参考地址</a><br>完成可以执行 <code>docker-machine create --driver=virtualbox vbox-test</code> 创建。<br>执行该命令，他首先检查 /home/xugz/.docker/machine/cache 是否存在，没有则创建文件夹；然后寻找该文件夹下是否有 boot2docker.iso文件（一个基于Tiny Core Linux的系统，里面Docker啥的都帮你搞定了），另外会默认会创建一个虚拟网卡 （vboxnet0）。所以如果太慢，我们可以去<a href="https://github.com/boot2docker/boot2docker/releases/" target="_blank" rel="noopener">boot2docker.iso对应gitHub下载地址</a>手工下载用ftp传到目标服务器再执行创建。</p>
-<div style="width: 61%;margin: left"></div>
+<div style="width: 61%;margin: left"><img src="/2019/11/28/Docker-Machine/create.png" class=""></div>
 
 <h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><p>查看列表 <code>docker-machine ls</code><br>查看IP地址 <code>docker-machine ip 虚拟机名称</code><br>停止和开启 <code>docker-machine stop/start  虚拟机名称</code><br>查看环境变量 <code>docker-machine env vbox-test</code><br> 如果我们要操作machine里面的docker环境变量 ,可以不用进入到虚拟机<br> 使用eval命令（可以读取一连串的参数,然后按照参数特性来执行）<br> 此时我们执行 <code>eval $(docker-machine env vbox-test)</code><br> 这时我们本机的docker客户端就连接了vbox-test的docker服务端<br> 切换回来使用命令 <code>eval $(docker-machine env -u)</code><br>SSH的方式连接到虚拟机 <code>docker-machine ssh 虚拟机名称</code></p>
 <h1 id="移植主机镜像到虚拟机"><a href="#移植主机镜像到虚拟机" class="headerlink" title="移植主机镜像到虚拟机"></a>移植主机镜像到虚拟机</h1><p><strong>创建私有镜像库</strong></p>
@@ -89,7 +30,7 @@ yum install VirtualBox-5.2
 <h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><h2 id="http-server-gave-HTTP-response-to-HTTPS-client"><a href="#http-server-gave-HTTP-response-to-HTTPS-client" class="headerlink" title="http: server gave HTTP response to HTTPS client"></a>http: server gave HTTP response to HTTPS client</h2><p>因为docker为了安全，需要https 。但是我们可以让其不需要。<br>如果我们在主机里，那么要修改的是<code>/etc/docker/daemon.json</code>。在machine里也是一样的，那么要在/etc/docker下面 手动创建daemon.json文件（默认是木有的），添加如下内容</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{</span><br><span class="line">    "insecure-registries":["192.168.99.1:5000"]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>修改完成需要重启虚拟机主机 <code>docker-machine restart 虚拟机名称</code>。</p>
-<div style="width: 61%;margin: left"></div>
+<div style="width: 61%;margin: left"><img src="/2019/11/28/Docker-Machine/error_https.png" class=""></div>
 ## This computer doesn't have VT-X/AMD-v enabled. Enabling it in the BIOS is mandatory
 如果是在VMware中的Linux，需要在关机状态的虚拟机进行配置: 虚拟机&gt;设置&gt;处理器中勾选虚拟化 Intel VT-x/EPT 或 AMD-V/RVI(V)<script>
         document.querySelectorAll('.github-emoji')
@@ -1369,52 +1310,6 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
-    <title>Hexo NexT主题添加字数统计阅读时长</title>
-    <url>/2019/06/19/hexo_add_wordcount/</url>
-    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
-<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<p>到这里就可以啦，快去试试吧。  </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>修改Hexo博客next主题文章页面宽度</title>
     <url>/2019/06/19/hexo_postwidth/</url>
     <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
@@ -1453,6 +1348,52 @@ header.post-header {
     width: 100% !important;
   }
 }</code></pre><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo NexT主题添加字数统计阅读时长</title>
+    <url>/2019/06/19/hexo_add_wordcount/</url>
+    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
+<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<p>到这里就可以啦，快去试试吧。  </p>
+<script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
