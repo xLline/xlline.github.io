@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="MySQL,索引," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -86,27 +86,14 @@
 
 
 
-<meta name="description" content="MySQL可以创建复合索引，一个索引最多可以包含16列。联合索引参与条件规则的字段需要放在前面，即需要满足最左匹配原则。举例来说，如果你有一个三列的索引(col1, col2, col3)，走索引的条件顺序为(col1)，(col1, col2)以及 (col1, col2, col3)。使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，指标TYPE结果值好坏依次是: system &amp;gt">
-<meta name="keywords" content="MySQL,索引">
-<meta property="og:type" content="article">
-<meta property="og:title" content="MySQL之联合索引最左原则">
-<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;index.html">
+<meta name="description" content="等我想到好主意，会让刚才爬进我耳朵的虫子去告诉你。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="理想国">
+<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;page&#x2F;4&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="MySQL可以创建复合索引，一个索引最多可以包含16列。联合索引参与条件规则的字段需要放在前面，即需要满足最左匹配原则。举例来说，如果你有一个三列的索引(col1, col2, col3)，走索引的条件顺序为(col1)，(col1, col2)以及 (col1, col2, col3)。使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，指标TYPE结果值好坏依次是: system &amp;gt">
+<meta property="og:description" content="等我想到好主意，会让刚才爬进我耳朵的虫子去告诉你。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_1.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_2.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_3.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_4.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_5.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_6.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_error_1.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_error_2.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_error_3.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;order_1.png">
-<meta property="og:updated_time" content="2019-11-23T10:15:25.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_1.png">
 
 
 
@@ -141,13 +128,13 @@
 
 
 
-  <link rel="canonical" href="https://xlline.github.io/2019/11/20/MySQL之联合索引最左原则/"/>
+  <link rel="canonical" href="https://xlline.github.io/page/4/"/>
 
 
 
 
 
-  <title>MySQL之联合索引最左原则 | 理想国</title>
+  <title>理想国</title>
   
 
 
@@ -166,7 +153,8 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail">
+  <div class="container sidebar-position-left 
+  page-home">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -293,9 +281,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-
-  <div id="posts" class="posts-expand">
+  <section id="posts" class="posts-expand">
     
+      
 
   
 
@@ -308,7 +296,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/">
+    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2018/10/18/markdown_GFM/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xugz">
@@ -325,7 +313,9 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">MySQL之联合索引最左原则</h1>
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/18/markdown_GFM/" itemprop="url">轻量级标记语言Markdown的语法（GFM）</a></h1>
         
 
         <div class="post-meta">
@@ -337,8 +327,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-20T15:43:20+08:00">
-                2019-11-20
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-18T15:29:14+08:00">
+                2018-10-18
               </time>
             
 
@@ -371,8 +361,8 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/MySQL/" itemprop="url" rel="index">
-                    <span itemprop="name">MySQL</span>
+                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
                   </a>
                 </span>
 
@@ -403,7 +393,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  527 字
+                  1.1k 字
                 </span>
               
 
@@ -419,7 +409,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2分钟
+                  4分钟
                 </span>
               
             </span>
@@ -440,66 +430,35 @@
       
 
       
-        <p>MySQL可以创建复合索引，一个索引最多可以包含16列。联合索引参与条件规则的字段需要放在前面，即需要满足最左匹配原则。举例来说，如果你有一个三列的索引(col1, col2, col3)，走索引的条件顺序为(col1)，(col1, col2)以及 (col1, col2, col3)。<br>使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，指标TYPE结果值好坏依次是: system &gt; const &gt; eq_ref &gt; ref &gt; fulltext &gt; ref_or_null &gt; index_merge &gt; unique_subquery &gt; index_subquery &gt; range &gt; index &gt; ALL。</p>
-<a id="more"></a>
+        
+          
+          Hexo下使用的MarkDown是Github的GFM，整理汇总常用语法命令方便后续查找。此篇包含常用的语法，当然也一些偶尔会用到的，基本上可以满足日常使用。
+常用基础字体相关斜体:用 * 或 _ 包裹，紧贴被强调文本 
+1*斜体文本*
 
-<p>假设存在测试表，增加联合索引 <code>idx_last_first_name</code> (<code>last_name</code>,<code>first_name</code>)</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `employees` (</span><br><span class="line">  `emp_no` int(11) NOT NULL COMMENT '员工号',</span><br><span class="line">  `birth_date` date NOT NULL COMMENT '出生年月',</span><br><span class="line">  `first_name` varchar(14) NOT NULL COMMENT '名',</span><br><span class="line">  `last_name` varchar(16) NOT NULL COMMENT '姓',</span><br><span class="line">  `gender` enum('M','F') NOT NULL COMMENT '性别',</span><br><span class="line">  `hire_date` date NOT NULL COMMENT '雇佣时间',</span><br><span class="line">  `ids` char(18) DEFAULT NULL COMMENT '身份证号',</span><br><span class="line">  PRIMARY KEY (`emp_no`),</span><br><span class="line">  KEY `idx_last_first_name` (`last_name`,`first_name`)</span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure>
-<p>下面SQL是遵循了最左匹配原则的语句</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_1.png" class=""></div>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones' ORDER BY last_name,first_name desc;</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_2.png" class=""></div>
+我这是测试斜体哦
 
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones' AND first_name='John';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_3.png" class=""></div>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees  WHERE last_name='Jones'  AND (first_name='John' OR first_name='Jon');</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_4.png" class=""></div>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees  WHERE last_name='Jones'  AND first_name &gt;='M' AND first_name &lt; 'N';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_5.png" class=""></div>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name ='M' ORDER BY first_name,last_name desc;</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_6.png" class=""></div>
+粗体:用 ** 或 __ 包裹，紧贴被强调文本 
+1**粗体文本**
 
+我这是测试粗体哦
 
-<p>不走索引的语句类型有 </p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE first_name='John';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_error_1.png" class=""></div>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones' OR first_name='John';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_error_2.png" class=""></div>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones' ORDER BY first_name,last_name desc;</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_error_3.png" class=""></div>
+删除线： 用 ~~ 包裹被删除文本
+1~~我这是测试删除文字哦~~
 
+我这是测试删除文字哦
 
-<p>注意，排序时是否走索引受MySQL版本的影响，在MySQL8.0后，在排序查询中字段顺序不受影响。如图</p>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/order_1.png" class=""></div>
-
-<p>但是在MySQL5.7及以下版本中，排序查询受字段顺序影响。</p>
-<p>参考文档</p>
-<ol>
-<li>MySQL联合索引 <a href="https://dev.mysql.com/doc/refman/5.7/en/multiple-column-indexes.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/multiple-column-indexes.html</a></li>
-<li>EXPLAIN输出格式 <a href="https://dev.mysql.com/doc/refman/5.7/en/explain-output.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/explain-output.html</a></li>
-<li>Visual Explain图 <a href="https://dev.mysql.com/doc/workbench/en/wb-performance-explain.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/workbench/en/wb-performance-explain.html</a></li>
-<li>各个引擎支持的索引类型 <a href="https://dev.mysql.com/doc/refman/5.7/en/create-index.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/create-index.html</a></li>
-</ol>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>
+段落文本行 : 即一行文字，markdown 中换行必须进行手动操作，自动换行将会变成一个空格段　落 : 由数行文字成一段，markdown 中由空行划分段落。输入两个以上空格再回车，进行手动换行
+标题底线形式(S
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/10/18/markdown_GFM/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
       
     </div>
     
@@ -507,37 +466,6 @@
     
 
 <div>
-      
-        
-<div class="my_post_copyright">
-  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
-  
-  <!-- JS库 sweetalert 可修改路径 -->
-  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/">MySQL之联合索引最左原则</a></p>
-  <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
-  <p><span>发布时间:</span>2019年11月20日 - 15:43</p>
-  <p><span>最后更新:</span>2019年11月23日 - 18:15</p>
-  <p><span>原始链接:</span><a href="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/" title="MySQL之联合索引最左原则">https://xlline.github.io/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/</a>
-    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/"  aria-label="复制成功！"></i></span>
-  </p>
-  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
-</div>
-<script> 
-    var clipboard = new Clipboard('.fa-clipboard');
-      $(".fa-clipboard").click(function(){
-      clipboard.on('success', function(){
-        swal({   
-          title: "",   
-          text: '复制成功',
-          icon: "success", 
-          showConfirmButton: true
-          });
-        });
-    });  
-</script>
-
       
 </div>
 
@@ -548,51 +476,17 @@
     
 	<div>
 	  
-	    <div>
-<!--todo 暂时删除本文结束小标签，这个东西是统一的，不太喜欢，后续优化后再放开 只需要删除 条件 and passage_end_tag 即可 -->
-    
-</div>
-
-	  
 	</div>
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/MySQL/" rel="tag"><i class="fa fa-tag"></i> MySQL</a>
-          
-            <a href="/tags/%E7%B4%A2%E5%BC%95/" rel="tag"><i class="fa fa-tag"></i> 索引</a>
-          
-        </div>
+
+      
+
       
 
       
       
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2019/11/15/mysql8.0%E4%B9%8Bcaching_sha2_password/" rel="next" title="MySQL8.0之caching_sha2_password">
-                <i class="fa fa-chevron-left"></i> MySQL8.0之caching_sha2_password
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/11/21/docker%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" rel="prev" title="docker基础及常见问题">
-                docker基础及常见问题 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
+        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -602,11 +496,14 @@
   </article>
 
 
+    
+  </section>
 
-    <div class="post-spread">
-      
-    </div>
-  </div>
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
+  </nav>
+
 
 
           </div>
@@ -614,10 +511,6 @@
 
 
           
-
-  
-
-
 
         </div>
         
@@ -863,10 +756,6 @@
 
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
-
-
 
   
 

@@ -86,19 +86,19 @@
 
 
 
-<meta name="description" content="使用手工commit的方式创建了一个基于CentOS的Nginx容器，并且可以通过外部访问到。入手docker compose——Docker容器编排的工具，可以配置并启动多个容器，适合复杂业务场景。本篇是铺垫nginx负载均衡的笔记记录。">
+<meta name="description" content="使用手工commit的方式创建了一个基于CentOS的Nginx容器，并且可以通过外部访问到。入手docker compose——Docker容器编排的工具，可以配置并启动多个容器，适合复杂业务场景。本篇是铺垫nginx负载均衡的步骤记录。">
 <meta name="keywords" content="Docker">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Docker+Nginx负载均衡">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;25&#x2F;Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="使用手工commit的方式创建了一个基于CentOS的Nginx容器，并且可以通过外部访问到。入手docker compose——Docker容器编排的工具，可以配置并启动多个容器，适合复杂业务场景。本篇是铺垫nginx负载均衡的笔记记录。">
+<meta property="og:description" content="使用手工commit的方式创建了一个基于CentOS的Nginx容器，并且可以通过外部访问到。入手docker compose——Docker容器编排的工具，可以配置并启动多个容器，适合复杂业务场景。本篇是铺垫nginx负载均衡的步骤记录。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;25&#x2F;Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1&#x2F;run_desc.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;25&#x2F;Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1&#x2F;network_before.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;25&#x2F;Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1&#x2F;health_run.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;25&#x2F;Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1&#x2F;health_un.png">
-<meta property="og:updated_time" content="2019-11-27T13:33:47.824Z">
+<meta property="og:updated_time" content="2019-11-27T13:39:21.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;25&#x2F;Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1&#x2F;run_desc.png">
 
@@ -434,7 +434,7 @@
       
 
       
-        <p>使用手工commit的方式创建了一个基于CentOS的Nginx容器，并且可以通过外部访问到。入手docker compose——Docker容器编排的工具，可以配置并启动多个容器，适合复杂业务场景。本篇是铺垫nginx负载均衡的笔记记录。</p>
+        <p>使用手工commit的方式创建了一个基于CentOS的Nginx容器，并且可以通过外部访问到。入手docker compose——Docker容器编排的工具，可以配置并启动多个容器，适合复杂业务场景。本篇是铺垫nginx负载均衡的步骤记录。</p>
 <a id="more"></a>
 
 <h1 id="手工搭建CentOS-Nginx容器"><a href="#手工搭建CentOS-Nginx容器" class="headerlink" title="手工搭建CentOS+Nginx容器"></a>手工搭建CentOS+Nginx容器</h1><p><code>docker pull centos</code><br>在centos镜像基础上创建一个临时容器tmp，执行命令 <code>docker run -it --privileged --name tmp centos /usr/sbin/init</code>后如下图。保持不动，新开窗口进行后续操作。</p>
@@ -522,7 +522,7 @@
   <p><span>本文标题:</span><a href="/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/">Docker+Nginx负载均衡</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年11月25日 - 13:33</p>
-  <p><span>最后更新:</span>2019年11月27日 - 21:33</p>
+  <p><span>最后更新:</span>2019年11月27日 - 21:39</p>
   <p><span>原始链接:</span><a href="/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" title="Docker+Nginx负载均衡">https://xlline.github.io/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/"  aria-label="复制成功！"></i></span>
   </p>
@@ -585,6 +585,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/28/Docker-Machine/" rel="prev" title="Docker-Machine">
+                Docker-Machine <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -661,7 +665,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -774,7 +778,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 22.3k 字</span>
+  <span class="post-count">全站共 24.9k 字</span>
 </div>
         
 

@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="MySQL,索引," />
+  <meta name="keywords" content="Docker," />
 
 
 
@@ -86,27 +86,16 @@
 
 
 
-<meta name="description" content="MySQL可以创建复合索引，一个索引最多可以包含16列。联合索引参与条件规则的字段需要放在前面，即需要满足最左匹配原则。举例来说，如果你有一个三列的索引(col1, col2, col3)，走索引的条件顺序为(col1)，(col1, col2)以及 (col1, col2, col3)。使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，指标TYPE结果值好坏依次是: system &amp;gt">
-<meta name="keywords" content="MySQL,索引">
+<meta name="description" content="Docker Machine是简化的Docker安装的命令行工具,通过命令行即可在相应的平台上(目前支持在本机运行virtualbox虚拟主机，Hyper-V虚拟主机，VMware虚拟主机，AWS EC2，Azure，DigitalOcean，Google等公有云主机)安装Docker。（好比在你机器上装个虚拟机，老外帮你准备好了专门的ISO，docker 都帮你弄好了） 本篇主要涉及Docker">
+<meta name="keywords" content="Docker">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MySQL之联合索引最左原则">
-<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;index.html">
+<meta property="og:title" content="Docker-Machine">
+<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;28&#x2F;Docker-Machine&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="MySQL可以创建复合索引，一个索引最多可以包含16列。联合索引参与条件规则的字段需要放在前面，即需要满足最左匹配原则。举例来说，如果你有一个三列的索引(col1, col2, col3)，走索引的条件顺序为(col1)，(col1, col2)以及 (col1, col2, col3)。使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，指标TYPE结果值好坏依次是: system &amp;gt">
+<meta property="og:description" content="Docker Machine是简化的Docker安装的命令行工具,通过命令行即可在相应的平台上(目前支持在本机运行virtualbox虚拟主机，Hyper-V虚拟主机，VMware虚拟主机，AWS EC2，Azure，DigitalOcean，Google等公有云主机)安装Docker。（好比在你机器上装个虚拟机，老外帮你准备好了专门的ISO，docker 都帮你弄好了） 本篇主要涉及Docker">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_1.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_2.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_3.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_4.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_5.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_6.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_error_1.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_error_2.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_error_3.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;order_1.png">
-<meta property="og:updated_time" content="2019-11-23T10:15:25.000Z">
+<meta property="og:updated_time" content="2019-11-29T08:56:28.008Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;20&#x2F;MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99&#x2F;result_sus_1.png">
 
 
 
@@ -141,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="https://xlline.github.io/2019/11/20/MySQL之联合索引最左原则/"/>
+  <link rel="canonical" href="https://xlline.github.io/2019/11/28/Docker-Machine/"/>
 
 
 
 
 
-  <title>MySQL之联合索引最左原则 | 理想国</title>
+  <title>Docker-Machine | 理想国</title>
   
 
 
@@ -308,7 +297,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/">
+    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/11/28/Docker-Machine/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xugz">
@@ -325,7 +314,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">MySQL之联合索引最左原则</h1>
+          <h1 class="post-title" itemprop="name headline">Docker-Machine</h1>
         
 
         <div class="post-meta">
@@ -337,8 +326,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-20T15:43:20+08:00">
-                2019-11-20
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-28T15:40:26+08:00">
+                2019-11-28
               </time>
             
 
@@ -371,8 +360,8 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/MySQL/" itemprop="url" rel="index">
-                    <span itemprop="name">MySQL</span>
+                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/Docker/" itemprop="url" rel="index">
+                    <span itemprop="name">Docker</span>
                   </a>
                 </span>
 
@@ -403,7 +392,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  527 字
+                  1.9k 字
                 </span>
               
 
@@ -419,7 +408,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2分钟
+                  7分钟
                 </span>
               
             </span>
@@ -440,48 +429,36 @@
       
 
       
-        <p>MySQL可以创建复合索引，一个索引最多可以包含16列。联合索引参与条件规则的字段需要放在前面，即需要满足最左匹配原则。举例来说，如果你有一个三列的索引(col1, col2, col3)，走索引的条件顺序为(col1)，(col1, col2)以及 (col1, col2, col3)。<br>使用EXPLAIN关键字可以模拟优化器执行SQL查询语句，指标TYPE结果值好坏依次是: system &gt; const &gt; eq_ref &gt; ref &gt; fulltext &gt; ref_or_null &gt; index_merge &gt; unique_subquery &gt; index_subquery &gt; range &gt; index &gt; ALL。</p>
+        <p>Docker Machine是简化的Docker安装的命令行工具,通过命令行即可在相应的平台上(目前支持在本机运行virtualbox虚拟主机，Hyper-V虚拟主机，VMware虚拟主机，AWS EC2，Azure，DigitalOcean，Google等公有云主机)安装Docker。（好比在你机器上装个虚拟机，老外帮你准备好了专门的ISO，docker 都帮你弄好了）</p>
+<p>本篇主要涉及Docker-Machine创建虚拟Docker主机、创建私有镜像仓库，利用Docker-Machine在虚拟主机中使用compose启动Nginx负载均衡、设置IP转发在windows中访问。</p>
 <a id="more"></a>
 
-<p>假设存在测试表，增加联合索引 <code>idx_last_first_name</code> (<code>last_name</code>,<code>first_name</code>)</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `employees` (</span><br><span class="line">  `emp_no` int(11) NOT NULL COMMENT '员工号',</span><br><span class="line">  `birth_date` date NOT NULL COMMENT '出生年月',</span><br><span class="line">  `first_name` varchar(14) NOT NULL COMMENT '名',</span><br><span class="line">  `last_name` varchar(16) NOT NULL COMMENT '姓',</span><br><span class="line">  `gender` enum('M','F') NOT NULL COMMENT '性别',</span><br><span class="line">  `hire_date` date NOT NULL COMMENT '雇佣时间',</span><br><span class="line">  `ids` char(18) DEFAULT NULL COMMENT '身份证号',</span><br><span class="line">  PRIMARY KEY (`emp_no`),</span><br><span class="line">  KEY `idx_last_first_name` (`last_name`,`first_name`)</span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure>
-<p>下面SQL是遵循了最左匹配原则的语句</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_1.png" class=""></div>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones' ORDER BY last_name,first_name desc;</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_2.png" class=""></div>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>使用如下命令，或者直接到<a href="https://github.com/docker/machine/releases" target="_blank" rel="noopener">对应github</a>下载，授予可执行权限，保证最后拷贝到环境变量相关目录里(/usr/local/bin/)即可。  </p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -L https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-`uname -s`-`uname -m` &gt;/tmp/docker-machine &amp;&amp; \</span><br><span class="line">chmod +x /tmp/docker-machine &amp;&amp; \</span><br><span class="line">sudo cp /tmp/docker-machine /usr/local/bin/docker-machine</span><br></pre></td></tr></tbody></table></figure>
+<p><a href="https://docs.docker.com/machine/install-machine/" target="_blank" rel="noopener">Docker Machine安装参考文档</a></p>
+<h1 id="创建Docker主机"><a href="#创建Docker主机" class="headerlink" title="创建Docker主机"></a>创建Docker主机</h1><p>首先我们需要安装virtualbox <a href="https://www.virtualbox.org/wiki/Linux_Downloads" target="_blank" rel="noopener">官方下载地址点我</a>。选择对应版本的rpm下载包，通过ftp方式拷贝到服务器，进行<code>yum install &lt;包名&gt; -y</code> 安装即可。同时，oracle也告诉我们存在其他方法 <a href="http://yum.oracle.com/getting-started.html" target="_blank" rel="noopener">参考地址</a>，如下</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget   http://yum.oracle.com/public-yum-ol7.repo</span><br><span class="line">然后把下载下来的文件拷贝到/etc/yum.repos.d中</span><br><span class="line">yum install VirtualBox-5.2</span><br></pre></td></tr></tbody></table></figure>
+<p><a href="https://docs.docker.com/machine/drivers/virtualbox/" target="_blank" rel="noopener">创建Docker主机安装virtualbox参考地址</a><br>完成可以执行 <code>docker-machine create --driver=virtualbox vbox-test</code> 创建。<br>执行该命令，他首先检查 /home/xugz/.docker/machine/cache 是否存在，没有则创建文件夹；然后寻找该文件夹下是否有 boot2docker.iso文件（一个基于Tiny Core Linux的系统，里面Docker啥的都帮你搞定了），另外会默认会创建一个虚拟网卡 （vboxnet0）。所以如果太慢，我们可以去<a href="https://github.com/boot2docker/boot2docker/releases/" target="_blank" rel="noopener">boot2docker.iso对应gitHub下载地址</a>手工下载用ftp传到目标服务器再执行创建。</p>
+<div style="width: 61%;margin: left"></div>
 
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones' AND first_name='John';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_3.png" class=""></div>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees  WHERE last_name='Jones'  AND (first_name='John' OR first_name='Jon');</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_4.png" class=""></div>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees  WHERE last_name='Jones'  AND first_name &gt;='M' AND first_name &lt; 'N';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_5.png" class=""></div>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name ='M' ORDER BY first_name,last_name desc;</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_sus_6.png" class=""></div>
-
-
-<p>不走索引的语句类型有 </p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE first_name='John';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_error_1.png" class=""></div>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones' OR first_name='John';</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_error_2.png" class=""></div>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM employees WHERE last_name='Jones' ORDER BY first_name,last_name desc;</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/result_error_3.png" class=""></div>
-
-
-<p>注意，排序时是否走索引受MySQL版本的影响，在MySQL8.0后，在排序查询中字段顺序不受影响。如图</p>
-<div style="width: 70%;margin: left"><img src="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/order_1.png" class=""></div>
-
-<p>但是在MySQL5.7及以下版本中，排序查询受字段顺序影响。</p>
-<p>参考文档</p>
-<ol>
-<li>MySQL联合索引 <a href="https://dev.mysql.com/doc/refman/5.7/en/multiple-column-indexes.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/multiple-column-indexes.html</a></li>
-<li>EXPLAIN输出格式 <a href="https://dev.mysql.com/doc/refman/5.7/en/explain-output.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/explain-output.html</a></li>
-<li>Visual Explain图 <a href="https://dev.mysql.com/doc/workbench/en/wb-performance-explain.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/workbench/en/wb-performance-explain.html</a></li>
-<li>各个引擎支持的索引类型 <a href="https://dev.mysql.com/doc/refman/5.7/en/create-index.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/create-index.html</a></li>
-</ol>
-<script>
+<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><p>查看列表 <code>docker-machine ls</code><br>查看IP地址 <code>docker-machine ip 虚拟机名称</code><br>停止和开启 <code>docker-machine stop/start  虚拟机名称</code><br>查看环境变量 <code>docker-machine env vbox-test</code><br> 如果我们要操作machine里面的docker环境变量 ,可以不用进入到虚拟机<br> 使用eval命令（可以读取一连串的参数,然后按照参数特性来执行）<br> 此时我们执行 <code>eval $(docker-machine env vbox-test)</code><br> 这时我们本机的docker客户端就连接了vbox-test的docker服务端<br> 切换回来使用命令 <code>eval $(docker-machine env -u)</code><br>SSH的方式连接到虚拟机 <code>docker-machine ssh 虚拟机名称</code></p>
+<h1 id="移植主机镜像到虚拟机"><a href="#移植主机镜像到虚拟机" class="headerlink" title="移植主机镜像到虚拟机"></a>移植主机镜像到虚拟机</h1><p><strong>创建私有镜像库</strong></p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker pull registry  # docker pull一个官方镜像 专门处理私有镜像的提交和拉取</span><br><span class="line">docker run -d -p 5000:5000 --name registry registry # 运行镜像生成新容器</span><br><span class="line">docker tag  centos:httpd  localhost:5000/web  # 给本地centos:httpd 镜像打标签，命名为localhost:5000/web</span><br><span class="line">docker push localhost:5000/web  # 提交镜像</span><br><span class="line">docker tag  centos:nginx localhost:5000/nginx</span><br><span class="line">docker push localhost:5000/nginx</span><br><span class="line">docker rmi localhost:5000/web # 提交完成后, 可以删除刚才创建的标签</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>查看仓库目录</strong><br>注意以下的命令要保证registry容器正在运行<br>可以利用API的方式 查看私有仓库中的目录 <code>curl http://localhost:5000/v2/_catalog</code> <a href="https://docs.docker.com/registry/spec/api/#listing-repositories" target="_blank" rel="noopener">参考文档</a><br><strong>同步镜像</strong><br>最后使用命令 <code>docker-machine ssh vbox-test</code> 进入<br><code>docker pull 192.168.99.1:5000/nginx</code> 将私有镜像库中的Nginx下载到虚拟机里 主机的IP:端口</p>
+<p>修改镜像名使用tag命令 <code>docker tag &lt;原镜像名称&gt; &lt;新的镜像名&gt;</code> 完成后再把原镜像删除即可。我也不知道为什么官方没有rename命令，非得整这么麻烦。等我学会Go语言，就来本地尝试下。</p>
+<h1 id="利用Docker-Machine在虚拟主机中使用compose启动Nginx负载均衡"><a href="#利用Docker-Machine在虚拟主机中使用compose启动Nginx负载均衡" class="headerlink" title="利用Docker-Machine在虚拟主机中使用compose启动Nginx负载均衡"></a>利用Docker-Machine在虚拟主机中使用compose启动Nginx负载均衡</h1><p>这里我们也想使用compose进行容器统一管理，之前我们在宿主机中安装了compose（位置在：/usr/local/bin/docker-compose）我们可以直接拷贝就行了。</p>
+<h2 id="拷贝compose-到虚拟主机"><a href="#拷贝compose-到虚拟主机" class="headerlink" title="拷贝compose 到虚拟主机"></a>拷贝compose 到虚拟主机</h2><p>利用scp命令 <a href="https://docs.docker.com/machine/reference/scp/#example" target="_blank" rel="noopener">参考文档</a><br>我们进入宿主机执行  <code>docker-machine scp  /usr/local/bin/docker-compose  vbox-test:/home/docker/.local/bin</code><br><span style="font-size: 13px; color: #777;"> /home/docker/.local/bin 是虚拟机用户的一个环境变量 （也可以自己设置）</span><br>把我们之前做的compose配置文件拷贝过去 <code>docker-machine scp -r  mycompose vbox-test:/home/docker/</code>(如果是文件夹，则要加入-r 进行递归操作)。然后修改docker-compose.yml镜像配置改为虚拟主机自己的。<br>我们的compose里面有个映射文件，也就是把主机的文件映射到容器。那么是否我们也需要 把网站文件给拷贝到 虚拟机里面呢？<br>答案是不需要，我们可以使用 mount命令来完成。</p>
+<h2 id="映射文件挂载到虚拟主机"><a href="#映射文件挂载到虚拟主机" class="headerlink" title="映射文件挂载到虚拟主机"></a>映射文件挂载到虚拟主机</h2><p><a href="https://docs.docker.com/machine/reference/mount/" target="_blank" rel="noopener">mount命令参考文档</a><br>官方提醒我们，需要依赖使用sshfs将目录从虚拟机挂载到本地主机。SSHFS可以利用SFTP的方式把远程文件映射到本机 。<br>在宿主机的安装sshfs，安装如下依赖</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install -y epel-release</span><br><span class="line">yum install -y fuse-sshfs</span><br></pre></td></tr></tbody></table></figure>
+<p>首先在虚拟机里创建一个文件夹叫做 nginx <code>docker-machine ssh vbox-test mkdir nginx</code><br>主机上也创建一个文件夹 （空的），叫做 vbox-nginx。<br>挂载使用命令 <code>docker-machine mount vbox-test:/home/docker/nginx  /home/xugz/mnginx</code> 需要注意不在挂载点目录执行<br>取消挂载使用命令 <code>docker-machine mount -u vbox-test:/home/docker/nginx  /home/xugz/mnginx</code></p>
+<p>把本地主机之前的nginx文件夹里面的文件，拷贝到mnginx里面。进入nginx文件夹使用命令<code>cp . /home/xugz/mnginx -r</code><br>对应修改docker-compose.yml中对应文件挂载的配置。我们以后只要在宿主机修改文件就可以了。<br>接下来我们就可以利用 <code>docker-compose up -d</code> 在我们的虚拟机中启动容器了。</p>
+<h2 id="外部访问-IP转发"><a href="#外部访问-IP转发" class="headerlink" title="外部访问 IP转发"></a>外部访问 IP转发</h2><p>在虚拟主机中使用<code>curl localhost:9090</code>访问<br>在宿主机中使用 <code>curl $(docker-machine ip vbox-test):9090</code>访问<br>在windows里访问使用VBoxManage（我们上面虚了好几层了哦<del>~</del>）<br>简单说一下virtualbox的几个命令 <a href="https://www.virtualbox.org/manual/ch08.html#vboxmanage-controlvm" target="_blank" rel="noopener">文档点我</a><br><code>VBoxManage list vms</code>  列出当前的所有虚拟机<br><code>VBoxManage controlvm</code> 可以用来修改正在运行的虚拟机状态<br>  <code>存在参数语法： natpf&lt;1-N&gt; [&lt;name&gt;],tcp|udp,[&lt;hostip&gt;],&lt;hostport&gt;,[&lt;guestip&gt;], &lt;guestport&gt;</code><br>譬如<code>VBoxManage controlvm "vbox-test" natpf1 "mynat1,tcp,,9090,,9090"</code> 这代表把vbox-test这个虚拟机的tcp端口（IP不限制）转发到 宿主机的9090端口。执行完成后我们就可以使用 宿主机IP:9090端口访问<br><code>VBoxManage controlvm "vbox-test" natpf1 delete mynat1</code> 删掉规则，这样外部就不能访问了</p>
+<h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><h2 id="http-server-gave-HTTP-response-to-HTTPS-client"><a href="#http-server-gave-HTTP-response-to-HTTPS-client" class="headerlink" title="http: server gave HTTP response to HTTPS client"></a>http: server gave HTTP response to HTTPS client</h2><p>因为docker为了安全，需要https 。但是我们可以让其不需要。<br>如果我们在主机里，那么要修改的是<code>/etc/docker/daemon.json</code>。在machine里也是一样的，那么要在/etc/docker下面 手动创建daemon.json文件（默认是木有的），添加如下内容</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    "insecure-registries":["192.168.99.1:5000"]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>修改完成需要重启虚拟机主机 <code>docker-machine restart 虚拟机名称</code>。</p>
+<div style="width: 61%;margin: left"></div>
+## This computer doesn't have VT-X/AMD-v enabled. Enabling it in the BIOS is mandatory
+如果是在VMware中的Linux，需要在关机状态的虚拟机进行配置: 虚拟机&gt;设置&gt;处理器中勾选虚拟化 Intel VT-x/EPT 或 AMD-V/RVI(V)<script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
@@ -515,12 +492,12 @@
   <!-- JS库 sweetalert 可修改路径 -->
   <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/">MySQL之联合索引最左原则</a></p>
+  <p><span>本文标题:</span><a href="/2019/11/28/Docker-Machine/">Docker-Machine</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
-  <p><span>发布时间:</span>2019年11月20日 - 15:43</p>
-  <p><span>最后更新:</span>2019年11月23日 - 18:15</p>
-  <p><span>原始链接:</span><a href="/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/" title="MySQL之联合索引最左原则">https://xlline.github.io/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/</a>
-    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/11/20/MySQL%E4%B9%8B%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99/"  aria-label="复制成功！"></i></span>
+  <p><span>发布时间:</span>2019年11月28日 - 15:40</p>
+  <p><span>最后更新:</span>2019年11月29日 - 16:56</p>
+  <p><span>原始链接:</span><a href="/2019/11/28/Docker-Machine/" title="Docker-Machine">https://xlline.github.io/2019/11/28/Docker-Machine/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/11/28/Docker-Machine/"  aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
 </div>
@@ -559,9 +536,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/MySQL/" rel="tag"><i class="fa fa-tag"></i> MySQL</a>
-          
-            <a href="/tags/%E7%B4%A2%E5%BC%95/" rel="tag"><i class="fa fa-tag"></i> 索引</a>
+            <a href="/tags/Docker/" rel="tag"><i class="fa fa-tag"></i> Docker</a>
           
         </div>
       
@@ -574,8 +549,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/11/15/mysql8.0%E4%B9%8Bcaching_sha2_password/" rel="next" title="MySQL8.0之caching_sha2_password">
-                <i class="fa fa-chevron-left"></i> MySQL8.0之caching_sha2_password
+              <a href="/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" rel="next" title="Docker+Nginx负载均衡">
+                <i class="fa fa-chevron-left"></i> Docker+Nginx负载均衡
               </a>
             
           </div>
@@ -584,8 +559,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/11/21/docker%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" rel="prev" title="docker基础及常见问题">
-                docker基础及常见问题 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/11/28/Docker-Machine/" rel="prev" title="Docker-Machine">
+                Docker-Machine <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -638,8 +613,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -715,6 +699,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建Docker主机"><span class="nav-number">2.</span> <span class="nav-text">创建Docker主机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常用命令"><span class="nav-number">3.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#移植主机镜像到虚拟机"><span class="nav-number">4.</span> <span class="nav-text">移植主机镜像到虚拟机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#利用Docker-Machine在虚拟主机中使用compose启动Nginx负载均衡"><span class="nav-number">5.</span> <span class="nav-text">利用Docker-Machine在虚拟主机中使用compose启动Nginx负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#拷贝compose-到虚拟主机"><span class="nav-number">5.1.</span> <span class="nav-text">拷贝compose 到虚拟主机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#映射文件挂载到虚拟主机"><span class="nav-number">5.2.</span> <span class="nav-text">映射文件挂载到虚拟主机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#外部访问-IP转发"><span class="nav-number">5.3.</span> <span class="nav-text">外部访问 IP转发</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见问题"><span class="nav-number">6.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#http-server-gave-HTTP-response-to-HTTPS-client"><span class="nav-number">6.1.</span> <span class="nav-text">http: server gave HTTP response to HTTPS client</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
