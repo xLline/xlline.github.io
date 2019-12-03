@@ -1,6 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>MySQL指定日期加减</title>
+    <url>/2019/12/02/mysql-time-addsub/</url>
+    <content><![CDATA[<p>MySQL官网是不承认时间直接相加减的，本篇记录时间加减操作需要注意点，加深记忆，避免以后入坑。<br>先来看看MySQL中常用的内建日期函数</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>函数</strong></th>
+<th align="center"><strong>描述</strong></th>
+<th align="center"><strong>语法</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">NOW()</td>
+<td align="center">返回当前的日期和时间</td>
+<td align="center">NOW()</td>
+</tr>
+<tr>
+<td align="center">CURDATE()</td>
+<td align="center">返回当前的日期，该函数相当于current_date关键字</td>
+<td align="center">CURDATE()</td>
+</tr>
+<tr>
+<td align="center">CURTIME()</td>
+<td align="center">返回当前的时间，相当于current_time关键字</td>
+<td align="center">CURTIME()</td>
+</tr>
+<tr>
+<td align="center">DATE()</td>
+<td align="center">提取日期或日期/时间表达式的日期部分</td>
+<td align="center">DATE(date) date 参数是合法的日期表达式</td>
+</tr>
+<tr>
+<td align="center">EXTRACT()</td>
+<td align="center">用于返回日期/时间的单独部分，如年、月、日、小时、分钟等</td>
+<td align="center">EXTRACT(unit FROM date) date 参数是合法的日期表达式</td>
+</tr>
+<tr>
+<td align="center">DATE_ADD()</td>
+<td align="center">给日期添加指定的时间间隔</td>
+<td align="center">DATE_ADD(date,INTERVAL expr type) date 是合法的日期表达式，expr 是时间间隔。</td>
+</tr>
+<tr>
+<td align="center">DATE_SUB()</td>
+<td align="center">从日期减去指定的时间间隔</td>
+<td align="center">DATE_SUB(date,INTERVAL expr type) date 是合法的日期表达式，expr 是时间间隔。</td>
+</tr>
+<tr>
+<td align="center">DATEDIFF()</td>
+<td align="center">返回两个日期之间的天数</td>
+<td align="center">DATEDIFF(date1,date2) date1 和 date2 是合法的日期或日期/时间表达式。</td>
+</tr>
+<tr>
+<td align="center">DATE_FORMAT()</td>
+<td align="center">用不同的格式显示日期/时间</td>
+<td align="center">DATE_FORMAT(date,format) date 是合法的日期。format 规定日期/时间的输出格式。</td>
+</tr>
+</tbody></table>
+<a id="more"></a>
+<p>比如说，我们现在想要查询得出当前日期的一天前和五天前的日期，测试SQL语句如下</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">SELECT NOW(),CURDATE(), CURTIME(), DATE_SUB(CURDATE(),INTERVAL 1 DAY),CURDATE()-1, DATE_SUB(CURDATE(),INTERVAL 5 DAY), CURDATE()-5;</span><br></pre></td></tr></tbody></table></figure>
+<div style="width: 85%;margin: left"><img src="/2019/12/02/mysql-time-addsub/sql_result.png" class="" title="执行SQL得到的结果"></div>
+明显发现使用 CURDATE()函数直接进行加减存在问题，需要留意。当我们需要日期加减操作时，可使用 DATE_SUB() 和 DATE_ADD() 函数。
+
+<p>DATE_ADD()和DATE_SUB()函数常用type参数有： </p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">MICROSECOND 微秒 </span><br><span class="line">SECOND 秒</span><br><span class="line">MINUTE 分钟</span><br><span class="line">HOUR 小时</span><br><span class="line">DAY 天</span><br><span class="line">WEEK 周</span><br><span class="line">MONTH 月 </span><br><span class="line">QUARTER 季度 </span><br><span class="line">YEAR 年</span><br></pre></td></tr></tbody></table></figure><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker+PHP</title>
+    <url>/2019/11/29/docker-php-base/</url>
+    <content><![CDATA[<p>本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是一些Docker结合PHP的套路笔记。这里PHP版本为7.0+.</p>
+<a id="more"></a>
+
+<h1 id="运行PHP程序"><a href="#运行PHP程序" class="headerlink" title="运行PHP程序"></a>运行PHP程序</h1><p>拉取7.2版本的官方PHP镜像 <code>docker pull php:7.2-cli</code><br>运行刚才的镜像<span style="font-size: 13px; color: #777;"> –rm 运行完自己干掉自己，一般用于执行临时任务</span></p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run -it --rm --name runphp -v  /home/xugz/php:/usr/src/myphp  php:7.2-cli \</span><br><span class="line">php /usr/src/myphp/index.php</span><br></pre></td></tr></tbody></table></figure>
+<h1 id="手动运行php-fpm-apache"><a href="#手动运行php-fpm-apache" class="headerlink" title="手动运行php+fpm+apache"></a>手动运行php+fpm+apache</h1><p>我们尽可能的使用基于alpine的镜像。<br>安装FPM镜像 <code>docker pull php:7.2.0-fpm-alpine3.6</code> ，使用命令<code>docker run -d --rm --name fpm php:7.2.0-fpm-alpine3.6</code>  让容器以后台守护模式运行<br>安装Apache镜像 <code>docker pull httpd:2.4-alpine</code>，写一个测试HTML网页，使用命令 <code>docker run -d -p 80:80 --rm --name myweb -v /home/xugz/php:/usr/local/apache2/htdocs/ httpd:2.4-alpine</code>映射80端口挂载默认网站路径，尝试是否正常使用。一般来说应该是可使用的。</p>
+<p>然后我们需要修改配置文件。我们可以自己准备配置，或者从容器中拷贝一个。根据文档，容器里默认的配置文件路径为/usr/local/apache2/conf/httpd.conf。<br>使用 <code>docker exec -it myweb cat /usr/local/apache2/conf/httpd.conf</code>查看配置文件信息<br>使用 <code>docker cp myweb:/usr/local/apache2/conf/httpd.conf /home/xugz/conf/</code>复制文件<br>修改配置文件 <code>vi /home/xugz/conf/httpd.conf</code> 找到以下内容，把前面的#号去掉开启对应模块</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">LoadModule proxy_module modules/mod_proxy.so</span><br><span class="line">LoadModule proxy_http_module modules/mod_proxy_http.so</span><br><span class="line">LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so</span><br></pre></td></tr></tbody></table></figure>
+<p>另需增加修改配置如下内容</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;VirtualHost *:80&gt;</span><br><span class="line">    ServerAdmin xugz@com.cn</span><br><span class="line">    DocumentRoot "/usr/local/apache2/htdocs"</span><br><span class="line">    ServerName localhost</span><br><span class="line">    &lt;Directory "/usr/local/apache2/htdocs"&gt;</span><br><span class="line">     Options None</span><br><span class="line">     Require all granted</span><br><span class="line">    &lt;/Directory&gt;</span><br><span class="line">    ProxyRequests Off</span><br><span class="line">    ProxyPassMatch ^/(.*\.php)$ fcgi://192.158.0.2:9000/php/$1 </span><br><span class="line">    #转向fpm基本配置。使用docker network ls &amp;&amp; docker network inspect bridge 中查看FPM的inet</span><br><span class="line">&lt;/VirtualHost&gt;</span><br></pre></td></tr></tbody></table></figure>
+<p>启动fpm的时候把php文件夹挂载到fpm容器中，因此fpm容器的启动要增加文件挂载，命令改成<br><code>docker run -d --rm --name fpm -v /home/xugz/php:/php php:7.2.0-fpm-alpine3.6</code><br>重新运行apache容器</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run -d  -p 80:80 --name myweb -v /home/xugz/php:/usr/local/apache2/htdocs/  \</span><br><span class="line">-v /home/xugz/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf \</span><br><span class="line">httpd:2.4-alpine</span><br></pre></td></tr></tbody></table></figure>
+<p>没有异常的话，可用 <code>curl localhost</code> 和 <code>curl localhost/index.php</code> 测试。</p>
+<h1 id="compose编排php-fpm-apache"><a href="#compose编排php-fpm-apache" class="headerlink" title="compose编排php+fpm+apache"></a>compose编排php+fpm+apache</h1><p>为了让我们容器的启动和删除操作方便，所以要我们要使用docker compose ，一款编排工具。<br>下载安装步骤见本站其他篇，<a href="https://xlline.github.io/2019/11/25/Docker-Nginx负载均衡/#compose">点我瞬时移动</a>。新建目录webcompose目录，在目录中新建docker-compose.yml文件,拷贝如下内容(就是将上文中两条启动容器命令翻译成dockerfile)</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">version: "3"                                                                         </span><br><span class="line">services:                                                                            </span><br><span class="line">  fpm:                                                                               </span><br><span class="line">   image: php:7.2.0-fpm-alpine3.6                                                    </span><br><span class="line">   container_name: fpm                                                               </span><br><span class="line">   volumes:                                                                          </span><br><span class="line">      - /home/xugz/php:/php                                                          </span><br><span class="line">   networks:                                                                         </span><br><span class="line">      mywebnet:                                                                      </span><br><span class="line">       ipv4_address: 192.159.0.2  # 这里的IP需要和Apache配置文件httpd.conf中的ProxyPassMatch fcgi地址保持一致                                                 </span><br><span class="line">                                                                                     </span><br><span class="line">  httpd:                                                                             </span><br><span class="line">   image: httpd:2.4-alpine                                                           </span><br><span class="line">   container_name: httpd                                                             </span><br><span class="line">   ports:                                                                            </span><br><span class="line">      - 80:80                                                                        </span><br><span class="line">   volumes:                                                                          </span><br><span class="line">      - /home/xugz/php:/usr/local/apache2/htdocs/                                    </span><br><span class="line">      - /home/xugz/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf                </span><br><span class="line">   networks:                                                                         </span><br><span class="line">      mywebnet:                                                                      </span><br><span class="line">       ipv4_address: 192.159.0.3  # 设置指定IP IP从0.1开始生成                                                </span><br><span class="line">                                                                                     </span><br><span class="line">                                                                                     </span><br><span class="line">networks:                                                                            </span><br><span class="line">  mywebnet:  # 如果之前创建了相同子网的网络 要先删掉之前的,否则冲突                                                          </span><br><span class="line">     driver: bridge                                                                  </span><br><span class="line">     ipam:                                                                           </span><br><span class="line">       config:                                                                       </span><br><span class="line">         - subnet: 192.159.0.0/16                                                    </span><br><span class="line">          # 子网随便填写 IP地址是以网络号和主机号来表示网络上的主机的，只有在一个网络号下的计算机之间才能“直接”互通，不同网络号的计算机要通过网关（Gateway）才能互通。但这样的划分在某些情况下显得并不十分灵活。为此IP网络还允许划分成更小的网络，称为子网（Subnet）。</span><br></pre></td></tr></tbody></table></figure>
+<p>然后可以使用 <code>docker-compose up -d</code>启动可用 <code>curl localhost</code> 和 <code>curl localhost/index.php</code> 测试。</p>
+<h1 id="搭建nginx-PHP-FPM环境"><a href="#搭建nginx-PHP-FPM环境" class="headerlink" title="搭建nginx+PHP-FPM环境"></a>搭建nginx+PHP-FPM环境</h1><p>使用命令 <code>docker pull nginx:1.13.9-alpine</code>安装Nginx<span style="font-size: 13px; color: #777;"><br>默认的网页文件夹是 /usr/share/nginx/html<br>默认的配置文件地址是/etc/nginx/nginx.conf</span><br>如果我们没有现成的配置文件，那么可以先胡乱启动下容器，然后拷贝到 我们的文件夹中。如下</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run --name nginx --rm -d  nginx:1.13.9-alpine</span><br><span class="line">docker cp nginx:/etc/nginx/nginx.conf ~/conf</span><br></pre></td></tr></tbody></table></figure>
+<p>普通html的情况下，nginx不需要做任何配置，使用如下命令重新运行后，尝试普通HTML访问是否正常</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run --name nginx -d --rm -v /home/xugz/php:/usr/share/nginx/html \</span><br><span class="line">-p 80:80 nginx:1.13.9-alpine</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="nginx-FPM的配置"><a href="#nginx-FPM的配置" class="headerlink" title="nginx+FPM的配置"></a>nginx+FPM的配置</h2><p>nginx配置文件的内容参考</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">user  nginx;</span><br><span class="line">worker_processes  1;</span><br><span class="line"></span><br><span class="line">error_log  /var/log/nginx/error.log warn;</span><br><span class="line">pid        /var/run/nginx.pid;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">events {</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">http {</span><br><span class="line">    include       /etc/nginx/mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">                      '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">                      '"$http_user_agent" "$http_x_forwarded_for"';</span><br><span class="line"></span><br><span class="line">    access_log  /var/log/nginx/access.log  main;</span><br><span class="line"></span><br><span class="line">    sendfile        on;</span><br><span class="line">    #tcp_nopush     on;</span><br><span class="line"></span><br><span class="line">    keepalive_timeout  65;</span><br><span class="line"></span><br><span class="line">    #gzip  on;</span><br><span class="line"></span><br><span class="line">  #  include /etc/nginx/conf.d/*.conf;</span><br><span class="line">  server{</span><br><span class="line">    listen 80;</span><br><span class="line">    location / {</span><br><span class="line">    root  /usr/share/nginx/html; </span><br><span class="line">     index  index.html index.htm index.php;</span><br><span class="line">   }</span><br><span class="line">   location ~ \.php$ {</span><br><span class="line">        root /php;</span><br><span class="line">        fastcgi_pass 192.138.0.2:9000; # 这个192.138.0.2 是容器IP 需要指定</span><br><span class="line">        fastcgi_index index.php;</span><br><span class="line">        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;</span><br><span class="line">        include fastcgi_params;</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>启动FPM和Nginx</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker network create --driver=bridge --subnet=192.138.0.0/16 mynginx</span><br><span class="line"></span><br><span class="line">docker run -d  --rm --name fpm \</span><br><span class="line">--network mynginx --ip 192.138.0.2 \ # 这个IP和Nginx配置文件中 fastcgi_pass配置的IP需要保持一致</span><br><span class="line">-v /home/xugz/php:/php \</span><br><span class="line">php:7.2.0-fpm-alpine3.6</span><br><span class="line"></span><br><span class="line">docker run --name nginx -d --rm -v /home/xugz/php:/usr/share/nginx/html \</span><br><span class="line">-v /home/xugz/conf/nginx.conf:/etc/nginx/nginx.conf \</span><br><span class="line">--network mynginx  -p 80:80 \</span><br><span class="line">nginx:1.13.9-alpine</span><br></pre></td></tr></tbody></table></figure>
+
+<p>当然可以使用compose进行编排，很简单这里不就赘述了，不要忘记同步修改Apache和Nginx配置文件中的fpm部分，统一改成fpm的IP。<br><a href="https://hub.docker.com/_/nginx/" target="_blank" rel="noopener">nginx 官方镜像</a></p>
+<h1 id="启动MySQL容器、导入数据"><a href="#启动MySQL容器、导入数据" class="headerlink" title="启动MySQL容器、导入数据"></a>启动MySQL容器、导入数据</h1><p>拉取官方镜像 <code>docker pull mysql:5.7</code><br>启动MySQL <span style="font-size: 13px; color: #777;"> -e 设置环境变量 MYSQL_ROOT_PASSWORD 是root的密码</span><br><code>docker run --name mysql --rm -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</code><br>测试连接 <code>docker exec -it mysql mysql -u root -p123123</code> 或者 <code>docker exec -it mysql mysql -u root -p</code><br>实际运行必定要配置文件，根据官网的提示，配置文件在 /etc/mysql/my.cnf，数据目录在 /var/lib/mysql。</p>
+<p>本地新建mysql目录，其中新建conf和data目录。conf挂载/etc/mysql/conf.d，data挂载/var/lib/mysql</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">vim /home/xugz/mysql/conf/conf.cnf</span><br><span class="line"></span><br><span class="line"># 下面是对应配置信息</span><br><span class="line">[mysqld]</span><br><span class="line">server-id = 1 #服务Id唯一 用于主从同步</span><br><span class="line">port = 3306</span><br><span class="line">log-error = /var/log/mysql/error.log #错误日志</span><br><span class="line">#只能用IP地址</span><br><span class="line">skip_name_resolve </span><br><span class="line">#数据库默认字符集</span><br><span class="line">character-set-server = utf8mb4</span><br><span class="line">#数据库字符集对应一些排序等规则 </span><br><span class="line">collation-server = utf8mb4_general_ci</span><br><span class="line">#设置client连接mysql时的字符集,防止乱码</span><br><span class="line">init_connect='SET NAMES utf8mb4'</span><br><span class="line">#最大连接数</span><br><span class="line">max_connections = 300</span><br></pre></td></tr></tbody></table></figure>
+<p>修改完成后启动，确定放行3306端口</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run --name mysql --rm -p 3306:3306 \</span><br><span class="line">-v /home/xugz/mysql/conf:/etc/mysql/conf.d  -v /home/xugz/mysql/data:/var/lib/mysql \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</span><br></pre></td></tr></tbody></table></figure>
+<p>使用 <code>docker logs</code> 查看是否存在报错或者使用客户端进入MySQL确认配置是否生效。</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker exec -it mysql mysql -uroot -p123123</span><br><span class="line"># 或者上行命令使用  docker exec -it mysql bash 然后  mysql -uroot -p123123 正常来说会进入mysql交互界面</span><br><span class="line">show variables like '%max_connections%'； #查看最大连接数是否和配置一致用于判断配置是否生效。</span><br></pre></td></tr></tbody></table></figure>
+<p>利用容器执行命令导入SQL文件</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker cp test.sql mysql:/tmp</span><br><span class="line">docker exec -it mysql mysql -uroot -p123123 </span><br><span class="line"> create database test;</span><br><span class="line"> use test;</span><br><span class="line"> source /tmp/test.sql;</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="基于alpine构建自己的容器"><a href="#基于alpine构建自己的容器" class="headerlink" title="基于alpine构建自己的容器"></a>基于alpine构建自己的容器</h1><p>alpine使用的是apk包管理器,命令，如apk add 、apk update 、apk del。默认镜像源可能比较慢，常用的有<br>中科大镜像源：<a href="http://mirrors.ustc.edu.cn/alpine/" target="_blank" rel="noopener">http://mirrors.ustc.edu.cn/alpine/</a> 阿里云镜像源：<a href="http://mirrors.aliyun.com/alpine/" target="_blank" rel="noopener">http://mirrors.aliyun.com/alpine/</a></p>
+<p>拉取官方镜像 <code>docker pull alpine</code><br>新建目录 <code>mkdir mydocker</code> 并在目录中新建Dockerfile文件，键入以下内容</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">FROM alpine:latest</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/main &gt; /etc/apk/repositories</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/community &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update &amp;&amp; apk upgrade</span><br><span class="line">RUN apk add mysql-client</span><br><span class="line">ENTRYPOINT ["mysql"]</span><br></pre></td></tr></tbody></table></figure>
+<p><span style="font-size: 13px; color: #777;">不使用dockerfile的话，手工配置加速镜像源使用命令<br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/main/\" &gt; /etc/apk/repositories"</code><br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/community/\" &gt;&gt; /etc/apk/repositories"</code><br>当然设置好后，还得  执行<code>apk update &amp;&amp; apk upgrade</code><br></span><br>构建镜像，使用命令 <code>docker build -t mytool:1.0 .</code><br>使用<code>docker run -it --name tmp  mytool:1.0 mysql -h 192.168.2.156 -uroot -p123123</code> 运行验证。</p>
+<p><a href="https://hub.docker.com/_/alpine/" target="_blank" rel="noopener">alpine镜像官方文档</a></p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Docker</category>
+        <category>PHP</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>PHP</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker-Machine</title>
     <url>/2019/11/28/Docker-Machine/</url>
     <content><![CDATA[<p>Docker Machine是简化的Docker安装的命令行工具,通过命令行即可在相应的平台上(目前支持在本机运行virtualbox虚拟主机，Hyper-V虚拟主机，VMware虚拟主机，AWS EC2，Azure，DigitalOcean，Google等公有云主机)安装Docker。（好比在你机器上装个虚拟机，老外帮你准备好了专门的ISO，docker 都帮你弄好了）</p>
@@ -164,7 +330,7 @@
  -i: 打开stdin，用于和容器进行交互，通常与 -t 同时使用；<br>
  -t: 为容器创建虚拟终端，我们就可以登录终端了通常与 -i 同时使用。 
 
-<p>提示：使用ctrl+d 可退出当前终端</p>
+<p>提示：使用ctrl+d 可退出当前终端。ctrl+p+q 退出容器但不关闭</p>
 </div>
 
 <p>列出容器 <code>docker ps</code><br>查看到当前所有容器  <code>docker ps -a</code><br>再次启动运行容器  先通过 <code>docker ps -a</code> 获得容器ID ，使用 <code>docker start &lt;container ID&gt;</code> 启动容器，使用 <code>docker attach &lt;container ID &gt;</code> 进入运行容器。当然也可以使用组合命令 <code>docker start &lt;contianer ID &gt;  -a -i</code><br><span style="font-size: 13px; color: #777;">  -a 打开容器的输出流 -i 打开容器的输入流。注意，退出后容器也会自动停止。</span><br>在运行中的容器中执行命令进行交互式操作 <code>docker exec  -i -t &lt;container Name or container ID &gt;  &lt;cmd&gt;</code><br><span style="font-size: 13px; color: #777;"> docker exec -i -t myos1 /bin/bash </span><br>停止所有的container <code>docker stop $(docker ps -a -q)</code><br>删除所有容器 <code>docker rm $(docker ps -a -q)</code><br>删除所有镜像 <code>docker rmi $(docker images -q)</code></p>
@@ -855,46 +1021,6 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
-    <title>Linux的crontab命令</title>
-    <url>/2019/10/23/linux_crontab/</url>
-    <content><![CDATA[<p>Linux下的任务调度分为两类：系统任务调度和用户任务调度。<br>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。<br>所有用户定义的crontab文件都被保存在/var/spool/cron目录中。其文件名与用户名一致，使用者权限文件如下：<br><code>/etc/cron.deny</code>     该文件中所列用户不允许使用crontab命令<br><code>/etc/cron.allow</code>   该文件中所列用户允许使用crontab命令<br><code>/var/spool/cron/</code>   所有用户crontab文件存放的目录,以用户名命名  </p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">分 时 日 月 星期 命令</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></tbody></table></figure>
-
-<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/sbin/service crond start    // 启动服务   或者使用  service crond start 命令 手动启动crontab服务</span><br><span class="line">/sbin/service crond stop     // 关闭服务</span><br><span class="line">/sbin/service crond restart  // 重启服务</span><br><span class="line">/sbin/service crond reload   // 重新载入配置</span><br><span class="line"></span><br><span class="line">chkconfig –level 35 crond on // 加入开机自动启动</span><br><span class="line">service crond status // 查看crontab服务状态</span><br></pre></td></tr></tbody></table></figure>
-
-<p>crontab (选项 例如:-e)(参数 crontab文件)<br>-e：编辑该用户的计时器设置；<br>-l：列出该用户的计时器设置；<br>-r：删除该用户的计时器设置；<br>-u&lt;用户名称&gt;：指定要设定计时器的用户名称。    </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Linux</category>
-        <category>crontab</category>
-      </categories>
-      <tags>
-        <tag>基础</tag>
-        <tag>Linux</tag>
-        <tag>crontab</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux基础</title>
     <url>/2019/10/23/linux_base/</url>
     <content><![CDATA[<p>最近在云之梦网站学习Linux基础，发现有好多基础命令见面不相识……此篇作为学习笔记，利用零碎的时间终于完成课程学习，该篇添加常用命令以方便后续翻阅参考。</p>
@@ -1151,6 +1277,46 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
+    <title>Linux的crontab命令</title>
+    <url>/2019/10/23/linux_crontab/</url>
+    <content><![CDATA[<p>Linux下的任务调度分为两类：系统任务调度和用户任务调度。<br>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。<br>所有用户定义的crontab文件都被保存在/var/spool/cron目录中。其文件名与用户名一致，使用者权限文件如下：<br><code>/etc/cron.deny</code>     该文件中所列用户不允许使用crontab命令<br><code>/etc/cron.allow</code>   该文件中所列用户允许使用crontab命令<br><code>/var/spool/cron/</code>   所有用户crontab文件存放的目录,以用户名命名  </p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">分 时 日 月 星期 命令</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/sbin/service crond start    // 启动服务   或者使用  service crond start 命令 手动启动crontab服务</span><br><span class="line">/sbin/service crond stop     // 关闭服务</span><br><span class="line">/sbin/service crond restart  // 重启服务</span><br><span class="line">/sbin/service crond reload   // 重新载入配置</span><br><span class="line"></span><br><span class="line">chkconfig –level 35 crond on // 加入开机自动启动</span><br><span class="line">service crond status // 查看crontab服务状态</span><br></pre></td></tr></tbody></table></figure>
+
+<p>crontab (选项 例如:-e)(参数 crontab文件)<br>-e：编辑该用户的计时器设置；<br>-l：列出该用户的计时器设置；<br>-r：删除该用户的计时器设置；<br>-u&lt;用户名称&gt;：指定要设定计时器的用户名称。    </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Linux</category>
+        <category>crontab</category>
+      </categories>
+      <tags>
+        <tag>基础</tag>
+        <tag>Linux</tag>
+        <tag>crontab</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>使用Hexo+GitHub搭建个人博客教程</title>
     <url>/2019/06/19/Hexo+GitHub/</url>
     <content><![CDATA[<p>开始搭建自己的小站吧。简单记录，方便后续翻阅。<br>从无到有的流程还是比较详细的，按步骤从头到尾跟着执行可以避免大部分问题。本次搭站 <a href="https://zhuanlan.zhihu.com/p/60578464" target="_blank" rel="noopener">参考文章</a> 人家写的已经很详细了，这里进行备份基础补充和常见问题的汇总。</p>
@@ -1310,6 +1476,52 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
+    <title>Hexo NexT主题添加字数统计阅读时长</title>
+    <url>/2019/06/19/hexo_add_wordcount/</url>
+    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
+<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<p>到这里就可以啦，快去试试吧。  </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>修改Hexo博客next主题文章页面宽度</title>
     <url>/2019/06/19/hexo_postwidth/</url>
     <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
@@ -1348,52 +1560,6 @@ header.post-header {
     width: 100% !important;
   }
 }</code></pre><script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo NexT主题添加字数统计阅读时长</title>
-    <url>/2019/06/19/hexo_add_wordcount/</url>
-    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
-<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<p>到这里就可以啦，快去试试吧。  </p>
-<script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
