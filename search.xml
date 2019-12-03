@@ -1,6 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Docker+MySQL</title>
+    <url>/2019/12/03/docker-mysql-base/</url>
+    <content><![CDATA[<p>本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是一些Docker结合MySQL常用操作的笔记。这里MySQL版本为5.7。</p>
+<a id="more"></a>
+
+<h1 id="启动MySQL容器、导入数据"><a href="#启动MySQL容器、导入数据" class="headerlink" title="启动MySQL容器、导入数据"></a>启动MySQL容器、导入数据</h1><p>拉取官方镜像 <code>docker pull mysql:5.7</code><br>启动MySQL <span style="font-size: 13px; color: #777;"> -e 设置环境变量 MYSQL_ROOT_PASSWORD 是root的密码</span><br><code>docker run --name mysql --rm -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</code><br>测试连接 <code>docker exec -it mysql mysql -u root -p123123</code> 或者 <code>docker exec -it mysql mysql -u root -p</code><br>实际运行必定要配置文件，根据官网的提示，配置文件在 /etc/mysql/my.cnf，数据目录在 /var/lib/mysql。</p>
+<p>本地新建mysql目录，其中新建conf和data目录。conf挂载/etc/mysql/conf.d，data挂载/var/lib/mysql</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">vim /home/xugz/mysql/conf/conf.cnf</span><br><span class="line"></span><br><span class="line"># 下面是对应配置信息</span><br><span class="line">[mysqld]</span><br><span class="line">server-id = 1 #服务Id唯一 用于主从同步</span><br><span class="line">port = 3306</span><br><span class="line">log-error = /var/log/mysql/error.log #错误日志</span><br><span class="line">#只能用IP地址</span><br><span class="line">skip_name_resolve </span><br><span class="line">#数据库默认字符集</span><br><span class="line">character-set-server = utf8mb4</span><br><span class="line">#数据库字符集对应一些排序等规则 </span><br><span class="line">collation-server = utf8mb4_general_ci</span><br><span class="line">#设置client连接mysql时的字符集,防止乱码</span><br><span class="line">init_connect='SET NAMES utf8mb4'</span><br><span class="line">#最大连接数</span><br><span class="line">max_connections = 300</span><br></pre></td></tr></tbody></table></figure>
+<p>修改完成后启动，确定放行3306端口</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run --name mysql --rm -p 3306:3306 \</span><br><span class="line">-v /home/xugz/mysql/conf:/etc/mysql/conf.d  -v /home/xugz/mysql/data:/var/lib/mysql \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</span><br></pre></td></tr></tbody></table></figure>
+<p>使用 <code>docker logs</code> 查看是否存在报错或者使用客户端进入MySQL确认配置是否生效。</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker exec -it mysql mysql -uroot -p123123</span><br><span class="line"># 或者上行命令使用  docker exec -it mysql bash 然后  mysql -uroot -p123123 正常来说会进入mysql交互界面</span><br><span class="line">show variables like '%max_connections%'； #查看最大连接数是否和配置一致用于判断配置是否生效。</span><br></pre></td></tr></tbody></table></figure>
+<p>利用容器执行命令导入SQL文件</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker cp test.sql mysql:/tmp</span><br><span class="line">docker exec -it mysql mysql -uroot -p123123 </span><br><span class="line"> create database test;</span><br><span class="line"> use test;</span><br><span class="line"> source /tmp/test.sql;</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="基于alpine构建MySQL客户端"><a href="#基于alpine构建MySQL客户端" class="headerlink" title="基于alpine构建MySQL客户端"></a>基于alpine构建MySQL客户端</h1><p>alpine使用的是apk包管理器,命令，如apk add 、apk update 、apk del。默认镜像源可能比较慢，常用的有<br>中科大镜像源：<a href="http://mirrors.ustc.edu.cn/alpine/" target="_blank" rel="noopener">http://mirrors.ustc.edu.cn/alpine/</a> 阿里云镜像源：<a href="http://mirrors.aliyun.com/alpine/" target="_blank" rel="noopener">http://mirrors.aliyun.com/alpine/</a></p>
+<p>拉取官方镜像 <code>docker pull alpine</code><br>新建目录 <code>mkdir mytool</code> 并在目录中新建Dockerfile文件，键入以下内容。安装MySQL客户端</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">FROM alpine:latest</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/main &gt; /etc/apk/repositories</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/community &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update &amp;&amp; apk upgrade</span><br><span class="line">RUN apk add mysql-client</span><br><span class="line">ENTRYPOINT ["mysql"]</span><br></pre></td></tr></tbody></table></figure>
+<p><span style="font-size: 13px; color: #777;">不使用dockerfile的话，手工配置加速镜像源使用命令<br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/main/\" &gt; /etc/apk/repositories"</code><br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/community/\" &gt;&gt; /etc/apk/repositories"</code><br>当然设置好后，还得  执行<code>apk update &amp;&amp; apk upgrade</code><br></span><br>构建镜像，使用命令编译 <code>docker build -t mytool:1.0 .</code><br>使用<code>docker run -it --name tmp  mytool:1.0 mysql -h 192.168.2.156 -uroot -p123123</code> 运行验证。<br><span style="font-size: 13px; color: #777;">这里的192.168.2.156是MySQL服务端部署主机的IP</span></p>
+<p><a href="https://hub.docker.com/_/alpine/" target="_blank" rel="noopener">alpine镜像官方文档</a></p>
+<h1 id="制作MySQL备份专用镜像"><a href="#制作MySQL备份专用镜像" class="headerlink" title="制作MySQL备份专用镜像"></a>制作MySQL备份专用镜像</h1><p>我们现在想要制作一个MySQL备份数据库数据的镜像，要求存放到指定目录 /home/xugz/mysql/database_bak/下，文件名与数据库名一致。<br>数据库备份命令<code>mysqldump -u用户名 -p密码 数据库名 &gt; 导出的文件名</code>。<br>修改原mytool目录中的Dockerfile文件，覆盖以下内容，注意需要去掉注释哦</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">FROM mytool:1.0 # 基于上文中alpine构建的MySQL客户端</span><br><span class="line">ENV mysql_host  192.168.2.156 # 环境变量 目标连接服务器</span><br><span class="line">ENV mysql_user root # 环境变量 默认用户为 root</span><br><span class="line">ENV mysql_pass 123123 # 环境变量 连接mysql服务器主机对应用户的密码</span><br><span class="line">ENV mysql_db test</span><br><span class="line">ENTRYPOINT mysqldump -h$mysql_host  -u$mysql_user -p$mysql_pass $mysql_db &gt; /data/$mysql_db.sql</span><br></pre></td></tr></tbody></table></figure>
+<p>构建镜像，使用命令编译<code>docker build -t mytool:1.1 .</code><br>新建备份目录地址 <code>mkdir database_bak</code><br>运行并挂载指定目录 <code>docker run -it --name bakup --rm -v /home/xugz/mysql/database_bak:/data mytool:1.1</code></p>
+<p>或者增加环境变量指定，用于跨主机备份，参考以下命令</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run -it --name bakup --rm -v /home/xugz/mysql/database_bak:/data \</span><br><span class="line">-e mysql_pass=qwe123 -e mysql_host=192.168.222.1 -e mysql_db=db_test_products -e mysql_user=root \</span><br><span class="line">mytool:1.1</span><br></pre></td></tr></tbody></table></figure>
+<p>运行完成后，可到备份目标地址查看是否存在文件。</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Docker</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MySQL指定日期加减</title>
     <url>/2019/12/02/mysql-time-addsub/</url>
     <content><![CDATA[<p>MySQL官网是不承认时间直接相加减的，本篇记录时间加减操作需要注意点，加深记忆，避免以后入坑。<br>先来看看MySQL中常用的内建日期函数</p>
@@ -93,9 +149,9 @@
       </tags>
   </entry>
   <entry>
-    <title>Docker+PHP</title>
+    <title>Docker搭建PHP运行环境</title>
     <url>/2019/11/29/docker-php-base/</url>
-    <content><![CDATA[<p>本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是一些Docker结合PHP的套路笔记。这里PHP版本为7.0+.</p>
+    <content><![CDATA[<p>本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是使用Docker安装PHP运行环境的命令笔记。这里PHP版本为7.0+.</p>
 <a id="more"></a>
 
 <h1 id="运行PHP程序"><a href="#运行PHP程序" class="headerlink" title="运行PHP程序"></a>运行PHP程序</h1><p>拉取7.2版本的官方PHP镜像 <code>docker pull php:7.2-cli</code><br>运行刚才的镜像<span style="font-size: 13px; color: #777;"> –rm 运行完自己干掉自己，一般用于执行临时任务</span></p>
@@ -122,21 +178,6 @@
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker network create --driver=bridge --subnet=192.138.0.0/16 mynginx</span><br><span class="line"></span><br><span class="line">docker run -d  --rm --name fpm \</span><br><span class="line">--network mynginx --ip 192.138.0.2 \ # 这个IP和Nginx配置文件中 fastcgi_pass配置的IP需要保持一致</span><br><span class="line">-v /home/xugz/php:/php \</span><br><span class="line">php:7.2.0-fpm-alpine3.6</span><br><span class="line"></span><br><span class="line">docker run --name nginx -d --rm -v /home/xugz/php:/usr/share/nginx/html \</span><br><span class="line">-v /home/xugz/conf/nginx.conf:/etc/nginx/nginx.conf \</span><br><span class="line">--network mynginx  -p 80:80 \</span><br><span class="line">nginx:1.13.9-alpine</span><br></pre></td></tr></tbody></table></figure>
 
 <p>当然可以使用compose进行编排，很简单这里不就赘述了，不要忘记同步修改Apache和Nginx配置文件中的fpm部分，统一改成fpm的IP。<br><a href="https://hub.docker.com/_/nginx/" target="_blank" rel="noopener">nginx 官方镜像</a></p>
-<h1 id="启动MySQL容器、导入数据"><a href="#启动MySQL容器、导入数据" class="headerlink" title="启动MySQL容器、导入数据"></a>启动MySQL容器、导入数据</h1><p>拉取官方镜像 <code>docker pull mysql:5.7</code><br>启动MySQL <span style="font-size: 13px; color: #777;"> -e 设置环境变量 MYSQL_ROOT_PASSWORD 是root的密码</span><br><code>docker run --name mysql --rm -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</code><br>测试连接 <code>docker exec -it mysql mysql -u root -p123123</code> 或者 <code>docker exec -it mysql mysql -u root -p</code><br>实际运行必定要配置文件，根据官网的提示，配置文件在 /etc/mysql/my.cnf，数据目录在 /var/lib/mysql。</p>
-<p>本地新建mysql目录，其中新建conf和data目录。conf挂载/etc/mysql/conf.d，data挂载/var/lib/mysql</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">vim /home/xugz/mysql/conf/conf.cnf</span><br><span class="line"></span><br><span class="line"># 下面是对应配置信息</span><br><span class="line">[mysqld]</span><br><span class="line">server-id = 1 #服务Id唯一 用于主从同步</span><br><span class="line">port = 3306</span><br><span class="line">log-error = /var/log/mysql/error.log #错误日志</span><br><span class="line">#只能用IP地址</span><br><span class="line">skip_name_resolve </span><br><span class="line">#数据库默认字符集</span><br><span class="line">character-set-server = utf8mb4</span><br><span class="line">#数据库字符集对应一些排序等规则 </span><br><span class="line">collation-server = utf8mb4_general_ci</span><br><span class="line">#设置client连接mysql时的字符集,防止乱码</span><br><span class="line">init_connect='SET NAMES utf8mb4'</span><br><span class="line">#最大连接数</span><br><span class="line">max_connections = 300</span><br></pre></td></tr></tbody></table></figure>
-<p>修改完成后启动，确定放行3306端口</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run --name mysql --rm -p 3306:3306 \</span><br><span class="line">-v /home/xugz/mysql/conf:/etc/mysql/conf.d  -v /home/xugz/mysql/data:/var/lib/mysql \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</span><br></pre></td></tr></tbody></table></figure>
-<p>使用 <code>docker logs</code> 查看是否存在报错或者使用客户端进入MySQL确认配置是否生效。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker exec -it mysql mysql -uroot -p123123</span><br><span class="line"># 或者上行命令使用  docker exec -it mysql bash 然后  mysql -uroot -p123123 正常来说会进入mysql交互界面</span><br><span class="line">show variables like '%max_connections%'； #查看最大连接数是否和配置一致用于判断配置是否生效。</span><br></pre></td></tr></tbody></table></figure>
-<p>利用容器执行命令导入SQL文件</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker cp test.sql mysql:/tmp</span><br><span class="line">docker exec -it mysql mysql -uroot -p123123 </span><br><span class="line"> create database test;</span><br><span class="line"> use test;</span><br><span class="line"> source /tmp/test.sql;</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="基于alpine构建自己的容器"><a href="#基于alpine构建自己的容器" class="headerlink" title="基于alpine构建自己的容器"></a>基于alpine构建自己的容器</h1><p>alpine使用的是apk包管理器,命令，如apk add 、apk update 、apk del。默认镜像源可能比较慢，常用的有<br>中科大镜像源：<a href="http://mirrors.ustc.edu.cn/alpine/" target="_blank" rel="noopener">http://mirrors.ustc.edu.cn/alpine/</a> 阿里云镜像源：<a href="http://mirrors.aliyun.com/alpine/" target="_blank" rel="noopener">http://mirrors.aliyun.com/alpine/</a></p>
-<p>拉取官方镜像 <code>docker pull alpine</code><br>新建目录 <code>mkdir mydocker</code> 并在目录中新建Dockerfile文件，键入以下内容</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">FROM alpine:latest</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/main &gt; /etc/apk/repositories</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/community &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update &amp;&amp; apk upgrade</span><br><span class="line">RUN apk add mysql-client</span><br><span class="line">ENTRYPOINT ["mysql"]</span><br></pre></td></tr></tbody></table></figure>
-<p><span style="font-size: 13px; color: #777;">不使用dockerfile的话，手工配置加速镜像源使用命令<br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/main/\" &gt; /etc/apk/repositories"</code><br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/community/\" &gt;&gt; /etc/apk/repositories"</code><br>当然设置好后，还得  执行<code>apk update &amp;&amp; apk upgrade</code><br></span><br>构建镜像，使用命令 <code>docker build -t mytool:1.0 .</code><br>使用<code>docker run -it --name tmp  mytool:1.0 mysql -h 192.168.2.156 -uroot -p123123</code> 运行验证。</p>
-<p><a href="https://hub.docker.com/_/alpine/" target="_blank" rel="noopener">alpine镜像官方文档</a></p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -1021,6 +1062,46 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
+    <title>Linux的crontab命令</title>
+    <url>/2019/10/23/linux_crontab/</url>
+    <content><![CDATA[<p>Linux下的任务调度分为两类：系统任务调度和用户任务调度。<br>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。<br>所有用户定义的crontab文件都被保存在/var/spool/cron目录中。其文件名与用户名一致，使用者权限文件如下：<br><code>/etc/cron.deny</code>     该文件中所列用户不允许使用crontab命令<br><code>/etc/cron.allow</code>   该文件中所列用户允许使用crontab命令<br><code>/var/spool/cron/</code>   所有用户crontab文件存放的目录,以用户名命名  </p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">分 时 日 月 星期 命令</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/sbin/service crond start    // 启动服务   或者使用  service crond start 命令 手动启动crontab服务</span><br><span class="line">/sbin/service crond stop     // 关闭服务</span><br><span class="line">/sbin/service crond restart  // 重启服务</span><br><span class="line">/sbin/service crond reload   // 重新载入配置</span><br><span class="line"></span><br><span class="line">chkconfig –level 35 crond on // 加入开机自动启动</span><br><span class="line">service crond status // 查看crontab服务状态</span><br></pre></td></tr></tbody></table></figure>
+
+<p>crontab (选项 例如:-e)(参数 crontab文件)<br>-e：编辑该用户的计时器设置；<br>-l：列出该用户的计时器设置；<br>-r：删除该用户的计时器设置；<br>-u&lt;用户名称&gt;：指定要设定计时器的用户名称。    </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Linux</category>
+        <category>crontab</category>
+      </categories>
+      <tags>
+        <tag>基础</tag>
+        <tag>Linux</tag>
+        <tag>crontab</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux基础</title>
     <url>/2019/10/23/linux_base/</url>
     <content><![CDATA[<p>最近在云之梦网站学习Linux基础，发现有好多基础命令见面不相识……此篇作为学习笔记，利用零碎的时间终于完成课程学习，该篇添加常用命令以方便后续翻阅参考。</p>
@@ -1277,46 +1358,6 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
-    <title>Linux的crontab命令</title>
-    <url>/2019/10/23/linux_crontab/</url>
-    <content><![CDATA[<p>Linux下的任务调度分为两类：系统任务调度和用户任务调度。<br>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。<br>所有用户定义的crontab文件都被保存在/var/spool/cron目录中。其文件名与用户名一致，使用者权限文件如下：<br><code>/etc/cron.deny</code>     该文件中所列用户不允许使用crontab命令<br><code>/etc/cron.allow</code>   该文件中所列用户允许使用crontab命令<br><code>/var/spool/cron/</code>   所有用户crontab文件存放的目录,以用户名命名  </p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">分 时 日 月 星期 命令</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></tbody></table></figure>
-
-<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/sbin/service crond start    // 启动服务   或者使用  service crond start 命令 手动启动crontab服务</span><br><span class="line">/sbin/service crond stop     // 关闭服务</span><br><span class="line">/sbin/service crond restart  // 重启服务</span><br><span class="line">/sbin/service crond reload   // 重新载入配置</span><br><span class="line"></span><br><span class="line">chkconfig –level 35 crond on // 加入开机自动启动</span><br><span class="line">service crond status // 查看crontab服务状态</span><br></pre></td></tr></tbody></table></figure>
-
-<p>crontab (选项 例如:-e)(参数 crontab文件)<br>-e：编辑该用户的计时器设置；<br>-l：列出该用户的计时器设置；<br>-r：删除该用户的计时器设置；<br>-u&lt;用户名称&gt;：指定要设定计时器的用户名称。    </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Linux</category>
-        <category>crontab</category>
-      </categories>
-      <tags>
-        <tag>基础</tag>
-        <tag>Linux</tag>
-        <tag>crontab</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用Hexo+GitHub搭建个人博客教程</title>
     <url>/2019/06/19/Hexo+GitHub/</url>
     <content><![CDATA[<p>开始搭建自己的小站吧。简单记录，方便后续翻阅。<br>从无到有的流程还是比较详细的，按步骤从头到尾跟着执行可以避免大部分问题。本次搭站 <a href="https://zhuanlan.zhihu.com/p/60578464" target="_blank" rel="noopener">参考文章</a> 人家写的已经很详细了，这里进行备份基础补充和常见问题的汇总。</p>
@@ -1476,52 +1517,6 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
-    <title>Hexo NexT主题添加字数统计阅读时长</title>
-    <url>/2019/06/19/hexo_add_wordcount/</url>
-    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
-<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<p>到这里就可以啦，快去试试吧。  </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>修改Hexo博客next主题文章页面宽度</title>
     <url>/2019/06/19/hexo_postwidth/</url>
     <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
@@ -1560,6 +1555,52 @@ header.post-header {
     width: 100% !important;
   }
 }</code></pre><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo NexT主题添加字数统计阅读时长</title>
+    <url>/2019/06/19/hexo_add_wordcount/</url>
+    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
+<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<p>到这里就可以啦，快去试试吧。  </p>
+<script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }

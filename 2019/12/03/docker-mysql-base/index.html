@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Docker,MySQL," />
 
 
 
@@ -86,13 +86,15 @@
 
 
 
-<meta name="description" content="等我想到好主意，会让刚才爬进我耳朵的虫子去告诉你。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="理想国">
-<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;page&#x2F;4&#x2F;index.html">
+<meta name="description" content="本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是一些Docker结合MySQL常用操作的笔记。这里MySQL版本为5.7。">
+<meta name="keywords" content="Docker,MySQL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker+MySQL">
+<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-mysql-base&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="等我想到好主意，会让刚才爬进我耳朵的虫子去告诉你。">
+<meta property="og:description" content="本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是一些Docker结合MySQL常用操作的笔记。这里MySQL版本为5.7。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-12-03T06:09:22.707Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -128,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="https://xlline.github.io/page/4/"/>
+  <link rel="canonical" href="https://xlline.github.io/2019/12/03/docker-mysql-base/"/>
 
 
 
 
 
-  <title>理想国</title>
+  <title>Docker+MySQL | 理想国</title>
   
 
 
@@ -153,8 +155,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -281,9 +282,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -296,7 +297,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/06/19/hexo_add_wordcount/">
+    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/12/03/docker-mysql-base/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xugz">
@@ -313,9 +314,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/19/hexo_add_wordcount/" itemprop="url">Hexo NexT主题添加字数统计阅读时长</a></h1>
+          <h1 class="post-title" itemprop="name headline">Docker+MySQL</h1>
         
 
         <div class="post-meta">
@@ -327,8 +326,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-19T15:29:14+08:00">
-                2019-06-19
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-03T12:22:21+08:00">
+                2019-12-03
               </time>
             
 
@@ -361,195 +360,8 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/Hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-	
-          
-	   <span class="post-meta-divider">|</span>
-            <span class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  457 字
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  2分钟
-                </span>
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          配置NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 _config.yml 中打开 wordcount 统计功能即可。如下所示：
-12345678# Post wordcount display settings# Dependencies: https://github.com/willin/hexo-wordcountpost_wordcount:  item_text: true  wordcount: true         # 单篇 字数统计  min2read: true          # 单篇 阅读时长  totalcount: false       # 网站 字数统计 
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/06/19/hexo_add_wordcount/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-<div>
-      
-</div>
-
-    
-
-    
-
-    
-	<div>
-	  
-	</div>
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2018/10/25/OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="xugz">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="理想国">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/25/OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/" itemprop="url">网络工程师基础</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-25T17:02:34+08:00">
-                2018-10-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/" itemprop="url" rel="index">
-                    <span itemprop="name">拾级而上</span>
+                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/Docker/" itemprop="url" rel="index">
+                    <span itemprop="name">Docker</span>
                   </a>
                 </span>
 
@@ -559,205 +371,8 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/" itemprop="url" rel="index">
-                    <span itemprop="name">网络通信</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-	
-          
-	   <span class="post-meta-divider">|</span>
-            <span class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  419 字
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  1分钟
-                </span>
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          OSIOSI（开放系统互联(Open System Interconnection)），把网络通信的工作分为7层,分别是物理层,数据链路层,网络层,传输层,会话层,表示层和应用层。通俗理解如下：物理层就是布线、光纤和其它电子设备，用来把两台网络通信设备连接在一起的东西。数据链路层就是MAC地址、交换机或者网卡和驱动程序，主要任务是把数据帧转换成二进制位供一层处理。网络层最主要的设备是路由器，主要作用是为了在数据外围针对IP地址路由的交换。传输层作用是每台计算机每台应用程序与他人发生通讯，互联端口的协议。会话层，两者之间的通讯过程就是一次会话过程。表示层，规范编码问题。负责转换为适合于OSI系统内部使用的传送语法。即提供格式化的表示和转换数据服务。数据的
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/10/25/OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-<div>
-      
-</div>
-
-    
-
-    
-
-    
-	<div>
-	  
-	</div>
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2018/10/18/markdown_GFM/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="xugz">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="理想国">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/18/markdown_GFM/" itemprop="url">轻量级标记语言Markdown的语法（GFM）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-18T15:29:14+08:00">
-                2018-10-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/" itemprop="url" rel="index">
-                    <span itemprop="name">拾级而上</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/Hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo</span>
+                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/Docker/MySQL/" itemprop="url" rel="index">
+                    <span itemprop="name">MySQL</span>
                   </a>
                 </span>
 
@@ -825,35 +440,49 @@
       
 
       
-        
-          
-          Hexo下使用的MarkDown是Github的GFM，整理汇总常用语法命令方便后续查找。此篇包含常用的语法，当然也一些偶尔会用到的，基本上可以满足日常使用。
-常用基础字体相关斜体:用 * 或 _ 包裹，紧贴被强调文本 
-1*斜体文本*
+        <p>本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是一些Docker结合MySQL常用操作的笔记。这里MySQL版本为5.7。</p>
+<a id="more"></a>
 
-我这是测试斜体哦
+<h1 id="启动MySQL容器、导入数据"><a href="#启动MySQL容器、导入数据" class="headerlink" title="启动MySQL容器、导入数据"></a>启动MySQL容器、导入数据</h1><p>拉取官方镜像 <code>docker pull mysql:5.7</code><br>启动MySQL <span style="font-size: 13px; color: #777;"> -e 设置环境变量 MYSQL_ROOT_PASSWORD 是root的密码</span><br><code>docker run --name mysql --rm -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</code><br>测试连接 <code>docker exec -it mysql mysql -u root -p123123</code> 或者 <code>docker exec -it mysql mysql -u root -p</code><br>实际运行必定要配置文件，根据官网的提示，配置文件在 /etc/mysql/my.cnf，数据目录在 /var/lib/mysql。</p>
+<p>本地新建mysql目录，其中新建conf和data目录。conf挂载/etc/mysql/conf.d，data挂载/var/lib/mysql</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">vim /home/xugz/mysql/conf/conf.cnf</span><br><span class="line"></span><br><span class="line"># 下面是对应配置信息</span><br><span class="line">[mysqld]</span><br><span class="line">server-id = 1 #服务Id唯一 用于主从同步</span><br><span class="line">port = 3306</span><br><span class="line">log-error = /var/log/mysql/error.log #错误日志</span><br><span class="line">#只能用IP地址</span><br><span class="line">skip_name_resolve </span><br><span class="line">#数据库默认字符集</span><br><span class="line">character-set-server = utf8mb4</span><br><span class="line">#数据库字符集对应一些排序等规则 </span><br><span class="line">collation-server = utf8mb4_general_ci</span><br><span class="line">#设置client连接mysql时的字符集,防止乱码</span><br><span class="line">init_connect='SET NAMES utf8mb4'</span><br><span class="line">#最大连接数</span><br><span class="line">max_connections = 300</span><br></pre></td></tr></tbody></table></figure>
+<p>修改完成后启动，确定放行3306端口</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run --name mysql --rm -p 3306:3306 \</span><br><span class="line">-v /home/xugz/mysql/conf:/etc/mysql/conf.d  -v /home/xugz/mysql/data:/var/lib/mysql \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</span><br></pre></td></tr></tbody></table></figure>
+<p>使用 <code>docker logs</code> 查看是否存在报错或者使用客户端进入MySQL确认配置是否生效。</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it mysql mysql -uroot -p123123</span><br><span class="line"># 或者上行命令使用  docker exec -it mysql bash 然后  mysql -uroot -p123123 正常来说会进入mysql交互界面</span><br><span class="line">show variables like '%max_connections%'； #查看最大连接数是否和配置一致用于判断配置是否生效。</span><br></pre></td></tr></tbody></table></figure>
+<p>利用容器执行命令导入SQL文件</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker cp test.sql mysql:/tmp</span><br><span class="line">docker exec -it mysql mysql -uroot -p123123 </span><br><span class="line"> create database test;</span><br><span class="line"> use test;</span><br><span class="line"> source /tmp/test.sql;</span><br></pre></td></tr></tbody></table></figure>
 
-粗体:用 ** 或 __ 包裹，紧贴被强调文本 
-1**粗体文本**
-
-我这是测试粗体哦
-
-删除线： 用 ~~ 包裹被删除文本
-1~~我这是测试删除文字哦~~
-
-我这是测试删除文字哦
-
-段落文本行 : 即一行文字，markdown 中换行必须进行手动操作，自动换行将会变成一个空格段　落 : 由数行文字成一段，markdown 中由空行划分段落。输入两个以上空格再回车，进行手动换行
-标题底线形式(S
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/10/18/markdown_GFM/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
+<h1 id="基于alpine构建MySQL客户端"><a href="#基于alpine构建MySQL客户端" class="headerlink" title="基于alpine构建MySQL客户端"></a>基于alpine构建MySQL客户端</h1><p>alpine使用的是apk包管理器,命令，如apk add 、apk update 、apk del。默认镜像源可能比较慢，常用的有<br>中科大镜像源：<a href="http://mirrors.ustc.edu.cn/alpine/" target="_blank" rel="noopener">http://mirrors.ustc.edu.cn/alpine/</a> 阿里云镜像源：<a href="http://mirrors.aliyun.com/alpine/" target="_blank" rel="noopener">http://mirrors.aliyun.com/alpine/</a></p>
+<p>拉取官方镜像 <code>docker pull alpine</code><br>新建目录 <code>mkdir mytool</code> 并在目录中新建Dockerfile文件，键入以下内容。安装MySQL客户端</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FROM alpine:latest</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/main &gt; /etc/apk/repositories</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/community &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update &amp;&amp; apk upgrade</span><br><span class="line">RUN apk add mysql-client</span><br><span class="line">ENTRYPOINT ["mysql"]</span><br></pre></td></tr></tbody></table></figure>
+<p><span style="font-size: 13px; color: #777;">不使用dockerfile的话，手工配置加速镜像源使用命令<br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/main/\" &gt; /etc/apk/repositories"</code><br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/community/\" &gt;&gt; /etc/apk/repositories"</code><br>当然设置好后，还得  执行<code>apk update &amp;&amp; apk upgrade</code><br></span><br>构建镜像，使用命令编译 <code>docker build -t mytool:1.0 .</code><br>使用<code>docker run -it --name tmp  mytool:1.0 mysql -h 192.168.2.156 -uroot -p123123</code> 运行验证。<br><span style="font-size: 13px; color: #777;">这里的192.168.2.156是MySQL服务端部署主机的IP</span></p>
+<p><a href="https://hub.docker.com/_/alpine/" target="_blank" rel="noopener">alpine镜像官方文档</a></p>
+<h1 id="制作MySQL备份专用镜像"><a href="#制作MySQL备份专用镜像" class="headerlink" title="制作MySQL备份专用镜像"></a>制作MySQL备份专用镜像</h1><p>我们现在想要制作一个MySQL备份数据库数据的镜像，要求存放到指定目录 /home/xugz/mysql/database_bak/下，文件名与数据库名一致。<br>数据库备份命令<code>mysqldump -u用户名 -p密码 数据库名 &gt; 导出的文件名</code>。<br>修改原mytool目录中的Dockerfile文件，覆盖以下内容，注意需要去掉注释哦</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FROM mytool:1.0 # 基于上文中alpine构建的MySQL客户端</span><br><span class="line">ENV mysql_host  192.168.2.156 # 环境变量 目标连接服务器</span><br><span class="line">ENV mysql_user root # 环境变量 默认用户为 root</span><br><span class="line">ENV mysql_pass 123123 # 环境变量 连接mysql服务器主机对应用户的密码</span><br><span class="line">ENV mysql_db test</span><br><span class="line">ENTRYPOINT mysqldump -h$mysql_host  -u$mysql_user -p$mysql_pass $mysql_db &gt; /data/$mysql_db.sql</span><br></pre></td></tr></tbody></table></figure>
+<p>构建镜像，使用命令编译<code>docker build -t mytool:1.1 .</code><br>新建备份目录地址 <code>mkdir database_bak</code><br>运行并挂载指定目录 <code>docker run -it --name bakup --rm -v /home/xugz/mysql/database_bak:/data mytool:1.1</code></p>
+<p>或者增加环境变量指定，用于跨主机备份，参考以下命令</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --name bakup --rm -v /home/xugz/mysql/database_bak:/data \</span><br><span class="line">-e mysql_pass=qwe123 -e mysql_host=192.168.222.1 -e mysql_db=db_test_products -e mysql_user=root \</span><br><span class="line">mytool:1.1</span><br></pre></td></tr></tbody></table></figure>
+<p>运行完成后，可到备份目标地址查看是否存在文件。</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
       
     </div>
     
@@ -861,6 +490,37 @@
     
 
 <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/2019/12/03/docker-mysql-base/">Docker+MySQL</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
+  <p><span>发布时间:</span>2019年12月03日 - 12:22</p>
+  <p><span>最后更新:</span>2019年12月03日 - 14:09</p>
+  <p><span>原始链接:</span><a href="/2019/12/03/docker-mysql-base/" title="Docker+MySQL">https://xlline.github.io/2019/12/03/docker-mysql-base/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/12/03/docker-mysql-base/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+      $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+        });
+    });  
+</script>
+
       
 </div>
 
@@ -871,17 +531,47 @@
     
 	<div>
 	  
+	    <div>
+<!--todo 暂时删除本文结束小标签，这个东西是统一的，不太喜欢，后续优化后再放开 只需要删除 条件 and passage_end_tag 即可 -->
+    
+</div>
+
+	  
 	</div>
     <footer class="post-footer">
       
-
+        <div class="post-tags">
+          
+            <a href="/tags/Docker/" rel="tag"><i class="fa fa-tag"></i> Docker</a>
+          
+            <a href="/tags/MySQL/" rel="tag"><i class="fa fa-tag"></i> MySQL</a>
+          
+        </div>
       
 
       
+      
+      
 
       
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/02/mysql-time-addsub/" rel="next" title="MySQL指定日期加减">
+                <i class="fa fa-chevron-left"></i> MySQL指定日期加减
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
       
-        <div class="post-eof"></div>
+
+      
       
     </footer>
   </div>
@@ -891,14 +581,11 @@
   </article>
 
 
-    
-  </section>
 
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
-  </nav>
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -906,6 +593,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -926,8 +617,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -1003,6 +703,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#启动MySQL容器、导入数据"><span class="nav-number">1.</span> <span class="nav-text">启动MySQL容器、导入数据</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基于alpine构建MySQL客户端"><span class="nav-number">2.</span> <span class="nav-text">基于alpine构建MySQL客户端</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#制作MySQL备份专用镜像"><span class="nav-number">3.</span> <span class="nav-text">制作MySQL备份专用镜像</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -1151,6 +867,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

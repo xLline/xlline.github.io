@@ -86,15 +86,15 @@
 
 
 
-<meta name="description" content="本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是一些Docker结合PHP的套路笔记。这里PHP版本为7.0+.">
+<meta name="description" content="本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是使用Docker安装PHP运行环境的命令笔记。这里PHP版本为7.0+.">
 <meta name="keywords" content="Docker,PHP">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Docker+PHP">
+<meta property="og:title" content="Docker搭建PHP运行环境">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;11&#x2F;29&#x2F;docker-php-base&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是一些Docker结合PHP的套路笔记。这里PHP版本为7.0+.">
+<meta property="og:description" content="本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是使用Docker安装PHP运行环境的命令笔记。这里PHP版本为7.0+.">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-12-03T03:45:21.926Z">
+<meta property="og:updated_time" content="2019-12-03T04:27:05.357Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -136,7 +136,7 @@
 
 
 
-  <title>Docker+PHP | 理想国</title>
+  <title>Docker搭建PHP运行环境 | 理想国</title>
   
 
 
@@ -314,7 +314,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Docker+PHP</h1>
+          <h1 class="post-title" itemprop="name headline">Docker搭建PHP运行环境</h1>
         
 
         <div class="post-meta">
@@ -403,7 +403,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.1k 字
+                  1.4k 字
                 </span>
               
 
@@ -419,7 +419,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  9分钟
+                  6分钟
                 </span>
               
             </span>
@@ -440,7 +440,7 @@
       
 
       
-        <p>本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是一些Docker结合PHP的套路笔记。这里PHP版本为7.0+.</p>
+        <p>本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是使用Docker安装PHP运行环境的命令笔记。这里PHP版本为7.0+.</p>
 <a id="more"></a>
 
 <h1 id="运行PHP程序"><a href="#运行PHP程序" class="headerlink" title="运行PHP程序"></a>运行PHP程序</h1><p>拉取7.2版本的官方PHP镜像 <code>docker pull php:7.2-cli</code><br>运行刚才的镜像<span style="font-size: 13px; color: #777;"> –rm 运行完自己干掉自己，一般用于执行临时任务</span></p>
@@ -467,21 +467,6 @@
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">docker network create --driver=bridge --subnet=192.138.0.0/16 mynginx</span><br><span class="line"></span><br><span class="line">docker run -d  --rm --name fpm \</span><br><span class="line">--network mynginx --ip 192.138.0.2 \ # 这个IP和Nginx配置文件中 fastcgi_pass配置的IP需要保持一致</span><br><span class="line">-v /home/xugz/php:/php \</span><br><span class="line">php:7.2.0-fpm-alpine3.6</span><br><span class="line"></span><br><span class="line">docker run --name nginx -d --rm -v /home/xugz/php:/usr/share/nginx/html \</span><br><span class="line">-v /home/xugz/conf/nginx.conf:/etc/nginx/nginx.conf \</span><br><span class="line">--network mynginx  -p 80:80 \</span><br><span class="line">nginx:1.13.9-alpine</span><br></pre></td></tr></tbody></table></figure>
 
 <p>当然可以使用compose进行编排，很简单这里不就赘述了，不要忘记同步修改Apache和Nginx配置文件中的fpm部分，统一改成fpm的IP。<br><a href="https://hub.docker.com/_/nginx/" target="_blank" rel="noopener">nginx 官方镜像</a></p>
-<h1 id="启动MySQL容器、导入数据"><a href="#启动MySQL容器、导入数据" class="headerlink" title="启动MySQL容器、导入数据"></a>启动MySQL容器、导入数据</h1><p>拉取官方镜像 <code>docker pull mysql:5.7</code><br>启动MySQL <span style="font-size: 13px; color: #777;"> -e 设置环境变量 MYSQL_ROOT_PASSWORD 是root的密码</span><br><code>docker run --name mysql --rm -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</code><br>测试连接 <code>docker exec -it mysql mysql -u root -p123123</code> 或者 <code>docker exec -it mysql mysql -u root -p</code><br>实际运行必定要配置文件，根据官网的提示，配置文件在 /etc/mysql/my.cnf，数据目录在 /var/lib/mysql。</p>
-<p>本地新建mysql目录，其中新建conf和data目录。conf挂载/etc/mysql/conf.d，data挂载/var/lib/mysql</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">vim /home/xugz/mysql/conf/conf.cnf</span><br><span class="line"></span><br><span class="line"># 下面是对应配置信息</span><br><span class="line">[mysqld]</span><br><span class="line">server-id = 1 #服务Id唯一 用于主从同步</span><br><span class="line">port = 3306</span><br><span class="line">log-error = /var/log/mysql/error.log #错误日志</span><br><span class="line">#只能用IP地址</span><br><span class="line">skip_name_resolve </span><br><span class="line">#数据库默认字符集</span><br><span class="line">character-set-server = utf8mb4</span><br><span class="line">#数据库字符集对应一些排序等规则 </span><br><span class="line">collation-server = utf8mb4_general_ci</span><br><span class="line">#设置client连接mysql时的字符集,防止乱码</span><br><span class="line">init_connect='SET NAMES utf8mb4'</span><br><span class="line">#最大连接数</span><br><span class="line">max_connections = 300</span><br></pre></td></tr></tbody></table></figure>
-<p>修改完成后启动，确定放行3306端口</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker run --name mysql --rm -p 3306:3306 \</span><br><span class="line">-v /home/xugz/mysql/conf:/etc/mysql/conf.d  -v /home/xugz/mysql/data:/var/lib/mysql \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</span><br></pre></td></tr></tbody></table></figure>
-<p>使用 <code>docker logs</code> 查看是否存在报错或者使用客户端进入MySQL确认配置是否生效。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it mysql mysql -uroot -p123123</span><br><span class="line"># 或者上行命令使用  docker exec -it mysql bash 然后  mysql -uroot -p123123 正常来说会进入mysql交互界面</span><br><span class="line">show variables like '%max_connections%'； #查看最大连接数是否和配置一致用于判断配置是否生效。</span><br></pre></td></tr></tbody></table></figure>
-<p>利用容器执行命令导入SQL文件</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker cp test.sql mysql:/tmp</span><br><span class="line">docker exec -it mysql mysql -uroot -p123123 </span><br><span class="line"> create database test;</span><br><span class="line"> use test;</span><br><span class="line"> source /tmp/test.sql;</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="基于alpine构建自己的容器"><a href="#基于alpine构建自己的容器" class="headerlink" title="基于alpine构建自己的容器"></a>基于alpine构建自己的容器</h1><p>alpine使用的是apk包管理器,命令，如apk add 、apk update 、apk del。默认镜像源可能比较慢，常用的有<br>中科大镜像源：<a href="http://mirrors.ustc.edu.cn/alpine/" target="_blank" rel="noopener">http://mirrors.ustc.edu.cn/alpine/</a> 阿里云镜像源：<a href="http://mirrors.aliyun.com/alpine/" target="_blank" rel="noopener">http://mirrors.aliyun.com/alpine/</a></p>
-<p>拉取官方镜像 <code>docker pull alpine</code><br>新建目录 <code>mkdir mydocker</code> 并在目录中新建Dockerfile文件，键入以下内容</p>
-<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FROM alpine:latest</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/main &gt; /etc/apk/repositories</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/community &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update &amp;&amp; apk upgrade</span><br><span class="line">RUN apk add mysql-client</span><br><span class="line">ENTRYPOINT ["mysql"]</span><br></pre></td></tr></tbody></table></figure>
-<p><span style="font-size: 13px; color: #777;">不使用dockerfile的话，手工配置加速镜像源使用命令<br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/main/\" &gt; /etc/apk/repositories"</code><br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/community/\" &gt;&gt; /etc/apk/repositories"</code><br>当然设置好后，还得  执行<code>apk update &amp;&amp; apk upgrade</code><br></span><br>构建镜像，使用命令 <code>docker build -t mytool:1.0 .</code><br>使用<code>docker run -it --name tmp  mytool:1.0 mysql -h 192.168.2.156 -uroot -p123123</code> 运行验证。</p>
-<p><a href="https://hub.docker.com/_/alpine/" target="_blank" rel="noopener">alpine镜像官方文档</a></p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -516,11 +501,11 @@
   <!-- JS库 sweetalert 可修改路径 -->
   <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/2019/11/29/docker-php-base/">Docker+PHP</a></p>
+  <p><span>本文标题:</span><a href="/2019/11/29/docker-php-base/">Docker搭建PHP运行环境</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年11月29日 - 17:12</p>
-  <p><span>最后更新:</span>2019年12月03日 - 11:45</p>
-  <p><span>原始链接:</span><a href="/2019/11/29/docker-php-base/" title="Docker+PHP">https://xlline.github.io/2019/11/29/docker-php-base/</a>
+  <p><span>最后更新:</span>2019年12月03日 - 12:27</p>
+  <p><span>原始链接:</span><a href="/2019/11/29/docker-php-base/" title="Docker搭建PHP运行环境">https://xlline.github.io/2019/11/29/docker-php-base/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/11/29/docker-php-base/"  aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
@@ -664,7 +649,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -675,7 +660,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -735,7 +720,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#运行PHP程序"><span class="nav-number">1.</span> <span class="nav-text">运行PHP程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#手动运行php-fpm-apache"><span class="nav-number">2.</span> <span class="nav-text">手动运行php+fpm+apache</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#compose编排php-fpm-apache"><span class="nav-number">3.</span> <span class="nav-text">compose编排php+fpm+apache</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#搭建nginx-PHP-FPM环境"><span class="nav-number">4.</span> <span class="nav-text">搭建nginx+PHP-FPM环境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#nginx-FPM的配置"><span class="nav-number">4.1.</span> <span class="nav-text">nginx+FPM的配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#启动MySQL容器、导入数据"><span class="nav-number">5.</span> <span class="nav-text">启动MySQL容器、导入数据</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基于alpine构建自己的容器"><span class="nav-number">6.</span> <span class="nav-text">基于alpine构建自己的容器</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#运行PHP程序"><span class="nav-number">1.</span> <span class="nav-text">运行PHP程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#手动运行php-fpm-apache"><span class="nav-number">2.</span> <span class="nav-text">手动运行php+fpm+apache</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#compose编排php-fpm-apache"><span class="nav-number">3.</span> <span class="nav-text">compose编排php+fpm+apache</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#搭建nginx-PHP-FPM环境"><span class="nav-number">4.</span> <span class="nav-text">搭建nginx+PHP-FPM环境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#nginx-FPM的配置"><span class="nav-number">4.1.</span> <span class="nav-text">nginx+FPM的配置</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -777,7 +762,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 26.9k 字</span>
+  <span class="post-count">全站共 27.3k 字</span>
 </div>
         
 
