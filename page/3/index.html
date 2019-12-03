@@ -1526,7 +1526,7 @@ unix操作系统常用命令Linux查看版本当前操作系统内核信息uname
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/06/19/hexo_postwidth/">
+    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/06/19/hexo_add_wordcount/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xugz">
@@ -1545,7 +1545,7 @@ unix操作系统常用命令Linux查看版本当前操作系统内核信息uname
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/06/19/hexo_postwidth/" itemprop="url">修改Hexo博客next主题文章页面宽度</a></h1>
+                <a class="post-title-link" href="/2019/06/19/hexo_add_wordcount/" itemprop="url">Hexo NexT主题添加字数统计阅读时长</a></h1>
         
 
         <div class="post-meta">
@@ -1623,7 +1623,7 @@ unix操作系统常用命令Linux查看版本当前操作系统内核信息uname
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  159 字
+                  457 字
                 </span>
               
 
@@ -1639,7 +1639,7 @@ unix操作系统常用命令Linux查看版本当前操作系统内核信息uname
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1分钟
+                  2分钟
                 </span>
               
             </span>
@@ -1662,23 +1662,12 @@ unix操作系统常用命令Linux查看版本当前操作系统内核信息uname
       
         
           
-          网上方法很多，我简单记录一种，手动修改样式，宽度自适应。
-\themes\next\source/css/_schemes/Picses/_layout.styl文件末尾添加如下代码即可
-// 以下为新增代码！！修改post宽度
-header{ width: 80% !important; }
-header.post-header {
-  width: auto !important;
-}
-.container .main-inner { width: 80%; }
-.content-wrap { width: calc(100% - 260px); }
-
-.header {
-  +tablet() {
-    width: auto !importa
+          配置NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 _config.yml 中打开 wordcount 统计功能即可。如下所示：
+12345678# Post wordcount display settings# Dependencies: https://github.com/willin/hexo-wordcountpost_wordcount:  item_text: true  wordcount: true         # 单篇 字数统计  min2read: true          # 单篇 阅读时长  totalcount: false       # 网站 字数统计 
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2019/06/19/hexo_postwidth/#more" rel="contents">
+            <a class="btn" href="/2019/06/19/hexo_add_wordcount/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1869,7 +1858,7 @@ header.post-header {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 27.3k 字</span>
+  <span class="post-count">全站共 27.6k 字</span>
 </div>
         
 
