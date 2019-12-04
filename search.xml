@@ -1,9 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>docker配置Samba文件共享服务</title>
+    <url>/2019/12/03/docker-samba/</url>
+    <content><![CDATA[<p>在windows网络环境中，主机之间进行文件和打印机共享是通过微软公司自己的SMB/CIFS网络协议实现的。SMB（Server Message Block，服务消息块）和CIFS（Common Internet File System，通用互联网文件系统）协议是微软的私有协议，在Samba项目出现之前，并不能直接与Linux/UNIX系统进行通信。<br>Samba是著名的开源软件项目之一，它在Linux/UNIX系统中实现了微软的SMB/CIFS网络协议，从而使得跨平台的文件共享变得更加容易。在部署Windows、Linux/UNIX混合平台的企业环境时，选用Samba可以很好地解决不同系统之间的文件互访问题。</p>
+<a id="more"></a>
+<p>选择高下载量的镜像拉取 <code>docker pull dperson/samba</code><br>关闭必要端口防火墙，执行下面命令</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">sudo iptables -I INPUT -p tcp --dport 139 -j ACCEPT</span><br><span class="line">sudo iptables -I INPUT -p tcp --dport 445 -j ACCEPT</span><br><span class="line"></span><br><span class="line">sudo iptables -I INPUT -p udp --dport 137 -j ACCEPT</span><br><span class="line">sudo iptables -I INPUT -p udp --dport 138 -j ACCEPT</span><br></pre></td></tr></tbody></table></figure>
+<p>运行执行以下命令后，在window本机使用window+R调出运行窗口，输入 linux主机的IP回车，比如 <code>\\192.168.2.156</code>即可看到分享的xugz_tp5文件目录。选中目录右键选择映射网络驱动器选择喜欢的盘，即可在计算机中找到。如此可实现先共享文件夹到本地盘。</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run -it -p 139:139 -p 445:445  --name smb -d --rm  \</span><br><span class="line"> -v /home/xugz/tp5/web:/mount \</span><br><span class="line"> dperson/samba \</span><br><span class="line"> -u "xugz;123" \</span><br><span class="line"> -s "xugz_tp5;/mount/;yes;no;yes;all;all;all" \</span><br><span class="line"> -w "WORKGROUP" \</span><br><span class="line"> -g "force user= xugz" \</span><br><span class="line"> -g "guest account= xugz"</span><br></pre></td></tr></tbody></table></figure>
+<p>Samba在<a href="https://hub.docker.com/r/dperson/samba" target="_blank" rel="noopener">docker镜像地址</a>中介绍了很多参数选项，简单记录上条命令用到的</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">-u "&lt;username;password&gt;[;ID;group;GID]"  </span><br><span class="line">   设置用户及密码</span><br><span class="line">-s "&lt;name;/path&gt;[;browse;readonly;guest;users;admins;writelist;comment]"</span><br><span class="line">    配置一个共享。其中&lt;name;/path&gt;为必须参数</span><br><span class="line">    &lt;name&gt; 分享名称</span><br><span class="line">    &lt;path&gt; 要分享的路径</span><br><span class="line">    [browsable] 是否可浏览 参数值为:'yes' or 'no'</span><br><span class="line">    [readonly] 是否只读 参数值为:'yes' or 'no'</span><br><span class="line">    [guest] 游客模式 参数值为:'yes' or 'no'</span><br><span class="line">    [users] 用户列表 参数值为:'all' or 允许的用户秒表，多用户使用','分割</span><br><span class="line">    [admins] 系统用户 参数值为:'none' or 系统用户列表</span><br><span class="line">    [writelist] 可以写入RO共享的用户列表</span><br><span class="line">    [comment] 分享描述</span><br><span class="line">-w "&lt;workgroup&gt;" 配置要使用的工作组 比如要和windows共享，这里的工作组路径在 控制面板&gt;系统和安全&gt;系统&gt;工作组设置里面。（此电脑右键选择管理以快速打开）</span><br><span class="line">-g "&lt;parameter&gt;" 配置全局变量 相当于修改配置文件 smb.conf</span><br><span class="line">    格式参考： -g "log level = 2"</span><br><span class="line">    上行命令中我们使用用户xugz挂载程序文件夹到mount文件夹，所以mount目录下文件的所有者为xugz。当我们在外部访问分享文件夹此时新建文件，他的所属者默认为smbuser（我们可以通过 docker run -it dperson/samba sh 进入命令行查看 /etc/samba/smb.conf）配置force user指定用户以解决用户</span><br><span class="line">    map to guest 匿名访问且无密码    guest account 匿名用户映射到指定账户</span><br></pre></td></tr></tbody></table></figure><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+  </entry>
+  <entry>
+    <title>docker_tp5_base</title>
+    <url>/2019/12/03/docker-tp5-base/</url>
+    <content><![CDATA[<p>本篇是使用Docker部署ThinkPHP运行环境的命令笔记。这里ThinkPHP框架版本为5.0.24。</p>
+<a id="more"></a>
+<p>下载框架 <a href="http://www.thinkphp.cn/down.html" target="_blank" rel="noopener">官网框架下载地址</a>到本地，使用ftp方式上传到虚拟机tool目录中。</p>
+<h1 id="结合apache的基本运行"><a href="#结合apache的基本运行" class="headerlink" title="结合apache的基本运行"></a>结合apache的基本运行</h1><p>创建一个目录叫做tp5<br>在tp5中创建两个目录。一个放程序文件(web)，一个放docker-compose.yml(compose)</p>
+<p>解压框架压缩包至目录 /home/xugz/tp5/web，使用命令 <code>cd tool &amp;&amp; unzip mydata.zip -d ../tp5/web</code> 解压至指定目录<br>如果没有安装zip和unzip。执行 <code>sudo yum install zip unzip -y</code><br>我们需要将TP5web文件夹整个目录挂载到PHP-FPM容器，Apache容器仅仅挂载public文件夹，httpd.conf文件中fpm配置改为：<code>ProxyPassMatch ^/(.*\.php)$ fcgi://192.138.0.2:9000/php/public/$1</code></p>
+<p>docker-compose.yml文件中添加如下内容</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">version: "3"</span><br><span class="line">services:</span><br><span class="line">  fpm:</span><br><span class="line">   image: php:7.2.0-fpm-alpine3.6</span><br><span class="line">   container_name: fpm</span><br><span class="line">   volumes:</span><br><span class="line">      - /home/xugz/tp5/web:/php</span><br><span class="line">   networks:</span><br><span class="line">      mywebnet:</span><br><span class="line">       ipv4_address: 192.138.0.2</span><br><span class="line">  httpd:</span><br><span class="line">   image: httpd:2.4-alpine</span><br><span class="line">   container_name: httpd</span><br><span class="line">   ports:</span><br><span class="line">      - 8081:80</span><br><span class="line">   volumes:</span><br><span class="line">      - /home/xugz/tp5/web/public:/usr/local/apache2/htdocs/</span><br><span class="line">      - /home/xugz/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf</span><br><span class="line">   networks:</span><br><span class="line">      mywebnet:</span><br><span class="line">       ipv4_address: 192.138.0.3</span><br><span class="line"></span><br><span class="line">networks:</span><br><span class="line">  mywebnet:</span><br><span class="line">     driver: bridge</span><br><span class="line">     ipam:</span><br><span class="line">       config:</span><br><span class="line">         - subnet: 192.138.0.0/16</span><br></pre></td></tr></tbody></table></figure>
+<p>保存文件使用 <code>docker-compose up -d</code> 编译运行成功后使用 <code>curl localhost:8081/index.php</code>验证。</p>
+<h1 id="添加控制器、url重写"><a href="#添加控制器、url重写" class="headerlink" title="添加控制器、url重写"></a>添加控制器、url重写</h1><p>tp5默认有个控制器，位置在: application/index/controller/index.php</p>
+<p>在我们开启防火墙端口<code>sudo iptables -A INPUT -p tcp -m tcp --dport 8081 -j ACCEPT</code> 后，可以在windows本机通过 <code>虚拟机:端口/index.php</code><br>tp5创建控制可以用命令直接帮你创建：<code>php think make:controller index/test</code> <span style="font-size: 13px; color: #777;"> 需要确保本地有PHP环境</span> 当然我们也可以手工创建</p>
+<p>开启apache重写模块<br>取消本行注释 <code>LoadModule rewrite_module modules/mod_rewrite.so</code><br>在网站配置相关节点加入  <code>AllowOverride all</code></p>
+<div style="width: 67%;margin: left"><img src="/2019/12/03/docker-tp5-base/rewrite_conf.png" class=""></div>
+
+<p>完成后使用 <code>docker-compose restart</code> 让其重启重新构建容器<br><code>虚拟机:端口/index</code> 访问Index目录下index文件 <code>虚拟机:端口/index/index/test</code> 访问Index目录下index中的test方法<br><code>虚拟机:端口/index/user</code> 访问Index目录下user文件index方法 <code>虚拟机:端口/index/user_index</code> 访问Index目录下UserIndex文件index方法</p>
+<h1 id="添加PHP扩展"><a href="#添加PHP扩展" class="headerlink" title="添加PHP扩展"></a>添加PHP扩展</h1><p>在容器中直接修改安装的话，容器删除后重新启动时，拓展和配置等都会丢失，所以我们在docker-compose文件中进行构建。在docker-compose.yml文件同目录创建新文件夹叫做build.<br>参考地址： <a href="https://hub.docker.com/_/php/" target="_blank" rel="noopener">https://hub.docker.com/_/php/</a></p>
+<h2 id="PDO-MYSQL扩展"><a href="#PDO-MYSQL扩展" class="headerlink" title="PDO_MYSQL扩展"></a>PDO_MYSQL扩展</h2><p>默认的PHP–FPM容器没有PDO_MYSQL扩展，我们需要指定安装。<br>在build里面新建一个Dockerfile文件，注意文件名 我们这次随便取，譬如叫做phpfpm，配置镜像源并更新apk包后执行安装PDO_MYSQL扩展。参考命令</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">FROM php:7.2.0-fpm-alpine3.6</span><br><span class="line">RUN echo http://mirrors.ustc.edu.cn/alpine/v3.6/main &gt; /etc/apk/repositories &amp;&amp; echo http://mirrors.ustc.edu.cn/alpine/v3.6/community &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update &amp;&amp; apk upgrade</span><br><span class="line">RUN docker-php-ext-install pdo_mysql</span><br></pre></td></tr></tbody></table></figure>
+<p>返回上级目录修改docker-compose.yml文件，增加fpm服务标签</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">fpm:</span><br><span class="line">  build:</span><br><span class="line">   context: ./build</span><br><span class="line">   dockerfile: phpfpm</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="redis拓展"><a href="#redis拓展" class="headerlink" title="redis拓展"></a>redis拓展</h2><p>在build里面新建一个Dockerfile文件，随便取，譬如叫做phpredis，安装redis依赖使用pecl来安装Redis扩展。参考命令</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">FROM php:7.2.0-fpm-alpine3.6</span><br><span class="line">RUN apk add autoconf gcc g++ make </span><br><span class="line">COPY ./redis-4.0.1 / # curl 'http://pecl.php.net/get/redis-4.0.1.tgz' -o redis-4.0.1.tgz</span><br><span class="line">RUN pecl install redis-4.0.1 \</span><br><span class="line">    &amp;&amp; docker-php-ext-enable redis</span><br></pre></td></tr></tbody></table></figure>
+<p>返回上级目录修改docker-compose.yml文件，增加fpm服务build标签</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">fpm:</span><br><span class="line">  build:</span><br><span class="line">   context: ./build</span><br><span class="line">   dockerfile: phpredis</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
+<p>构建fpm服务设置 <code>docker-compose build fpm</code>， 完成后我们发现他帮我们新建了一个镜像，原有镜像没有所需拓展，删除原有启动新镜像<br><code>docker-compose stop fpm &amp;&amp; docker-compose rm fpm &amp;&amp; docker-compose up -d fpm</code></p>
+<h1 id="连接数据库"><a href="#连接数据库" class="headerlink" title="连接数据库"></a>连接数据库</h1><p>编辑TP5对应的compose配置docker-compose.yml文件，加入MySQL的配置</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">mysql:</span><br><span class="line">   image: mysql:5.7</span><br><span class="line">   container_name: mysqld</span><br><span class="line">   ports:</span><br><span class="line">     - 3306:3306</span><br><span class="line">   volumes:</span><br><span class="line">     - /home/xugz/mysql/conf:/etc/mysql/conf.d</span><br><span class="line">     - /home/xugz/mysql/data:/var/lib/mysql</span><br><span class="line">   environment:</span><br><span class="line">     - MYSQL_ROOT_PASSWORD=123456</span><br><span class="line">   networks:</span><br><span class="line">     - mywebnet</span><br></pre></td></tr></tbody></table></figure>
+<p>然后使用 <code>docker-compose up -d mysql</code> 创建MySQL服务器容器<br>在应用程序web目录里application/database.php中修改MySQL配置，参考配置如下</p>
+<div style="width: 67%;margin: left"><img src="/2019/12/03/docker-tp5-base/db_conn_conf.png" class=""></div>
+
+<p>配置完成后，可定义模型和数据库调用尝试验证。<a href="https://www.kancloud.cn/manual/thinkphp5/135187" target="_blank" rel="noopener">点我，我是隐藏的参考地址</a></p>
+<h1 id="结合redis容器基本操作"><a href="#结合redis容器基本操作" class="headerlink" title="结合redis容器基本操作"></a>结合redis容器基本操作</h1><p>拉取官方镜像 <code>docker pull redis:alpine</code><br>在conf目录下拉取redis配置文件 <code>wget https://raw.githubusercontent.com/antirez/redis/5.0/redis.conf</code><br>编辑redis.conf文件修改一些基本参数  如 <code>bind 0.0.0.0</code> 和 <code>dir /data</code></p>
+<p>编辑TP5对应的compose配置docker-compose.yml文件，加入Redis的配置</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">redis:</span><br><span class="line">    image: redis:alpine</span><br><span class="line">    container_name: redis</span><br><span class="line">    ports:</span><br><span class="line">     - 6379:6379</span><br><span class="line">    volumes:</span><br><span class="line">     - /home/xugz/tp5/conf/redis.conf:/usr/local/etc/redis/redis.conf</span><br><span class="line">     - /home/xugz/tp5/redisdata:/data # 这里的data和 conf/redis.conf中的dir配置保持一致</span><br><span class="line">    networks:</span><br><span class="line">      mywebnet:</span><br><span class="line">       ipv4_address: 192.138.0.10</span><br></pre></td></tr></tbody></table></figure>
+<p>修改application/config.php中关于缓存相关配置，参考如图</p>
+<div style="width: 68%;margin: left"><img src="/2019/12/03/docker-tp5-base/redis_conf.png" class=""></div>
+
+<p>然后使用 <code>docker-compose up -d</code> 创建redis服务器容器。成功的话使用 <code>docker exec -it redis redis-cli</code> 可进入Redis客户端。也可以写简单的测试验证，最简单的代码如图</p>
+<div style="width: 67%;margin: left"><img src="/2019/12/03/docker-tp5-base/code_redis.png" class=""></div>
+使用浏览器访问 `http://192.168.2.156:8081/news` 即可看到测试数据
+参考文档： https://hub.docker.com/_/redis/
+
+<h1 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h1><p>// todo</p>
+<h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><h2 id="浏览器访问报错-variable-type-error-array"><a href="#浏览器访问报错-variable-type-error-array" class="headerlink" title="浏览器访问报错 variable type error:array"></a>浏览器访问报错 variable type error:array</h2><p>默认输出类型导致解析异常。在应用程序web目录里application/config.php中修改，如 <code>default_return_type = 'json'</code></p>
+<h2 id="wget文件报错-unable-to-resolve-host-address"><a href="#wget文件报错-unable-to-resolve-host-address" class="headerlink" title="wget文件报错 unable to resolve host address"></a>wget文件报错 unable to resolve host address</h2><p>因为VPS的本地DNS不通导致的，我们需要修改当前VPS的DNS。<br>修改 /etc/resolv.conf 文件，增加DNS nameserver 8.8.8.8保存退出后重试。</p>
+<h2 id="查看运行在docker中的redis版本"><a href="#查看运行在docker中的redis版本" class="headerlink" title="查看运行在docker中的redis版本"></a>查看运行在docker中的redis版本</h2><p>使用命令  `docker exec -it <containerid or="" name=""> redis-server -v</containerid></p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Docker</category>
+        <category>PHP</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+        <tag>PHP</tag>
+        <tag>ThinkPHP</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker+MySQL</title>
     <url>/2019/12/03/docker-mysql-base/</url>
-    <content><![CDATA[<p>本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是一些Docker结合MySQL常用操作的笔记。这里MySQL版本为5.7。</p>
+    <content><![CDATA[<p>本篇是一些Docker结合MySQL常用操作的笔记。这里MySQL版本为5.7。主要是使用docker搭建MySQL并导入数据、基于alpine镜像构建MySQL客户端、制作MySQL备份专用镜像和使用crontab实现数据库定时备份。</p>
 <a id="more"></a>
 
 <h1 id="启动MySQL容器、导入数据"><a href="#启动MySQL容器、导入数据" class="headerlink" title="启动MySQL容器、导入数据"></a>启动MySQL容器、导入数据</h1><p>拉取官方镜像 <code>docker pull mysql:5.7</code><br>启动MySQL <span style="font-size: 13px; color: #777;"> -e 设置环境变量 MYSQL_ROOT_PASSWORD 是root的密码</span><br><code>docker run --name mysql --rm -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</code><br>测试连接 <code>docker exec -it mysql mysql -u root -p123123</code> 或者 <code>docker exec -it mysql mysql -u root -p</code><br>实际运行必定要配置文件，根据官网的提示，配置文件在 /etc/mysql/my.cnf，数据目录在 /var/lib/mysql。</p>
@@ -19,6 +127,7 @@
 <h1 id="基于alpine构建MySQL客户端"><a href="#基于alpine构建MySQL客户端" class="headerlink" title="基于alpine构建MySQL客户端"></a>基于alpine构建MySQL客户端</h1><p>alpine使用的是apk包管理器,命令，如apk add 、apk update 、apk del。默认镜像源可能比较慢，常用的有<br>中科大镜像源：<a href="http://mirrors.ustc.edu.cn/alpine/" target="_blank" rel="noopener">http://mirrors.ustc.edu.cn/alpine/</a> 阿里云镜像源：<a href="http://mirrors.aliyun.com/alpine/" target="_blank" rel="noopener">http://mirrors.aliyun.com/alpine/</a></p>
 <p>拉取官方镜像 <code>docker pull alpine</code><br>新建目录 <code>mkdir mytool</code> 并在目录中新建Dockerfile文件，键入以下内容。安装MySQL客户端</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">FROM alpine:latest</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/main &gt; /etc/apk/repositories</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/community &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update &amp;&amp; apk upgrade</span><br><span class="line">RUN apk add mysql-client</span><br><span class="line">ENTRYPOINT ["mysql"]</span><br></pre></td></tr></tbody></table></figure>
+<p>如果不知道当前 alpine的版本，可以通过 <code>docker exec -it 容器名 sh</code>  通过命令行方式进入容器 使用命令 <code>cat /etc/issue</code> 查看。</p>
 <p><span style="font-size: 13px; color: #777;">不使用dockerfile的话，手工配置加速镜像源使用命令<br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/main/\" &gt; /etc/apk/repositories"</code><br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/community/\" &gt;&gt; /etc/apk/repositories"</code><br>当然设置好后，还得  执行<code>apk update &amp;&amp; apk upgrade</code><br></span><br>构建镜像，使用命令编译 <code>docker build -t mytool:1.0 .</code><br>使用<code>docker run -it --name tmp  mytool:1.0 mysql -h 192.168.2.156 -uroot -p123123</code> 运行验证。<br><span style="font-size: 13px; color: #777;">这里的192.168.2.156是MySQL服务端部署主机的IP</span></p>
 <p><a href="https://hub.docker.com/_/alpine/" target="_blank" rel="noopener">alpine镜像官方文档</a></p>
 <h1 id="制作MySQL备份专用镜像"><a href="#制作MySQL备份专用镜像" class="headerlink" title="制作MySQL备份专用镜像"></a>制作MySQL备份专用镜像</h1><p>我们现在想要制作一个MySQL备份数据库数据的镜像，要求存放到指定目录 /home/xugz/mysql/database_bak/下，文件名与数据库名一致。<br>数据库备份命令<code>mysqldump -u用户名 -p密码 数据库名 &gt; 导出的文件名</code>。<br>修改原mytool目录中的Dockerfile文件，覆盖以下内容，注意需要去掉注释哦</p>
@@ -158,7 +267,7 @@
   <entry>
     <title>Docker搭建PHP运行环境</title>
     <url>/2019/11/29/docker-php-base/</url>
-    <content><![CDATA[<p>本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是使用Docker安装PHP运行环境的命令笔记。这里PHP版本为7.0+.</p>
+    <content><![CDATA[<p>本篇是使用Docker安装PHP运行环境的命令笔记。这里PHP版本为7.0+。主要是手动运行php+fpm+apache步骤、使用compose编排php+fpm+apache 和nginx+PHP-FPM环境搭建过程简述。</p>
 <a id="more"></a>
 
 <h1 id="运行PHP程序"><a href="#运行PHP程序" class="headerlink" title="运行PHP程序"></a>运行PHP程序</h1><p>拉取7.2版本的官方PHP镜像 <code>docker pull php:7.2-cli</code><br>运行刚才的镜像<span style="font-size: 13px; color: #777;"> –rm 运行完自己干掉自己，一般用于执行临时任务</span></p>
@@ -1476,26 +1585,24 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
-    <title>Hexo添加emoji表情</title>
-    <url>/2019/06/19/hexo_add_emjo/</url>
-    <content><![CDATA[<p>废话不多说，直接动手干吧。 具体表情参考 <a href="https://github.com/caiyongji/emoji-list" target="_blank" rel="noopener">GFM 表情列表</a> <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8">😜</span> </p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install hexo-filter-github-emojis --save</span><br><span class="line">npm un hexo-renderer-stylus --save</span><br><span class="line">npm i hexo-renderer-stylus-plus --save</span><br></pre></td></tr></tbody></table></figure>
+    <title>Hexo NexT主题添加字数统计阅读时长</title>
+    <url>/2019/06/19/hexo_add_wordcount/</url>
+    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
 
-<h1 id="打开-站点配置文件，添加以下内容"><a href="#打开-站点配置文件，添加以下内容" class="headerlink" title="打开 站点配置文件，添加以下内容"></a>打开 站点配置文件，添加以下内容</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
+<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
 
-<h1 id="解决渲染错误问题"><a href="#解决渲染错误问题" class="headerlink" title="解决渲染错误问题"></a>解决渲染错误问题</h1><ul>
-<li>修改 <code>themes/next/layout/_partials/head.swig</code>, 解决渲染错误问题，渲染 emoji 表情时会被自动加上 a 标签<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;script type="text/javascript" id="hexo.configurations"&gt;</span><br><span class="line">  var NexT = window.NexT || {};</span><br><span class="line">  var CONFIG = {</span><br><span class="line">    root: '{{ theme.root }}',</span><br><span class="line">    scheme: '{{ theme.scheme }}',</span><br><span class="line">    sidebar: {{ theme.sidebar | json_encode }},</span><br><span class="line">    fancybox: {{ theme.fancybox }},</span><br><span class="line">    tabs: {{ theme.tabs.enable }},</span><br><span class="line">    motion: {{ theme.use_motion }},</span><br><span class="line">    duoshuo: {</span><br><span class="line">      userId: '{{ theme.duoshuo_info.user_id | default() }}',</span><br><span class="line">      author: '{{ theme.duoshuo_info.admin_nickname | default(__('author'))}}'</span><br><span class="line">    },</span><br><span class="line">    algolia: {</span><br><span class="line">      applicationID: '{{ theme.algolia.applicationID }}',</span><br><span class="line">      apiKey: '{{ theme.algolia.apiKey }}',</span><br><span class="line">      indexName: '{{ theme.algolia.indexName }}',</span><br><span class="line">      hits: {{ theme.algolia_search.hits | json_encode }},</span><br><span class="line">      labels: {{ theme.algolia_search.labels | json_encode }}</span><br><span class="line">    },</span><br><span class="line">    *{# ↓ 在这里修改，其他未动 ↓ #}</span><br><span class="line">    {# 添加 emojis 参数 #}</span><br><span class="line">    emojis: {</span><br><span class="line">      className: '{{ config.githubEmojis.className | default('github-emoji') }}'</span><br><span class="line">    }*</span><br><span class="line">  };</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></tbody></table></figure></li>
-<li>修改 <code>themes/next/source/js/src/utils.js</code><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// 注意看 CONFIG.emojis.className 那一行，其他未动</span><br><span class="line">$('.content img')</span><br><span class="line">  .not('[hidden]')</span><br><span class="line">  .not('.group-picture img, .post-gallery img, *img.' + CONFIG.emojis.className*)</span><br><span class="line">  .each(function () {</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
+<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
+<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
 
-</li>
-</ul>
-<h1 id="自定义emoji-样式"><a href="#自定义emoji-样式" class="headerlink" title="自定义emoji 样式"></a>自定义emoji 样式</h1><p>在 <code>站点配置文件</code> 中，我们配置：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
-<p>在 <code>themes/next/source/css/_variables/base.styl</code> 中使用 hexo-site-config 方法获取 <code>站点配置文件</code> 中的值，我们添加</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// Github emojis class name</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">get_emoji_class() {</span><br><span class="line">  emoji_class = hexo-site-config('githubEmojis.className')</span><br><span class="line">  return emoji_class ? emoji_class : 'github-emoji'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$github-emojis-class-name   = get_emoji_class()</span><br></pre></td></tr></tbody></table></figure>
-<p>最后在自定义样式文件 <code>themes/next/source/css/_custom/custom.styl</code> 中添加：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">img.{$github-emojis-class-name} {</span><br><span class="line">  display: inline;</span><br><span class="line">  height: 1.7em;</span><br><span class="line">  width: 1.7em;</span><br><span class="line">  vertical-align: -0.4em;</span><br><span class="line">  border: none !important;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span>  </p>
+
+<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<p>到这里就可以啦，快去试试吧。  </p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -1524,24 +1631,26 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
-    <title>Hexo NexT主题添加字数统计阅读时长</title>
-    <url>/2019/06/19/hexo_add_wordcount/</url>
-    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
+    <title>Hexo添加emoji表情</title>
+    <url>/2019/06/19/hexo_add_emjo/</url>
+    <content><![CDATA[<p>废话不多说，直接动手干吧。 具体表情参考 <a href="https://github.com/caiyongji/emoji-list" target="_blank" rel="noopener">GFM 表情列表</a> <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8">😜</span> </p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install hexo-filter-github-emojis --save</span><br><span class="line">npm un hexo-renderer-stylus --save</span><br><span class="line">npm i hexo-renderer-stylus-plus --save</span><br></pre></td></tr></tbody></table></figure>
 
-<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
+<h1 id="打开-站点配置文件，添加以下内容"><a href="#打开-站点配置文件，添加以下内容" class="headerlink" title="打开 站点配置文件，添加以下内容"></a>打开 站点配置文件，添加以下内容</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
 
-<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
-<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
+<h1 id="解决渲染错误问题"><a href="#解决渲染错误问题" class="headerlink" title="解决渲染错误问题"></a>解决渲染错误问题</h1><ul>
+<li>修改 <code>themes/next/layout/_partials/head.swig</code>, 解决渲染错误问题，渲染 emoji 表情时会被自动加上 a 标签<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;script type="text/javascript" id="hexo.configurations"&gt;</span><br><span class="line">  var NexT = window.NexT || {};</span><br><span class="line">  var CONFIG = {</span><br><span class="line">    root: '{{ theme.root }}',</span><br><span class="line">    scheme: '{{ theme.scheme }}',</span><br><span class="line">    sidebar: {{ theme.sidebar | json_encode }},</span><br><span class="line">    fancybox: {{ theme.fancybox }},</span><br><span class="line">    tabs: {{ theme.tabs.enable }},</span><br><span class="line">    motion: {{ theme.use_motion }},</span><br><span class="line">    duoshuo: {</span><br><span class="line">      userId: '{{ theme.duoshuo_info.user_id | default() }}',</span><br><span class="line">      author: '{{ theme.duoshuo_info.admin_nickname | default(__('author'))}}'</span><br><span class="line">    },</span><br><span class="line">    algolia: {</span><br><span class="line">      applicationID: '{{ theme.algolia.applicationID }}',</span><br><span class="line">      apiKey: '{{ theme.algolia.apiKey }}',</span><br><span class="line">      indexName: '{{ theme.algolia.indexName }}',</span><br><span class="line">      hits: {{ theme.algolia_search.hits | json_encode }},</span><br><span class="line">      labels: {{ theme.algolia_search.labels | json_encode }}</span><br><span class="line">    },</span><br><span class="line">    *{# ↓ 在这里修改，其他未动 ↓ #}</span><br><span class="line">    {# 添加 emojis 参数 #}</span><br><span class="line">    emojis: {</span><br><span class="line">      className: '{{ config.githubEmojis.className | default('github-emoji') }}'</span><br><span class="line">    }*</span><br><span class="line">  };</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></tbody></table></figure></li>
+<li>修改 <code>themes/next/source/js/src/utils.js</code><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// 注意看 CONFIG.emojis.className 那一行，其他未动</span><br><span class="line">$('.content img')</span><br><span class="line">  .not('[hidden]')</span><br><span class="line">  .not('.group-picture img, .post-gallery img, *img.' + CONFIG.emojis.className*)</span><br><span class="line">  .each(function () {</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
 
-
-<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<p>到这里就可以啦，快去试试吧。  </p>
+</li>
+</ul>
+<h1 id="自定义emoji-样式"><a href="#自定义emoji-样式" class="headerlink" title="自定义emoji 样式"></a>自定义emoji 样式</h1><p>在 <code>站点配置文件</code> 中，我们配置：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
+<p>在 <code>themes/next/source/css/_variables/base.styl</code> 中使用 hexo-site-config 方法获取 <code>站点配置文件</code> 中的值，我们添加</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// Github emojis class name</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">get_emoji_class() {</span><br><span class="line">  emoji_class = hexo-site-config('githubEmojis.className')</span><br><span class="line">  return emoji_class ? emoji_class : 'github-emoji'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$github-emojis-class-name   = get_emoji_class()</span><br></pre></td></tr></tbody></table></figure>
+<p>最后在自定义样式文件 <code>themes/next/source/css/_custom/custom.styl</code> 中添加：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">img.{$github-emojis-class-name} {</span><br><span class="line">  display: inline;</span><br><span class="line">  height: 1.7em;</span><br><span class="line">  width: 1.7em;</span><br><span class="line">  vertical-align: -0.4em;</span><br><span class="line">  border: none !important;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span>  </p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {

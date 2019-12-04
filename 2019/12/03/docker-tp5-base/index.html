@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Linux,VMware," />
+  <meta name="keywords" content="Docker,PHP,ThinkPHP," />
 
 
 
@@ -86,16 +86,21 @@
 
 
 
-<meta name="description" content="在Windows10系统安装了虚拟机，设置的主机与虚拟机的连接方式是桥接，安装好后，发现虚拟机ping不通主机，但是主机可以ping通虚拟机。上网查看资料，发现是因为Windows10防火墙阻止，防火墙没有打开ICMPv4-in这个规则。那怎么打开呢？   修改防火墙规则设置 &amp;gt; 网络和Internet &amp;gt; Windows防火墙 &amp;gt; 高级设置 &amp;gt; 入站规则中找到配置文件类型">
-<meta name="keywords" content="Linux,VMware">
+<meta name="description" content="本篇是使用Docker部署ThinkPHP运行环境的命令笔记。这里ThinkPHP框架版本为5.0.24。">
+<meta name="keywords" content="Docker,PHP,ThinkPHP">
 <meta property="og:type" content="article">
-<meta property="og:title" content="虚拟机ping不通主机，但是主机可以ping通虚拟机">
-<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;10&#x2F;28&#x2F;%E8%99%9A%E6%8B%9F%E6%9C%BAping%E4%B8%8D%E9%80%9A%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%BB%E6%9C%BA%E5%8F%AF%E4%BB%A5ping%E9%80%9A%E8%99%9A%E6%8B%9F%E6%9C%BA&#x2F;index.html">
+<meta property="og:title" content="docker_tp5_base">
+<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-tp5-base&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="在Windows10系统安装了虚拟机，设置的主机与虚拟机的连接方式是桥接，安装好后，发现虚拟机ping不通主机，但是主机可以ping通虚拟机。上网查看资料，发现是因为Windows10防火墙阻止，防火墙没有打开ICMPv4-in这个规则。那怎么打开呢？   修改防火墙规则设置 &amp;gt; 网络和Internet &amp;gt; Windows防火墙 &amp;gt; 高级设置 &amp;gt; 入站规则中找到配置文件类型">
+<meta property="og:description" content="本篇是使用Docker部署ThinkPHP运行环境的命令笔记。这里ThinkPHP框架版本为5.0.24。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-29T06:28:10.851Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-tp5-base&#x2F;rewrite_conf.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-tp5-base&#x2F;db_conn_conf.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-tp5-base&#x2F;redis_conf.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-tp5-base&#x2F;code_redis.png">
+<meta property="og:updated_time" content="2019-12-04T10:34:06.743Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-tp5-base&#x2F;rewrite_conf.png">
 
 
 
@@ -130,13 +135,13 @@
 
 
 
-  <link rel="canonical" href="https://xlline.github.io/2019/10/28/虚拟机ping不通主机，但是主机可以ping通虚拟机/"/>
+  <link rel="canonical" href="https://xlline.github.io/2019/12/03/docker-tp5-base/"/>
 
 
 
 
 
-  <title>虚拟机ping不通主机，但是主机可以ping通虚拟机 | 理想国</title>
+  <title>docker_tp5_base | 理想国</title>
   
 
 
@@ -297,7 +302,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/10/28/%E8%99%9A%E6%8B%9F%E6%9C%BAping%E4%B8%8D%E9%80%9A%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%BB%E6%9C%BA%E5%8F%AF%E4%BB%A5ping%E9%80%9A%E8%99%9A%E6%8B%9F%E6%9C%BA/">
+    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/12/03/docker-tp5-base/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xugz">
@@ -314,7 +319,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">虚拟机ping不通主机，但是主机可以ping通虚拟机</h1>
+          <h1 class="post-title" itemprop="name headline">docker_tp5_base</h1>
         
 
         <div class="post-meta">
@@ -326,8 +331,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-28T18:02:34+08:00">
-                2019-10-28
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-03T16:22:40+08:00">
+                2019-12-03
               </time>
             
 
@@ -360,8 +365,19 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
+                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/Docker/" itemprop="url" rel="index">
+                    <span itemprop="name">Docker</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/Docker/PHP/" itemprop="url" rel="index">
+                    <span itemprop="name">PHP</span>
                   </a>
                 </span>
 
@@ -392,7 +408,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  458 字
+                  1.5k 字
                 </span>
               
 
@@ -408,7 +424,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1分钟
+                  6分钟
                 </span>
               
             </span>
@@ -429,12 +445,51 @@
       
 
       
-        <p>在Windows10系统安装了虚拟机，设置的主机与虚拟机的连接方式是桥接，安装好后，发现虚拟机ping不通主机，但是主机可以ping通虚拟机。<br>上网查看资料，发现是因为Windows10防火墙阻止，防火墙没有打开ICMPv4-in这个规则。<br>那怎么打开呢？  </p>
-<h1 id="修改防火墙规则"><a href="#修改防火墙规则" class="headerlink" title="修改防火墙规则"></a>修改防火墙规则</h1><p>设置 &gt; 网络和Internet &gt; Windows防火墙 &gt; 高级设置 &gt; 入站规则中找到配置文件类型为“公用”的“文件和打印共享（回显请求 – ICMPv4-In）”规则，设置为启用规则。<br>这样虚拟机就可以ping通主机了。  </p>
-<h1 id="更改适配器选项"><a href="#更改适配器选项" class="headerlink" title="更改适配器选项"></a>更改适配器选项</h1><p>如果确保安装无误且防火墙已关闭却还没解决问题,可能是这个原因，我们一般都是自动获取ip地址和网关，设置为手动就可以了。<br>步骤如下：<br>打开cmd查看你的IP地址，ipconfig，记住IP地址和默认网关。</p>
-<p>设置  &gt; 网络和Internet &gt; 更改适配器选项 &gt; 选择主机连接的网络右键属性 &gt; Internet 协议4（TCP/IPv4）属性 中选择使用下面的DNS服务器地址进行自定义，填入IP地址 默认网关和子网掩码再试。</p>
-<p>防火墙是虚拟机ping不通本机ip的主要原因，但是如果开启了入站规则没管用那就是其他问题了，我的把自动获取改为手动就好了，之前设置的入站规则也管用了，现在防火墙也都开着。</p>
-<p>本文参考文章： <a href="https://blog.csdn.net/hskw444273663/article/details/81301470" target="_blank" rel="noopener">链接</a></p>
+        <p>本篇是使用Docker部署ThinkPHP运行环境的命令笔记。这里ThinkPHP框架版本为5.0.24。</p>
+<a id="more"></a>
+<p>下载框架 <a href="http://www.thinkphp.cn/down.html" target="_blank" rel="noopener">官网框架下载地址</a>到本地，使用ftp方式上传到虚拟机tool目录中。</p>
+<h1 id="结合apache的基本运行"><a href="#结合apache的基本运行" class="headerlink" title="结合apache的基本运行"></a>结合apache的基本运行</h1><p>创建一个目录叫做tp5<br>在tp5中创建两个目录。一个放程序文件(web)，一个放docker-compose.yml(compose)</p>
+<p>解压框架压缩包至目录 /home/xugz/tp5/web，使用命令 <code>cd tool &amp;&amp; unzip mydata.zip -d ../tp5/web</code> 解压至指定目录<br>如果没有安装zip和unzip。执行 <code>sudo yum install zip unzip -y</code><br>我们需要将TP5web文件夹整个目录挂载到PHP-FPM容器，Apache容器仅仅挂载public文件夹，httpd.conf文件中fpm配置改为：<code>ProxyPassMatch ^/(.*\.php)$ fcgi://192.138.0.2:9000/php/public/$1</code></p>
+<p>docker-compose.yml文件中添加如下内容</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">version: "3"</span><br><span class="line">services:</span><br><span class="line">  fpm:</span><br><span class="line">   image: php:7.2.0-fpm-alpine3.6</span><br><span class="line">   container_name: fpm</span><br><span class="line">   volumes:</span><br><span class="line">      - /home/xugz/tp5/web:/php</span><br><span class="line">   networks:</span><br><span class="line">      mywebnet:</span><br><span class="line">       ipv4_address: 192.138.0.2</span><br><span class="line">  httpd:</span><br><span class="line">   image: httpd:2.4-alpine</span><br><span class="line">   container_name: httpd</span><br><span class="line">   ports:</span><br><span class="line">      - 8081:80</span><br><span class="line">   volumes:</span><br><span class="line">      - /home/xugz/tp5/web/public:/usr/local/apache2/htdocs/</span><br><span class="line">      - /home/xugz/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf</span><br><span class="line">   networks:</span><br><span class="line">      mywebnet:</span><br><span class="line">       ipv4_address: 192.138.0.3</span><br><span class="line"></span><br><span class="line">networks:</span><br><span class="line">  mywebnet:</span><br><span class="line">     driver: bridge</span><br><span class="line">     ipam:</span><br><span class="line">       config:</span><br><span class="line">         - subnet: 192.138.0.0/16</span><br></pre></td></tr></tbody></table></figure>
+<p>保存文件使用 <code>docker-compose up -d</code> 编译运行成功后使用 <code>curl localhost:8081/index.php</code>验证。</p>
+<h1 id="添加控制器、url重写"><a href="#添加控制器、url重写" class="headerlink" title="添加控制器、url重写"></a>添加控制器、url重写</h1><p>tp5默认有个控制器，位置在: application/index/controller/index.php</p>
+<p>在我们开启防火墙端口<code>sudo iptables -A INPUT -p tcp -m tcp --dport 8081 -j ACCEPT</code> 后，可以在windows本机通过 <code>虚拟机:端口/index.php</code><br>tp5创建控制可以用命令直接帮你创建：<code>php think make:controller index/test</code> <span style="font-size: 13px; color: #777;"> 需要确保本地有PHP环境</span> 当然我们也可以手工创建</p>
+<p>开启apache重写模块<br>取消本行注释 <code>LoadModule rewrite_module modules/mod_rewrite.so</code><br>在网站配置相关节点加入  <code>AllowOverride all</code></p>
+<div style="width: 67%;margin: left"><img src="/2019/12/03/docker-tp5-base/rewrite_conf.png" class=""></div>
+
+<p>完成后使用 <code>docker-compose restart</code> 让其重启重新构建容器<br><code>虚拟机:端口/index</code> 访问Index目录下index文件 <code>虚拟机:端口/index/index/test</code> 访问Index目录下index中的test方法<br><code>虚拟机:端口/index/user</code> 访问Index目录下user文件index方法 <code>虚拟机:端口/index/user_index</code> 访问Index目录下UserIndex文件index方法</p>
+<h1 id="添加PHP扩展"><a href="#添加PHP扩展" class="headerlink" title="添加PHP扩展"></a>添加PHP扩展</h1><p>在容器中直接修改安装的话，容器删除后重新启动时，拓展和配置等都会丢失，所以我们在docker-compose文件中进行构建。在docker-compose.yml文件同目录创建新文件夹叫做build.<br>参考地址： <a href="https://hub.docker.com/_/php/" target="_blank" rel="noopener">https://hub.docker.com/_/php/</a></p>
+<h2 id="PDO-MYSQL扩展"><a href="#PDO-MYSQL扩展" class="headerlink" title="PDO_MYSQL扩展"></a>PDO_MYSQL扩展</h2><p>默认的PHP–FPM容器没有PDO_MYSQL扩展，我们需要指定安装。<br>在build里面新建一个Dockerfile文件，注意文件名 我们这次随便取，譬如叫做phpfpm，配置镜像源并更新apk包后执行安装PDO_MYSQL扩展。参考命令</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM php:7.2.0-fpm-alpine3.6</span><br><span class="line">RUN echo http://mirrors.ustc.edu.cn/alpine/v3.6/main &gt; /etc/apk/repositories &amp;&amp; echo http://mirrors.ustc.edu.cn/alpine/v3.6/community &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update &amp;&amp; apk upgrade</span><br><span class="line">RUN docker-php-ext-install pdo_mysql</span><br></pre></td></tr></tbody></table></figure>
+<p>返回上级目录修改docker-compose.yml文件，增加fpm服务标签</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fpm:</span><br><span class="line">  build:</span><br><span class="line">   context: ./build</span><br><span class="line">   dockerfile: phpfpm</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="redis拓展"><a href="#redis拓展" class="headerlink" title="redis拓展"></a>redis拓展</h2><p>在build里面新建一个Dockerfile文件，随便取，譬如叫做phpredis，安装redis依赖使用pecl来安装Redis扩展。参考命令</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FROM php:7.2.0-fpm-alpine3.6</span><br><span class="line">RUN apk add autoconf gcc g++ make </span><br><span class="line">COPY ./redis-4.0.1 / # curl 'http://pecl.php.net/get/redis-4.0.1.tgz' -o redis-4.0.1.tgz</span><br><span class="line">RUN pecl install redis-4.0.1 \</span><br><span class="line">    &amp;&amp; docker-php-ext-enable redis</span><br></pre></td></tr></tbody></table></figure>
+<p>返回上级目录修改docker-compose.yml文件，增加fpm服务build标签</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fpm:</span><br><span class="line">  build:</span><br><span class="line">   context: ./build</span><br><span class="line">   dockerfile: phpredis</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
+<p>构建fpm服务设置 <code>docker-compose build fpm</code>， 完成后我们发现他帮我们新建了一个镜像，原有镜像没有所需拓展，删除原有启动新镜像<br><code>docker-compose stop fpm &amp;&amp; docker-compose rm fpm &amp;&amp; docker-compose up -d fpm</code></p>
+<h1 id="连接数据库"><a href="#连接数据库" class="headerlink" title="连接数据库"></a>连接数据库</h1><p>编辑TP5对应的compose配置docker-compose.yml文件，加入MySQL的配置</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mysql:</span><br><span class="line">   image: mysql:5.7</span><br><span class="line">   container_name: mysqld</span><br><span class="line">   ports:</span><br><span class="line">     - 3306:3306</span><br><span class="line">   volumes:</span><br><span class="line">     - /home/xugz/mysql/conf:/etc/mysql/conf.d</span><br><span class="line">     - /home/xugz/mysql/data:/var/lib/mysql</span><br><span class="line">   environment:</span><br><span class="line">     - MYSQL_ROOT_PASSWORD=123456</span><br><span class="line">   networks:</span><br><span class="line">     - mywebnet</span><br></pre></td></tr></tbody></table></figure>
+<p>然后使用 <code>docker-compose up -d mysql</code> 创建MySQL服务器容器<br>在应用程序web目录里application/database.php中修改MySQL配置，参考配置如下</p>
+<div style="width: 67%;margin: left"><img src="/2019/12/03/docker-tp5-base/db_conn_conf.png" class=""></div>
+
+<p>配置完成后，可定义模型和数据库调用尝试验证。<a href="https://www.kancloud.cn/manual/thinkphp5/135187" target="_blank" rel="noopener">点我，我是隐藏的参考地址</a></p>
+<h1 id="结合redis容器基本操作"><a href="#结合redis容器基本操作" class="headerlink" title="结合redis容器基本操作"></a>结合redis容器基本操作</h1><p>拉取官方镜像 <code>docker pull redis:alpine</code><br>在conf目录下拉取redis配置文件 <code>wget https://raw.githubusercontent.com/antirez/redis/5.0/redis.conf</code><br>编辑redis.conf文件修改一些基本参数  如 <code>bind 0.0.0.0</code> 和 <code>dir /data</code></p>
+<p>编辑TP5对应的compose配置docker-compose.yml文件，加入Redis的配置</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">redis:</span><br><span class="line">    image: redis:alpine</span><br><span class="line">    container_name: redis</span><br><span class="line">    ports:</span><br><span class="line">     - 6379:6379</span><br><span class="line">    volumes:</span><br><span class="line">     - /home/xugz/tp5/conf/redis.conf:/usr/local/etc/redis/redis.conf</span><br><span class="line">     - /home/xugz/tp5/redisdata:/data # 这里的data和 conf/redis.conf中的dir配置保持一致</span><br><span class="line">    networks:</span><br><span class="line">      mywebnet:</span><br><span class="line">       ipv4_address: 192.138.0.10</span><br></pre></td></tr></tbody></table></figure>
+<p>修改application/config.php中关于缓存相关配置，参考如图</p>
+<div style="width: 68%;margin: left"><img src="/2019/12/03/docker-tp5-base/redis_conf.png" class=""></div>
+
+<p>然后使用 <code>docker-compose up -d</code> 创建redis服务器容器。成功的话使用 <code>docker exec -it redis redis-cli</code> 可进入Redis客户端。也可以写简单的测试验证，最简单的代码如图</p>
+<div style="width: 67%;margin: left"><img src="/2019/12/03/docker-tp5-base/code_redis.png" class=""></div>
+使用浏览器访问 `http://192.168.2.156:8081/news` 即可看到测试数据
+参考文档： https://hub.docker.com/_/redis/
+
+<h1 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h1><p>// todo</p>
+<h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><h2 id="浏览器访问报错-variable-type-error-array"><a href="#浏览器访问报错-variable-type-error-array" class="headerlink" title="浏览器访问报错 variable type error:array"></a>浏览器访问报错 variable type error:array</h2><p>默认输出类型导致解析异常。在应用程序web目录里application/config.php中修改，如 <code>default_return_type = 'json'</code></p>
+<h2 id="wget文件报错-unable-to-resolve-host-address"><a href="#wget文件报错-unable-to-resolve-host-address" class="headerlink" title="wget文件报错 unable to resolve host address"></a>wget文件报错 unable to resolve host address</h2><p>因为VPS的本地DNS不通导致的，我们需要修改当前VPS的DNS。<br>修改 /etc/resolv.conf 文件，增加DNS nameserver 8.8.8.8保存退出后重试。</p>
+<h2 id="查看运行在docker中的redis版本"><a href="#查看运行在docker中的redis版本" class="headerlink" title="查看运行在docker中的redis版本"></a>查看运行在docker中的redis版本</h2><p>使用命令  `docker exec -it <containerid or="" name=""> redis-server -v</containerid></p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -469,12 +524,12 @@
   <!-- JS库 sweetalert 可修改路径 -->
   <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/2019/10/28/%E8%99%9A%E6%8B%9F%E6%9C%BAping%E4%B8%8D%E9%80%9A%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%BB%E6%9C%BA%E5%8F%AF%E4%BB%A5ping%E9%80%9A%E8%99%9A%E6%8B%9F%E6%9C%BA/">虚拟机ping不通主机，但是主机可以ping通虚拟机</a></p>
+  <p><span>本文标题:</span><a href="/2019/12/03/docker-tp5-base/">docker_tp5_base</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
-  <p><span>发布时间:</span>2019年10月28日 - 18:02</p>
-  <p><span>最后更新:</span>2019年10月29日 - 14:28</p>
-  <p><span>原始链接:</span><a href="/2019/10/28/%E8%99%9A%E6%8B%9F%E6%9C%BAping%E4%B8%8D%E9%80%9A%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%BB%E6%9C%BA%E5%8F%AF%E4%BB%A5ping%E9%80%9A%E8%99%9A%E6%8B%9F%E6%9C%BA/" title="虚拟机ping不通主机，但是主机可以ping通虚拟机">https://xlline.github.io/2019/10/28/%E8%99%9A%E6%8B%9F%E6%9C%BAping%E4%B8%8D%E9%80%9A%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%BB%E6%9C%BA%E5%8F%AF%E4%BB%A5ping%E9%80%9A%E8%99%9A%E6%8B%9F%E6%9C%BA/</a>
-    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/10/28/%E8%99%9A%E6%8B%9F%E6%9C%BAping%E4%B8%8D%E9%80%9A%E4%B8%BB%E6%9C%BA%EF%BC%8C%E4%BD%86%E6%98%AF%E4%B8%BB%E6%9C%BA%E5%8F%AF%E4%BB%A5ping%E9%80%9A%E8%99%9A%E6%8B%9F%E6%9C%BA/"  aria-label="复制成功！"></i></span>
+  <p><span>发布时间:</span>2019年12月03日 - 16:22</p>
+  <p><span>最后更新:</span>2019年12月04日 - 18:34</p>
+  <p><span>原始链接:</span><a href="/2019/12/03/docker-tp5-base/" title="docker_tp5_base">https://xlline.github.io/2019/12/03/docker-tp5-base/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/12/03/docker-tp5-base/"  aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
 </div>
@@ -513,9 +568,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+            <a href="/tags/Docker/" rel="tag"><i class="fa fa-tag"></i> Docker</a>
           
-            <a href="/tags/VMware/" rel="tag"><i class="fa fa-tag"></i> VMware</a>
+            <a href="/tags/PHP/" rel="tag"><i class="fa fa-tag"></i> PHP</a>
+          
+            <a href="/tags/ThinkPHP/" rel="tag"><i class="fa fa-tag"></i> ThinkPHP</a>
           
         </div>
       
@@ -528,8 +585,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/10/25/hexo_add_pic/" rel="next" title="Hexo博客添加图片不显示问题">
-                <i class="fa fa-chevron-left"></i> Hexo博客添加图片不显示问题
+              <a href="/2019/12/03/docker-mysql-base/" rel="next" title="Docker+MySQL">
+                <i class="fa fa-chevron-left"></i> Docker+MySQL
               </a>
             
           </div>
@@ -538,8 +595,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/10/29/rsync+sersync%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/" rel="prev" title="rsync+sersync实现数据实时同步">
-                rsync+sersync实现数据实时同步 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/12/03/docker-samba/" rel="prev" title="docker配置Samba文件共享服务">
+                docker配置Samba文件共享服务 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -688,7 +745,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#修改防火墙规则"><span class="nav-number">1.</span> <span class="nav-text">修改防火墙规则</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#更改适配器选项"><span class="nav-number">2.</span> <span class="nav-text">更改适配器选项</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#结合apache的基本运行"><span class="nav-number">1.</span> <span class="nav-text">结合apache的基本运行</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#添加控制器、url重写"><span class="nav-number">2.</span> <span class="nav-text">添加控制器、url重写</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#添加PHP扩展"><span class="nav-number">3.</span> <span class="nav-text">添加PHP扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#PDO-MYSQL扩展"><span class="nav-number">3.1.</span> <span class="nav-text">PDO_MYSQL扩展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redis拓展"><span class="nav-number">3.2.</span> <span class="nav-text">redis拓展</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#连接数据库"><span class="nav-number">4.</span> <span class="nav-text">连接数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结合redis容器基本操作"><span class="nav-number">5.</span> <span class="nav-text">结合redis容器基本操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#上传文件"><span class="nav-number">6.</span> <span class="nav-text">上传文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见问题"><span class="nav-number">7.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#浏览器访问报错-variable-type-error-array"><span class="nav-number">7.1.</span> <span class="nav-text">浏览器访问报错 variable type error:array</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wget文件报错-unable-to-resolve-host-address"><span class="nav-number">7.2.</span> <span class="nav-text">wget文件报错 unable to resolve host address</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看运行在docker中的redis版本"><span class="nav-number">7.3.</span> <span class="nav-text">查看运行在docker中的redis版本</span></a></li></ol></li></ol></div>
             
 
           </div>

@@ -86,15 +86,15 @@
 
 
 
-<meta name="description" content="本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是一些Docker结合MySQL常用操作的笔记。这里MySQL版本为5.7。">
+<meta name="description" content="本篇是一些Docker结合MySQL常用操作的笔记。这里MySQL版本为5.7。主要是使用docker搭建MySQL并导入数据、基于alpine镜像构建MySQL客户端、制作MySQL备份专用镜像和使用crontab实现数据库定时备份。">
 <meta name="keywords" content="Docker,MySQL">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Docker+MySQL">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-mysql-base&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是一些Docker结合MySQL常用操作的笔记。这里MySQL版本为5.7。">
+<meta property="og:description" content="本篇是一些Docker结合MySQL常用操作的笔记。这里MySQL版本为5.7。主要是使用docker搭建MySQL并导入数据、基于alpine镜像构建MySQL客户端、制作MySQL备份专用镜像和使用crontab实现数据库定时备份。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-12-03T07:49:48.684Z">
+<meta property="og:updated_time" content="2019-12-04T09:31:54.605Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -403,7 +403,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.3k 字
+                  1.4k 字
                 </span>
               
 
@@ -440,7 +440,7 @@
       
 
       
-        <p>本篇默认docker环境已经安装完成，并且默认我们存在基本的docker基础，本篇是一些Docker结合MySQL常用操作的笔记。这里MySQL版本为5.7。</p>
+        <p>本篇是一些Docker结合MySQL常用操作的笔记。这里MySQL版本为5.7。主要是使用docker搭建MySQL并导入数据、基于alpine镜像构建MySQL客户端、制作MySQL备份专用镜像和使用crontab实现数据库定时备份。</p>
 <a id="more"></a>
 
 <h1 id="启动MySQL容器、导入数据"><a href="#启动MySQL容器、导入数据" class="headerlink" title="启动MySQL容器、导入数据"></a>启动MySQL容器、导入数据</h1><p>拉取官方镜像 <code>docker pull mysql:5.7</code><br>启动MySQL <span style="font-size: 13px; color: #777;"> -e 设置环境变量 MYSQL_ROOT_PASSWORD 是root的密码</span><br><code>docker run --name mysql --rm -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</code><br>测试连接 <code>docker exec -it mysql mysql -u root -p123123</code> 或者 <code>docker exec -it mysql mysql -u root -p</code><br>实际运行必定要配置文件，根据官网的提示，配置文件在 /etc/mysql/my.cnf，数据目录在 /var/lib/mysql。</p>
@@ -456,6 +456,7 @@
 <h1 id="基于alpine构建MySQL客户端"><a href="#基于alpine构建MySQL客户端" class="headerlink" title="基于alpine构建MySQL客户端"></a>基于alpine构建MySQL客户端</h1><p>alpine使用的是apk包管理器,命令，如apk add 、apk update 、apk del。默认镜像源可能比较慢，常用的有<br>中科大镜像源：<a href="http://mirrors.ustc.edu.cn/alpine/" target="_blank" rel="noopener">http://mirrors.ustc.edu.cn/alpine/</a> 阿里云镜像源：<a href="http://mirrors.aliyun.com/alpine/" target="_blank" rel="noopener">http://mirrors.aliyun.com/alpine/</a></p>
 <p>拉取官方镜像 <code>docker pull alpine</code><br>新建目录 <code>mkdir mytool</code> 并在目录中新建Dockerfile文件，键入以下内容。安装MySQL客户端</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FROM alpine:latest</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/main &gt; /etc/apk/repositories</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/community &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update &amp;&amp; apk upgrade</span><br><span class="line">RUN apk add mysql-client</span><br><span class="line">ENTRYPOINT ["mysql"]</span><br></pre></td></tr></tbody></table></figure>
+<p>如果不知道当前 alpine的版本，可以通过 <code>docker exec -it 容器名 sh</code>  通过命令行方式进入容器 使用命令 <code>cat /etc/issue</code> 查看。</p>
 <p><span style="font-size: 13px; color: #777;">不使用dockerfile的话，手工配置加速镜像源使用命令<br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/main/\" &gt; /etc/apk/repositories"</code><br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/community/\" &gt;&gt; /etc/apk/repositories"</code><br>当然设置好后，还得  执行<code>apk update &amp;&amp; apk upgrade</code><br></span><br>构建镜像，使用命令编译 <code>docker build -t mytool:1.0 .</code><br>使用<code>docker run -it --name tmp  mytool:1.0 mysql -h 192.168.2.156 -uroot -p123123</code> 运行验证。<br><span style="font-size: 13px; color: #777;">这里的192.168.2.156是MySQL服务端部署主机的IP</span></p>
 <p><a href="https://hub.docker.com/_/alpine/" target="_blank" rel="noopener">alpine镜像官方文档</a></p>
 <h1 id="制作MySQL备份专用镜像"><a href="#制作MySQL备份专用镜像" class="headerlink" title="制作MySQL备份专用镜像"></a>制作MySQL备份专用镜像</h1><p>我们现在想要制作一个MySQL备份数据库数据的镜像，要求存放到指定目录 /home/xugz/mysql/database_bak/下，文件名与数据库名一致。<br>数据库备份命令<code>mysqldump -u用户名 -p密码 数据库名 &gt; 导出的文件名</code>。<br>修改原mytool目录中的Dockerfile文件，覆盖以下内容，注意需要去掉注释哦</p>
@@ -508,7 +509,7 @@
   <p><span>本文标题:</span><a href="/2019/12/03/docker-mysql-base/">Docker+MySQL</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年12月03日 - 12:22</p>
-  <p><span>最后更新:</span>2019年12月03日 - 15:49</p>
+  <p><span>最后更新:</span>2019年12月04日 - 17:31</p>
   <p><span>原始链接:</span><a href="/2019/12/03/docker-mysql-base/" title="Docker+MySQL">https://xlline.github.io/2019/12/03/docker-mysql-base/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/12/03/docker-mysql-base/"  aria-label="复制成功！"></i></span>
   </p>
@@ -573,6 +574,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/12/03/docker-tp5-base/" rel="prev" title="docker_tp5_base">
+                docker_tp5_base <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -649,7 +654,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -671,7 +676,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -762,7 +767,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 27.6k 字</span>
+  <span class="post-count">全站共 29.9k 字</span>
 </div>
         
 
