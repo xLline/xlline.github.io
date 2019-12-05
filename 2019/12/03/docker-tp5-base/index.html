@@ -86,19 +86,19 @@
 
 
 
-<meta name="description" content="本篇是使用Docker部署ThinkPHP运行环境的命令笔记。这里ThinkPHP框架版本为5.0.24。">
+<meta name="description" content="本篇是使用Docker部署ThinkPHP运行环境的命令笔记。这里ThinkPHP框架版本为5.0.24。主要包括Apache下的基本运行、apache角度的URL重写、添加PHP拓展、连接数据库、结合redis的简单操作和上传文件示例等。">
 <meta name="keywords" content="Docker,PHP,ThinkPHP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="docker_tp5_base">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-tp5-base&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
-<meta property="og:description" content="本篇是使用Docker部署ThinkPHP运行环境的命令笔记。这里ThinkPHP框架版本为5.0.24。">
+<meta property="og:description" content="本篇是使用Docker部署ThinkPHP运行环境的命令笔记。这里ThinkPHP框架版本为5.0.24。主要包括Apache下的基本运行、apache角度的URL重写、添加PHP拓展、连接数据库、结合redis的简单操作和上传文件示例等。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-tp5-base&#x2F;rewrite_conf.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-tp5-base&#x2F;db_conn_conf.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-tp5-base&#x2F;redis_conf.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-tp5-base&#x2F;code_redis.png">
-<meta property="og:updated_time" content="2019-12-04T10:34:06.743Z">
+<meta property="og:updated_time" content="2019-12-05T05:36:05.330Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;03&#x2F;docker-tp5-base&#x2F;rewrite_conf.png">
 
@@ -408,7 +408,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.5k 字
+                  1.7k 字
                 </span>
               
 
@@ -424,7 +424,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6分钟
+                  7分钟
                 </span>
               
             </span>
@@ -445,7 +445,7 @@
       
 
       
-        <p>本篇是使用Docker部署ThinkPHP运行环境的命令笔记。这里ThinkPHP框架版本为5.0.24。</p>
+        <p>本篇是使用Docker部署ThinkPHP运行环境的命令笔记。这里ThinkPHP框架版本为5.0.24。主要包括Apache下的基本运行、apache角度的URL重写、添加PHP拓展、连接数据库、结合redis的简单操作和上传文件示例等。</p>
 <a id="more"></a>
 <p>下载框架 <a href="http://www.thinkphp.cn/down.html" target="_blank" rel="noopener">官网框架下载地址</a>到本地，使用ftp方式上传到虚拟机tool目录中。</p>
 <h1 id="结合apache的基本运行"><a href="#结合apache的基本运行" class="headerlink" title="结合apache的基本运行"></a>结合apache的基本运行</h1><p>创建一个目录叫做tp5<br>在tp5中创建两个目录。一个放程序文件(web)，一个放docker-compose.yml(compose)</p>
@@ -483,10 +483,10 @@
 
 <p>然后使用 <code>docker-compose up -d</code> 创建redis服务器容器。成功的话使用 <code>docker exec -it redis redis-cli</code> 可进入Redis客户端。也可以写简单的测试验证，最简单的代码如图</p>
 <div style="width: 67%;margin: left"><img src="/2019/12/03/docker-tp5-base/code_redis.png" class=""></div>
-使用浏览器访问 `http://192.168.2.156:8081/news` 即可看到测试数据
-参考文档： https://hub.docker.com/_/redis/
 
-<h1 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h1><p>// todo</p>
+<p>使用浏览器访问 <code>http://192.168.2.156:8081/news</code> 即可看到测试数据<br>参考文档： <a href="https://hub.docker.com/_/redis/" target="_blank" rel="noopener">https://hub.docker.com/_/redis/</a></p>
+<h1 id="上传文件-todo"><a href="#上传文件-todo" class="headerlink" title="上传文件 todo"></a>上传文件 todo</h1><p>默认模板配置已完成 <a href="https://www.kancloud.cn/manual/thinkphp5/119298" target="_blank" rel="noopener">参考地址</a>。默认模板实例代码已创建 <a href="https://www.kancloud.cn/manual/thinkphp5/155159" target="_blank" rel="noopener">模板实例代码参考地址</a><br>此时我们刷新页面报错：<em>mkdir():Permission denied</em>。这是因为主机上的用户和容器里用户未对应导致的权限问题。<br>如果你是apline 3.4 版本在数据源中加入 <code>echo http://nl.alpinelinux.org/alpine/edge/testing &gt;&gt; /etc/apk/repositories</code> 然后执行 <code>apk -no-cache add shadow</code>。是 alpine 3.6.则直接安装即可 <code>apk  add shadow</code>。通过 <a href="https://pkgs.alpinelinux.org/contents?file=usermod&amp;path=&amp;name=&amp;branch=&amp;repo=&amp;arch=" target="_blank" rel="noopener">地址</a> 找到对于 usermod文件的所在包。<br>完成之后执行 <code>usermod -u 1000 www-data &amp;&amp; groupmod -g 1000 www-data</code>修改用户www-data的用户以及群组ID为1000。搞定后要重启容器。</p>
+<p>使用 <code>cat /etc/passwd</code> 命令查看用户归属组等信息</p>
 <h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><h2 id="浏览器访问报错-variable-type-error-array"><a href="#浏览器访问报错-variable-type-error-array" class="headerlink" title="浏览器访问报错 variable type error:array"></a>浏览器访问报错 variable type error:array</h2><p>默认输出类型导致解析异常。在应用程序web目录里application/config.php中修改，如 <code>default_return_type = 'json'</code></p>
 <h2 id="wget文件报错-unable-to-resolve-host-address"><a href="#wget文件报错-unable-to-resolve-host-address" class="headerlink" title="wget文件报错 unable to resolve host address"></a>wget文件报错 unable to resolve host address</h2><p>因为VPS的本地DNS不通导致的，我们需要修改当前VPS的DNS。<br>修改 /etc/resolv.conf 文件，增加DNS nameserver 8.8.8.8保存退出后重试。</p>
 <h2 id="查看运行在docker中的redis版本"><a href="#查看运行在docker中的redis版本" class="headerlink" title="查看运行在docker中的redis版本"></a>查看运行在docker中的redis版本</h2><p>使用命令  `docker exec -it <containerid or="" name=""> redis-server -v</containerid></p>
@@ -527,7 +527,7 @@
   <p><span>本文标题:</span><a href="/2019/12/03/docker-tp5-base/">docker_tp5_base</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年12月03日 - 16:22</p>
-  <p><span>最后更新:</span>2019年12月04日 - 18:34</p>
+  <p><span>最后更新:</span>2019年12月05日 - 13:36</p>
   <p><span>原始链接:</span><a href="/2019/12/03/docker-tp5-base/" title="docker_tp5_base">https://xlline.github.io/2019/12/03/docker-tp5-base/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/12/03/docker-tp5-base/"  aria-label="复制成功！"></i></span>
   </p>
@@ -745,7 +745,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#结合apache的基本运行"><span class="nav-number">1.</span> <span class="nav-text">结合apache的基本运行</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#添加控制器、url重写"><span class="nav-number">2.</span> <span class="nav-text">添加控制器、url重写</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#添加PHP扩展"><span class="nav-number">3.</span> <span class="nav-text">添加PHP扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#PDO-MYSQL扩展"><span class="nav-number">3.1.</span> <span class="nav-text">PDO_MYSQL扩展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redis拓展"><span class="nav-number">3.2.</span> <span class="nav-text">redis拓展</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#连接数据库"><span class="nav-number">4.</span> <span class="nav-text">连接数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结合redis容器基本操作"><span class="nav-number">5.</span> <span class="nav-text">结合redis容器基本操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#上传文件"><span class="nav-number">6.</span> <span class="nav-text">上传文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见问题"><span class="nav-number">7.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#浏览器访问报错-variable-type-error-array"><span class="nav-number">7.1.</span> <span class="nav-text">浏览器访问报错 variable type error:array</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wget文件报错-unable-to-resolve-host-address"><span class="nav-number">7.2.</span> <span class="nav-text">wget文件报错 unable to resolve host address</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看运行在docker中的redis版本"><span class="nav-number">7.3.</span> <span class="nav-text">查看运行在docker中的redis版本</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#结合apache的基本运行"><span class="nav-number">1.</span> <span class="nav-text">结合apache的基本运行</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#添加控制器、url重写"><span class="nav-number">2.</span> <span class="nav-text">添加控制器、url重写</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#添加PHP扩展"><span class="nav-number">3.</span> <span class="nav-text">添加PHP扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#PDO-MYSQL扩展"><span class="nav-number">3.1.</span> <span class="nav-text">PDO_MYSQL扩展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redis拓展"><span class="nav-number">3.2.</span> <span class="nav-text">redis拓展</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#连接数据库"><span class="nav-number">4.</span> <span class="nav-text">连接数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结合redis容器基本操作"><span class="nav-number">5.</span> <span class="nav-text">结合redis容器基本操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#上传文件-todo"><span class="nav-number">6.</span> <span class="nav-text">上传文件 todo</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见问题"><span class="nav-number">7.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#浏览器访问报错-variable-type-error-array"><span class="nav-number">7.1.</span> <span class="nav-text">浏览器访问报错 variable type error:array</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wget文件报错-unable-to-resolve-host-address"><span class="nav-number">7.2.</span> <span class="nav-text">wget文件报错 unable to resolve host address</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看运行在docker中的redis版本"><span class="nav-number">7.3.</span> <span class="nav-text">查看运行在docker中的redis版本</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -787,7 +787,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 29.9k 字</span>
+  <span class="post-count">全站共 30.2k 字</span>
 </div>
         
 
