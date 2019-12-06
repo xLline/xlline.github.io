@@ -90,14 +90,14 @@
 <meta name="keywords" content="MySQL">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL指定日期加减">
-<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;02&#x2F;mysql-time-addsub&#x2F;index.html">
+<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;02&#x2F;MySQL-time-addsub&#x2F;index.html">
 <meta property="og:site_name" content="理想国">
 <meta property="og:description" content="MySQL官网是不承认时间直接相加减的，本篇记录时间加减操作需要注意点，加深记忆，避免以后入坑。先来看看MySQL中常用的内建日期函数    函数 描述 语法    NOW() 返回当前的日期和时间 NOW()   CURDATE() 返回当前的日期，该函数相当于current_date关键字 CURDATE()   CURTIME() 返回当前的时间，相当于current_time关键字 CUR">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;02&#x2F;mysql-time-addsub&#x2F;sql_result.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;02&#x2F;MySQL-time-addsub&#x2F;sql_result.png">
 <meta property="og:updated_time" content="2019-12-02T03:24:08.327Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;02&#x2F;mysql-time-addsub&#x2F;sql_result.png">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2019&#x2F;12&#x2F;02&#x2F;MySQL-time-addsub&#x2F;sql_result.png">
 
 
 
@@ -132,7 +132,7 @@
 
 
 
-  <link rel="canonical" href="https://xlline.github.io/2019/12/02/mysql-time-addsub/"/>
+  <link rel="canonical" href="https://xlline.github.io/2019/12/02/MySQL-time-addsub/"/>
 
 
 
@@ -299,7 +299,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/12/02/mysql-time-addsub/">
+    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2019/12/02/MySQL-time-addsub/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="xugz">
@@ -489,7 +489,7 @@
 <a id="more"></a>
 <p>比如说，我们现在想要查询得出当前日期的一天前和五天前的日期，测试SQL语句如下</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT NOW(),CURDATE(), CURTIME(), DATE_SUB(CURDATE(),INTERVAL 1 DAY),CURDATE()-1, DATE_SUB(CURDATE(),INTERVAL 5 DAY), CURDATE()-5;</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 85%;margin: left"><img src="/2019/12/02/mysql-time-addsub/sql_result.png" class title="执行SQL得到的结果"></div>
+<div style="width: 85%;margin: left"><img src="/2019/12/02/MySQL-time-addsub/sql_result.png" class="" title="执行SQL得到的结果"></div>
 明显发现使用 CURDATE()函数直接进行加减存在问题，需要留意。当我们需要日期加减操作时，可使用 DATE_SUB() 和 DATE_ADD() 函数。
 
 <p>DATE_ADD()和DATE_SUB()函数常用type参数有： </p>
@@ -527,12 +527,12 @@
   <!-- JS库 sweetalert 可修改路径 -->
   <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/2019/12/02/mysql-time-addsub/">MySQL指定日期加减</a></p>
+  <p><span>本文标题:</span><a href="/2019/12/02/MySQL-time-addsub/">MySQL指定日期加减</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2019年12月02日 - 10:16</p>
   <p><span>最后更新:</span>2019年12月02日 - 11:24</p>
-  <p><span>原始链接:</span><a href="/2019/12/02/mysql-time-addsub/" title="MySQL指定日期加减">https://xlline.github.io/2019/12/02/mysql-time-addsub/</a>
-    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/12/02/mysql-time-addsub/"  aria-label="复制成功！"></i></span>
+  <p><span>原始链接:</span><a href="/2019/12/02/MySQL-time-addsub/" title="MySQL指定日期加减">https://xlline.github.io/2019/12/02/MySQL-time-addsub/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2019/12/02/MySQL-time-addsub/"  aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
 </div>
@@ -584,7 +584,7 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/11/29/docker-php-base/" rel="next" title="Docker搭建PHP运行环境">
+              <a href="/2019/11/29/Docker-php-base/" rel="next" title="Docker搭建PHP运行环境">
                 <i class="fa fa-chevron-left"></i> Docker搭建PHP运行环境
               </a>
             
@@ -594,7 +594,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/12/03/docker-mysql-base/" rel="prev" title="Docker+MySQL">
+              <a href="/2019/12/03/Docker-mysql-base/" rel="prev" title="Docker+MySQL">
                 Docker+MySQL <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -664,7 +664,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-count">27</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -675,7 +675,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -686,7 +686,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -761,7 +761,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 30.2k 字</span>
+  <span class="post-count">全站共 30.6k 字</span>
 </div>
         
 
