@@ -1,489 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Swoole之协程篇</title>
-    <url>/2019/12/09/Swoole-Coroutine/</url>
-    <content><![CDATA[<p>CPU一次只能对一个进程做处理。<br>进程有自己独立的地址空间，是资源分配和拥有的单位。进程之间数据不共享，进程内至少有一个线程。<br>线程是处理器调度的最小单位，是进程内的一个执行单元，同一个进程内的线程共享进程的地址空间和资源。<br>协程的本质是将线程的调度权还给了程序本身，而不是CPU。所以协程也称用户态的轻量型线程。</p>
-<a id="more"></a>
-<h1 id="Coroutine-create"><a href="#Coroutine-create" class="headerlink" title="Coroutine::create"></a>Coroutine::create</h1><p>创建一个新的协程，并立即执行。<br><a href="https://wiki.swoole.com/wiki/page/774.html" target="_blank" rel="noopener">官方文档地址</a></p>
-<h1 id="Coroutine-System-sleep"><a href="#Coroutine-System-sleep" class="headerlink" title="Coroutine\System::sleep"></a>Coroutine\System::sleep</h1><p>进入等待状态。相当于PHP的<code>sleep</code>函数，不同的是<code>Coroutine::sleep</code>是协程调度器实现的，底层会<code>yield</code>当前协程，让出时间片，并添加一个异步定时器，当超时时间到达时重新<code>resume</code>当前协程，恢复运行。使用<code>sleep</code>接口可以方便地实现超时等待功能。使用sleep模拟IO阻塞，会引起协程的切换（进入调度队列）<br><a href="https://wiki.swoole.com/wiki/page/784.html" target="_blank" rel="noopener">官方文档地址</a></p>
-<h1 id="Coroutine-Channel"><a href="#Coroutine-Channel" class="headerlink" title="Coroutine\Channel"></a>Coroutine\Channel</h1><p>通道，类似于go语言的chan，支持多生产者协程和多消费者协程。底层自动实现了协程的切换和调度。<br><a href="https://wiki.swoole.com/wiki/page/p-coroutine_channel.html" target="_blank" rel="noopener">官方文档地址</a></p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">use Swoole\Coroutine as co;</span><br><span class="line">$chan=new co\Channel(1); // 容量为1 最小为1</span><br><span class="line">go(function() use($chan){ //只负责 计算  cpu</span><br><span class="line">    $count=0;</span><br><span class="line">    for($i=1;$i&lt;=3;$i++){</span><br><span class="line">        $count=$count+$i;</span><br><span class="line">        co::sleep(1);</span><br><span class="line">    }</span><br><span class="line">    $chan-&gt;push($count);</span><br><span class="line">});</span><br><span class="line">go(function() use($chan){  //只负责输出  IO</span><br><span class="line">    echo $chan-&gt;pop().PHP_EOL;</span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="Coroutine-yield"><a href="#Coroutine-yield" class="headerlink" title="Coroutine::yield"></a>Coroutine::yield</h1><p>让出当前协程的执行权。 此方法拥有另外一个别名：<code>Coroutine::suspend()</code><br>必须与<code>Coroutine::resume()</code>方法成对使用。该协程<code>yield</code>以后，必须由其他外部协程<code>resume</code>，否则将会造成协程泄漏，被挂起的协程永远不会执行。<br><a href="https://wiki.swoole.com/wiki/page/1001.html" target="_blank" rel="noopener">官方文档地址</a></p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">use Swoole\Coroutine as co;</span><br><span class="line">$cid = go(function(){</span><br><span class="line">    for($i=1;$i&lt;=10;$i++){</span><br><span class="line">        if($i==6){</span><br><span class="line">            co::yield();</span><br><span class="line">        }</span><br><span class="line">        echo $i.PHP_EOL;</span><br><span class="line">//        co::sleep(0.2); // 当IO存在堵塞时发生协程切换 进入调度队列 没有堵塞的话看起来是顺序执行</span><br><span class="line">    }</span><br><span class="line">});</span><br><span class="line"></span><br><span class="line">go(function() use ($cid){</span><br><span class="line">    for($i=1;$i&lt;=10;$i++){</span><br><span class="line">        echo 'a'.$i.PHP_EOL;</span><br><span class="line">    }</span><br><span class="line">    co::resume($cid);</span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure>
-<h1 id="Coroutine-Http-Client"><a href="#Coroutine-Http-Client" class="headerlink" title="Coroutine\Http\Client"></a>Coroutine\Http\Client</h1><p>协程版Http客户端基于原生的异步Http客户端，基本的设置和使用方法和异步Http客户端一致，不在需要注册回调函数，只需要同步写法即可<br><a href="https://wiki.swoole.com/wiki/page/p-coroutine_http_client.html" target="_blank" rel="noopener">官方文档地址</a></p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">go(function(){</span><br><span class="line">    $cli = new Swoole\Coroutine\Http\Client('192.168.2.156', 8082);</span><br><span class="line">    $cli-&gt;get('/index.php?t=123123');</span><br><span class="line">    echo $cli-&gt;body;</span><br><span class="line">    $cli-&gt;close();</span><br><span class="line">});</span><br><span class="line">go(function(){</span><br><span class="line">    $cli = new Swoole\Coroutine\Http\Client('192.168.2.156', 8082);</span><br><span class="line">    $cli-&gt;get('/index.php');</span><br><span class="line">    echo $cli-&gt;body;</span><br><span class="line">    $cli-&gt;close();</span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure>
-<p>如果未设置<code>timeout</code>，则将底层<code>connect</code>和<code>request</code>超时设置为默认的500ms</p>
-<h1 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h1><p>在4.1.0版本中，底层增加一个新的特性，可以在运行时动态将基于<code>php_stream</code>实现的扩展、PHP网络客户端代码一键协程化。<br>需要留意官方文档中的可用列表和不可用列表<br><a href="https://wiki.swoole.com/wiki/page/p-runtime.html" target="_blank" rel="noopener">官方文档地址</a></p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">Swoole\Runtime::enableCoroutine();</span><br><span class="line">function getHtml2($t=false){</span><br><span class="line">    $fp=stream_socket_client("tcp://192.168.2.156:8082");</span><br><span class="line">    $path="/index.php";</span><br><span class="line">    if($t) $path.="?".$t;</span><br><span class="line">    fwrite($fp, "GET $path HTTP/1.0\r\nAccept: */*\r\n\r\n");</span><br><span class="line">    $ret="";</span><br><span class="line">    while (!feof($fp)) {</span><br><span class="line">        $ret.=fgets($fp, 1024);</span><br><span class="line">    }</span><br><span class="line">    fclose($fp);</span><br><span class="line">    return $ret;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">go(function(){</span><br><span class="line">    echo getHtml2("t=123");</span><br><span class="line">});</span><br><span class="line">go(function(){</span><br><span class="line">    echo  getHtml2();</span><br><span class="line">});</span><br><span class="line">// 其他代码段不贴了，当传参t时，sleep一秒后执行</span><br><span class="line">// 目前Runtime函数支持stream_socket_client协程化，所以运行结果 输出先 getHtml2()的内容，后getHtml2("t=123")</span><br><span class="line">// 当然Swoole存在内置函数，可以直接实现协程化，见Coroutine\Http\Client</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="Coroutine-MySQL"><a href="#Coroutine-MySQL" class="headerlink" title="Coroutine\MySQL"></a>Coroutine\MySQL</h1><p>请勿同时使用异步回调和协程MySQL。使用MySQL协程客户端是否要关闭？<br><a href="https://wiki.swoole.com/wiki/page/p-coroutine_mysql.html" target="_blank" rel="noopener">官方文档地址</a></p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">$swoole_mysql = new Swoole\Coroutine\MySQL();</span><br><span class="line">$swoole_mysql-&gt;connect([</span><br><span class="line">    'host' =&gt; '127.0.0.1',</span><br><span class="line">    'port' =&gt; 3306,</span><br><span class="line">    'user' =&gt; 'user',</span><br><span class="line">    'password' =&gt; 'pass',</span><br><span class="line">    'database' =&gt; 'test',</span><br><span class="line">]);</span><br><span class="line">$res = $swoole_mysql-&gt;query('select sleep(1)');</span><br></pre></td></tr></tbody></table></figure><script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Swoole</category>
-        <category>Coroutine</category>
-      </categories>
-      <tags>
-        <tag>Swoole</tag>
-        <tag>Coroutine</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>基于win+PHPStorm+Linux的推荐开发环境配置</title>
-    <url>/2019/12/06/DevelopTool-phpstorm/</url>
-    <content><![CDATA[<p>想要在Windows开发可偏偏有拓展包依赖于Linux？也不想使用samba进行网络映射挂载虚拟盘？那这里还有一个方法，使用PHPstorm配置下下就可以。<br>当前我的环境在Vmware，基于centos7使用Docker搭建的。具体步骤见详情。</p>
-<a id="more"></a>
-
-<p><strong>虚拟机部分</strong><br>使用非Root账户创建一个空文件夹<br>设置SSH权限和密码，确保本地可以正常连接到虚拟机。不清楚的话可以参考<a href="https://xlline.github.io/2019/10/31/SSH%E7%A7%98%E9%92%A5%E6%93%8D%E4%BD%9C/">点我，我是猴子派来的救兵</a><br>确保当前容器已经正常启动且已实现代码映射到虚拟机<br><strong>主机部分</strong><br>本地我们要新建一个空目录（存放我们即将要同步的代码），使用PHPstorm打开，此时是一个空项目。PHP storm会在我们新建的目录里生成 .idea 文件夹。<br>File-&gt;Settings-&gt;Build,Execution,Deployment中点击Deployment。选择”+”中的SFTP创建新连接，键入你喜欢的连接名。<br>在Connection中填写基础连接配置</p>
-<div style="width: 71%;margin: left"><img src="/2019/12/06/DevelopTool-phpstorm/setting_1.png" class=""></div>
-
-<p>在Mappings中填写本地路径和目标路径</p>
-<div style="width: 71%;margin: left"><img src="/2019/12/06/DevelopTool-phpstorm/setting_2.png" class=""></div>
-
-<p>在Excluded Paths中填写我们要忽略排除的文件路径</p>
-<div style="width: 71%;margin: left"><img src="/2019/12/06/DevelopTool-phpstorm/setting_3.png" class=""></div>
-
-<p>配置完成点击应用就可以啦。在Tools-&gt;Deployment下选择Upload to swoole(这里的swoole是你创建的连接名，我本地是swoole)手动上传到远端，选择Automatic Upload(always)自动上传。</p>
-<div style="width: 61%;margin: left"><img src="/2019/12/06/DevelopTool-phpstorm/setting_4.png" class=""></div>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>PHP</category>
-        <category>PHPStorm</category>
-      </categories>
-      <tags>
-        <tag>PHPStorm</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>docker配置Samba文件共享服务</title>
-    <url>/2019/12/03/Docker-samba/</url>
-    <content><![CDATA[<p>在windows网络环境中，主机之间进行文件和打印机共享是通过微软公司自己的SMB/CIFS网络协议实现的。SMB（Server Message Block，服务消息块）和CIFS（Common Internet File System，通用互联网文件系统）协议是微软的私有协议，在Samba项目出现之前，并不能直接与Linux/UNIX系统进行通信。<br>Samba是著名的开源软件项目之一，它在Linux/UNIX系统中实现了微软的SMB/CIFS网络协议，从而使得跨平台的文件共享变得更加容易。在部署Windows、Linux/UNIX混合平台的企业环境时，选用Samba可以很好地解决不同系统之间的文件互访问题。</p>
-<a id="more"></a>
-<p>选择高下载量的镜像拉取 <code>docker pull dperson/samba</code><br>关闭必要端口防火墙，执行下面命令</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">sudo iptables -I INPUT -p tcp --dport 139 -j ACCEPT</span><br><span class="line">sudo iptables -I INPUT -p tcp --dport 445 -j ACCEPT</span><br><span class="line"></span><br><span class="line">sudo iptables -I INPUT -p udp --dport 137 -j ACCEPT</span><br><span class="line">sudo iptables -I INPUT -p udp --dport 138 -j ACCEPT</span><br></pre></td></tr></tbody></table></figure>
-<p>运行执行以下命令后，在window本机使用window+R调出运行窗口，输入 linux主机的IP回车，比如 <code>\\192.168.2.156</code>即可看到分享的xugz_tp5文件目录。选中目录右键选择映射网络驱动器选择喜欢的盘，即可在计算机中找到。如此可实现先共享文件夹到本地盘。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run -it -p 139:139 -p 445:445  --name smb -d --rm  \</span><br><span class="line"> -v /home/xugz/tp5/web:/mount \</span><br><span class="line"> dperson/samba \</span><br><span class="line"> -u "xugz;123" \</span><br><span class="line"> -s "xugz_tp5;/mount/;yes;no;yes;all;all;all" \</span><br><span class="line"> -w "WORKGROUP" \</span><br><span class="line"> -g "force user= xugz" \</span><br><span class="line"> -g "guest account= xugz"</span><br></pre></td></tr></tbody></table></figure>
-<p>Samba在<a href="https://hub.docker.com/r/dperson/samba" target="_blank" rel="noopener">docker镜像地址</a>中介绍了很多参数选项，简单记录上条命令用到的</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">-u "&lt;username;password&gt;[;ID;group;GID]"  </span><br><span class="line">   设置用户及密码</span><br><span class="line">-s "&lt;name;/path&gt;[;browse;readonly;guest;users;admins;writelist;comment]"</span><br><span class="line">    配置一个共享。其中&lt;name;/path&gt;为必须参数</span><br><span class="line">    &lt;name&gt; 分享名称</span><br><span class="line">    &lt;path&gt; 要分享的路径</span><br><span class="line">    [browsable] 是否可浏览 参数值为:'yes' or 'no'</span><br><span class="line">    [readonly] 是否只读 参数值为:'yes' or 'no'</span><br><span class="line">    [guest] 游客模式 参数值为:'yes' or 'no'</span><br><span class="line">    [users] 用户列表 参数值为:'all' or 允许的用户秒表，多用户使用','分割</span><br><span class="line">    [admins] 系统用户 参数值为:'none' or 系统用户列表</span><br><span class="line">    [writelist] 可以写入RO共享的用户列表</span><br><span class="line">    [comment] 分享描述</span><br><span class="line">-w "&lt;workgroup&gt;" 配置要使用的工作组 比如要和windows共享，这里的工作组路径在 控制面板&gt;系统和安全&gt;系统&gt;工作组设置里面。（此电脑右键选择管理以快速打开）</span><br><span class="line">-g "&lt;parameter&gt;" 配置全局变量 相当于修改配置文件 smb.conf</span><br><span class="line">    格式参考： -g "log level = 2"</span><br><span class="line">    上行命令中我们使用用户xugz挂载程序文件夹到mount文件夹，所以mount目录下文件的所有者为xugz。当我们在外部访问分享文件夹此时新建文件，他的所属者默认为smbuser（我们可以通过 docker run -it dperson/samba sh 进入命令行查看 /etc/samba/smb.conf）配置force user指定用户以解决用户</span><br><span class="line">    map to guest 匿名访问且无密码    guest account 匿名用户映射到指定账户</span><br></pre></td></tr></tbody></table></figure><script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-        <tag>Smaba</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker+ThinkPHP5部署基础</title>
-    <url>/2019/12/03/Docker-tp5-base/</url>
-    <content><![CDATA[<p>本篇是使用Docker部署ThinkPHP运行环境的命令笔记。这里ThinkPHP框架版本为5.0.24。主要包括Apache下的基本运行、apache角度的URL重写、添加PHP拓展、连接数据库和结合redis的简单操作示例等。</p>
-<a id="more"></a>
-<p>下载框架 <a href="http://www.thinkphp.cn/down.html" target="_blank" rel="noopener">官网框架下载地址</a>到本地，使用ftp方式上传到虚拟机tool目录中。</p>
-<h1 id="结合apache的基本运行"><a href="#结合apache的基本运行" class="headerlink" title="结合apache的基本运行"></a>结合apache的基本运行</h1><p>创建一个目录叫做tp5<br>在tp5中创建两个目录。一个放程序文件(web)，一个放docker-compose.yml(compose)</p>
-<p>解压框架压缩包至目录 /home/xugz/tp5/web，使用命令 <code>cd tool &amp;&amp; unzip mydata.zip -d ../tp5/web</code> 解压至指定目录<br>如果没有安装zip和unzip。执行 <code>sudo yum install zip unzip -y</code><br>我们需要将TP5web文件夹整个目录挂载到PHP-FPM容器，Apache容器仅仅挂载public文件夹，httpd.conf文件中fpm配置改为：<code>ProxyPassMatch ^/(.*\.php)$ fcgi://192.138.0.2:9000/php/public/$1</code></p>
-<p>docker-compose.yml文件中添加如下内容</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">version: "3"</span><br><span class="line">services:</span><br><span class="line">  fpm:</span><br><span class="line">   image: php:7.2.0-fpm-alpine3.6</span><br><span class="line">   container_name: fpm</span><br><span class="line">   volumes:</span><br><span class="line">      - /home/xugz/tp5/web:/php</span><br><span class="line">   networks:</span><br><span class="line">      mywebnet:</span><br><span class="line">       ipv4_address: 192.138.0.2</span><br><span class="line">  httpd:</span><br><span class="line">   image: httpd:2.4-alpine</span><br><span class="line">   container_name: httpd</span><br><span class="line">   ports:</span><br><span class="line">      - 8081:80</span><br><span class="line">   volumes:</span><br><span class="line">      - /home/xugz/tp5/web/public:/usr/local/apache2/htdocs/</span><br><span class="line">      - /home/xugz/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf</span><br><span class="line">   networks:</span><br><span class="line">      mywebnet:</span><br><span class="line">       ipv4_address: 192.138.0.3</span><br><span class="line"></span><br><span class="line">networks:</span><br><span class="line">  mywebnet:</span><br><span class="line">     driver: bridge</span><br><span class="line">     ipam:</span><br><span class="line">       config:</span><br><span class="line">         - subnet: 192.138.0.0/16</span><br></pre></td></tr></tbody></table></figure>
-<p>保存文件使用 <code>docker-compose up -d</code> 编译运行成功后使用 <code>curl localhost:8081/index.php</code>验证。</p>
-<h1 id="添加控制器、url重写"><a href="#添加控制器、url重写" class="headerlink" title="添加控制器、url重写"></a>添加控制器、url重写</h1><p>tp5默认有个控制器，位置在: application/index/controller/index.php</p>
-<p>在我们开启防火墙端口<code>sudo iptables -A INPUT -p tcp -m tcp --dport 8081 -j ACCEPT</code> 后，可以在windows本机通过 <code>虚拟机:端口/index.php</code><br>tp5创建控制可以用命令直接帮你创建：<code>php think make:controller index/test</code> <span style="font-size: 13px; color: #777;"> 需要确保本地有PHP环境</span> 当然我们也可以手工创建</p>
-<p>开启apache重写模块<br>取消本行注释 <code>LoadModule rewrite_module modules/mod_rewrite.so</code><br>在网站配置相关节点加入  <code>AllowOverride all</code></p>
-<div style="width: 67%;margin: left"><img src="/2019/12/03/Docker-tp5-base/rewrite_conf.png" class=""></div>
-
-<p>完成后使用 <code>docker-compose restart</code> 让其重启重新构建容器<br><code>虚拟机:端口/index</code> 访问Index目录下index文件 <code>虚拟机:端口/index/index/test</code> 访问Index目录下index中的test方法<br><code>虚拟机:端口/index/user</code> 访问Index目录下user文件index方法 <code>虚拟机:端口/index/user_index</code> 访问Index目录下UserIndex文件index方法</p>
-<h1 id="添加PHP扩展"><a href="#添加PHP扩展" class="headerlink" title="添加PHP扩展"></a>添加PHP扩展</h1><p>在容器中直接修改安装的话，容器删除后重新启动时，拓展和配置等都会丢失，所以我们在docker-compose文件中进行构建。在docker-compose.yml文件同目录创建新文件夹叫做build.<br>参考地址： <a href="https://hub.docker.com/_/php/" target="_blank" rel="noopener">https://hub.docker.com/_/php/</a></p>
-<h2 id="PDO-MYSQL扩展"><a href="#PDO-MYSQL扩展" class="headerlink" title="PDO_MYSQL扩展"></a>PDO_MYSQL扩展</h2><p>默认的PHP–FPM容器没有PDO_MYSQL扩展，我们需要指定安装。<br>在build里面新建一个Dockerfile文件，注意文件名 我们这次随便取，譬如叫做phpfpm，配置镜像源并更新apk包后执行安装PDO_MYSQL扩展。参考命令</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">FROM php:7.2.0-fpm-alpine3.6</span><br><span class="line">RUN echo http://mirrors.ustc.edu.cn/alpine/v3.6/main &gt; /etc/apk/repositories &amp;&amp; echo http://mirrors.ustc.edu.cn/alpine/v3.6/community &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update &amp;&amp; apk upgrade</span><br><span class="line">RUN docker-php-ext-install pdo_mysql</span><br></pre></td></tr></tbody></table></figure>
-<p>返回上级目录修改docker-compose.yml文件，增加fpm服务标签</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">fpm:</span><br><span class="line">  build:</span><br><span class="line">   context: ./build</span><br><span class="line">   dockerfile: phpfpm</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
-<h2 id="redis拓展"><a href="#redis拓展" class="headerlink" title="redis拓展"></a>redis拓展</h2><p>在build里面新建一个Dockerfile文件，随便取，譬如叫做phpredis，安装redis依赖使用pecl来安装Redis扩展。参考命令</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">FROM php:7.2.0-fpm-alpine3.6</span><br><span class="line">RUN apk add autoconf gcc g++ make </span><br><span class="line">COPY ./redis-4.0.1 / # curl 'http://pecl.php.net/get/redis-4.0.1.tgz' -o redis-4.0.1.tgz</span><br><span class="line">RUN pecl install redis-4.0.1 \</span><br><span class="line">    &amp;&amp; docker-php-ext-enable redis</span><br></pre></td></tr></tbody></table></figure>
-<p>返回上级目录修改docker-compose.yml文件，增加fpm服务build标签</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">fpm:</span><br><span class="line">  build:</span><br><span class="line">   context: ./build</span><br><span class="line">   dockerfile: phpredis</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
-<p>构建fpm服务设置 <code>docker-compose build fpm</code>， 完成后我们发现他帮我们新建了一个镜像，原有镜像没有所需拓展，删除原有启动新镜像<br><code>docker-compose stop fpm &amp;&amp; docker-compose rm fpm &amp;&amp; docker-compose up -d fpm</code></p>
-<h1 id="连接数据库"><a href="#连接数据库" class="headerlink" title="连接数据库"></a>连接数据库</h1><p>编辑TP5对应的compose配置docker-compose.yml文件，加入MySQL的配置</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">mysql:</span><br><span class="line">   image: mysql:5.7</span><br><span class="line">   container_name: mysqld</span><br><span class="line">   ports:</span><br><span class="line">     - 3306:3306</span><br><span class="line">   volumes:</span><br><span class="line">     - /home/xugz/mysql/conf:/etc/mysql/conf.d</span><br><span class="line">     - /home/xugz/mysql/data:/var/lib/mysql</span><br><span class="line">   environment:</span><br><span class="line">     - MYSQL_ROOT_PASSWORD=123456</span><br><span class="line">   networks:</span><br><span class="line">     - mywebnet</span><br></pre></td></tr></tbody></table></figure>
-<p>然后使用 <code>docker-compose up -d mysql</code> 创建MySQL服务器容器<br>在应用程序web目录里application/database.php中修改MySQL配置，参考配置如下</p>
-<div style="width: 67%;margin: left"><img src="/2019/12/03/Docker-tp5-base/db_conn_conf.png" class=""></div>
-
-<p>配置完成后，可定义模型和数据库调用尝试验证。<a href="https://www.kancloud.cn/manual/thinkphp5/135187" target="_blank" rel="noopener">点我，我是隐藏的参考地址</a></p>
-<h1 id="结合redis容器基本操作"><a href="#结合redis容器基本操作" class="headerlink" title="结合redis容器基本操作"></a>结合redis容器基本操作</h1><p>拉取官方镜像 <code>docker pull redis:alpine</code><br>在conf目录下拉取redis配置文件 <code>wget https://raw.githubusercontent.com/antirez/redis/5.0/redis.conf</code><br>编辑redis.conf文件修改一些基本参数  如 <code>bind 0.0.0.0</code> 和 <code>dir /data</code></p>
-<p>编辑TP5对应的compose配置docker-compose.yml文件，加入Redis的配置</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">redis:</span><br><span class="line">    image: redis:alpine</span><br><span class="line">    container_name: redis</span><br><span class="line">    ports:</span><br><span class="line">     - 6379:6379</span><br><span class="line">    volumes:</span><br><span class="line">     - /home/xugz/tp5/conf/redis.conf:/usr/local/etc/redis/redis.conf</span><br><span class="line">     - /home/xugz/tp5/redisdata:/data # 这里的data和 conf/redis.conf中的dir配置保持一致</span><br><span class="line">    networks:</span><br><span class="line">      mywebnet:</span><br><span class="line">       ipv4_address: 192.138.0.10</span><br></pre></td></tr></tbody></table></figure>
-<p>修改application/config.php中关于缓存相关配置，参考如图</p>
-<div style="width: 68%;margin: left"><img src="/2019/12/03/Docker-tp5-base/redis_conf.png" class=""></div>
-
-<p>然后使用 <code>docker-compose up -d</code> 创建redis服务器容器。成功的话使用 <code>docker exec -it redis redis-cli</code> 可进入Redis客户端。也可以写简单的测试验证，最简单的代码如图</p>
-<div style="width: 67%;margin: left"><img src="/2019/12/03/Docker-tp5-base/code_redis.png" class=""></div>
-
-<p>使用浏览器访问 <code>http://192.168.2.156:8081/news</code> 即可看到测试数据<br>参考文档： <a href="https://hub.docker.com/_/redis/" target="_blank" rel="noopener">https://hub.docker.com/_/redis/</a></p>
-<h1 id="上传文件-todo"><a href="#上传文件-todo" class="headerlink" title="上传文件 todo"></a>上传文件 todo</h1><p>默认模板配置已完成 <a href="https://www.kancloud.cn/manual/thinkphp5/119298" target="_blank" rel="noopener">参考地址</a>。默认模板实例代码已创建 <a href="https://www.kancloud.cn/manual/thinkphp5/155159" target="_blank" rel="noopener">模板实例代码参考地址</a><br>此时我们刷新页面报错：<em>mkdir():Permission denied</em>。这是因为主机上的用户和容器里用户未对应导致的权限问题。<br>如果你是apline 3.4 版本在数据源中加入 <code>echo http://nl.alpinelinux.org/alpine/edge/testing &gt;&gt; /etc/apk/repositories</code> 然后执行 <code>apk -no-cache add shadow</code>。是 alpine 3.6.则直接安装即可 <code>apk  add shadow</code>。通过 <a href="https://pkgs.alpinelinux.org/contents?file=usermod&amp;path=&amp;name=&amp;branch=&amp;repo=&amp;arch=" target="_blank" rel="noopener">地址</a> 找到对于 usermod文件的所在包。<br>完成之后执行 <code>usermod -u 1000 www-data &amp;&amp; groupmod -g 1000 www-data</code>修改用户www-data的用户以及群组ID为1000。搞定后要重启容器。</p>
-<p>使用 <code>cat /etc/passwd</code> 命令查看用户归属组等信息</p>
-<h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><h2 id="浏览器访问报错-variable-type-error-array"><a href="#浏览器访问报错-variable-type-error-array" class="headerlink" title="浏览器访问报错 variable type error:array"></a>浏览器访问报错 variable type error:array</h2><p>默认输出类型导致解析异常。在应用程序web目录里application/config.php中修改，如 <code>default_return_type = 'json'</code></p>
-<h2 id="wget文件报错-unable-to-resolve-host-address"><a href="#wget文件报错-unable-to-resolve-host-address" class="headerlink" title="wget文件报错 unable to resolve host address"></a>wget文件报错 unable to resolve host address</h2><p>因为VPS的本地DNS不通导致的，我们需要修改当前VPS的DNS。<br>修改 /etc/resolv.conf 文件，增加DNS nameserver 8.8.8.8保存退出后重试。</p>
-<h2 id="查看运行在docker中的redis版本"><a href="#查看运行在docker中的redis版本" class="headerlink" title="查看运行在docker中的redis版本"></a>查看运行在docker中的redis版本</h2><p>使用命令  `docker exec -it <containerid or="" name=""> redis-server -v</containerid></p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Docker</category>
-        <category>PHP</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-        <tag>PHP</tag>
-        <tag>ThinkPHP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker+MySQL</title>
-    <url>/2019/12/03/Docker-mysql-base/</url>
-    <content><![CDATA[<p>本篇是一些Docker结合MySQL常用操作的笔记。这里MySQL版本为5.7。主要是使用docker搭建MySQL并导入数据、基于alpine镜像构建MySQL客户端、制作MySQL备份专用镜像和使用crontab实现数据库定时备份。</p>
-<a id="more"></a>
-
-<h1 id="启动MySQL容器、导入数据"><a href="#启动MySQL容器、导入数据" class="headerlink" title="启动MySQL容器、导入数据"></a>启动MySQL容器、导入数据</h1><p>拉取官方镜像 <code>docker pull mysql:5.7</code><br>启动MySQL <span style="font-size: 13px; color: #777;"> -e 设置环境变量 MYSQL_ROOT_PASSWORD 是root的密码</span><br><code>docker run --name mysql --rm -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</code><br>测试连接 <code>docker exec -it mysql mysql -u root -p123123</code> 或者 <code>docker exec -it mysql mysql -u root -p</code><br>实际运行必定要配置文件，根据官网的提示，配置文件在 /etc/mysql/my.cnf，数据目录在 /var/lib/mysql。</p>
-<p>本地新建mysql目录，其中新建conf和data目录。conf挂载/etc/mysql/conf.d，data挂载/var/lib/mysql</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">vim /home/xugz/mysql/conf/conf.cnf</span><br><span class="line"></span><br><span class="line"># 下面是对应配置信息</span><br><span class="line">[mysqld]</span><br><span class="line">server-id = 1 #服务Id唯一 用于主从同步</span><br><span class="line">port = 3306</span><br><span class="line">log-error = /var/log/mysql/error.log #错误日志</span><br><span class="line">#只能用IP地址</span><br><span class="line">skip_name_resolve </span><br><span class="line">#数据库默认字符集</span><br><span class="line">character-set-server = utf8mb4</span><br><span class="line">#数据库字符集对应一些排序等规则 </span><br><span class="line">collation-server = utf8mb4_general_ci</span><br><span class="line">#设置client连接mysql时的字符集,防止乱码</span><br><span class="line">init_connect='SET NAMES utf8mb4'</span><br><span class="line">#最大连接数</span><br><span class="line">max_connections = 300</span><br></pre></td></tr></tbody></table></figure>
-<p>修改完成后启动，确定放行3306端口</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run --name mysql --rm -p 3306:3306 \</span><br><span class="line">-v /home/xugz/mysql/conf:/etc/mysql/conf.d  -v /home/xugz/mysql/data:/var/lib/mysql \</span><br><span class="line">-e MYSQL_ROOT_PASSWORD=123123 -d mysql:5.7</span><br></pre></td></tr></tbody></table></figure>
-<p>使用 <code>docker logs</code> 查看是否存在报错或者使用客户端进入MySQL确认配置是否生效。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker exec -it mysql mysql -uroot -p123123</span><br><span class="line"># 或者上行命令使用  docker exec -it mysql bash 然后  mysql -uroot -p123123 正常来说会进入mysql交互界面</span><br><span class="line">show variables like '%max_connections%'； #查看最大连接数是否和配置一致用于判断配置是否生效。</span><br></pre></td></tr></tbody></table></figure>
-<p>利用容器执行命令导入SQL文件</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker cp test.sql mysql:/tmp</span><br><span class="line">docker exec -it mysql mysql -uroot -p123123 </span><br><span class="line"> create database test;</span><br><span class="line"> use test;</span><br><span class="line"> source /tmp/test.sql;</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="基于alpine构建MySQL客户端"><a href="#基于alpine构建MySQL客户端" class="headerlink" title="基于alpine构建MySQL客户端"></a>基于alpine构建MySQL客户端</h1><p>alpine使用的是apk包管理器,命令，如apk add 、apk update 、apk del。默认镜像源可能比较慢，常用的有<br>中科大镜像源：<a href="http://mirrors.ustc.edu.cn/alpine/" target="_blank" rel="noopener">http://mirrors.ustc.edu.cn/alpine/</a> 阿里云镜像源：<a href="http://mirrors.aliyun.com/alpine/" target="_blank" rel="noopener">http://mirrors.aliyun.com/alpine/</a></p>
-<p>拉取官方镜像 <code>docker pull alpine</code><br>新建目录 <code>mkdir mytool</code> 并在目录中新建Dockerfile文件，键入以下内容。安装MySQL客户端</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">FROM alpine:latest</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/main &gt; /etc/apk/repositories</span><br><span class="line">RUN echo http://mirrors.aliyun.com/alpine/v3.10/community &gt;&gt; /etc/apk/repositories</span><br><span class="line">RUN apk update &amp;&amp; apk upgrade</span><br><span class="line">RUN apk add mysql-client</span><br><span class="line">ENTRYPOINT ["mysql"]</span><br></pre></td></tr></tbody></table></figure>
-<p>如果不知道当前 alpine的版本，可以通过 <code>docker exec -it 容器名 sh</code>  通过命令行方式进入容器 使用命令 <code>cat /etc/issue</code> 查看。</p>
-<p><span style="font-size: 13px; color: #777;">不使用dockerfile的话，手工配置加速镜像源使用命令<br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/main/\" &gt; /etc/apk/repositories"</code><br><code>docker exec -it tmp sh -c "echo \"http://mirrors.aliyun.com/alpine/v3.10/community/\" &gt;&gt; /etc/apk/repositories"</code><br>当然设置好后，还得  执行<code>apk update &amp;&amp; apk upgrade</code><br></span><br>构建镜像，使用命令编译 <code>docker build -t mytool:1.0 .</code><br>使用<code>docker run -it --name tmp  mytool:1.0 mysql -h 192.168.2.156 -uroot -p123123</code> 运行验证。<br><span style="font-size: 13px; color: #777;">这里的192.168.2.156是MySQL服务端部署主机的IP</span></p>
-<p><a href="https://hub.docker.com/_/alpine/" target="_blank" rel="noopener">alpine镜像官方文档</a></p>
-<h1 id="制作MySQL备份专用镜像"><a href="#制作MySQL备份专用镜像" class="headerlink" title="制作MySQL备份专用镜像"></a>制作MySQL备份专用镜像</h1><p>我们现在想要制作一个MySQL备份数据库数据的镜像，要求存放到指定目录 /home/xugz/mysql/database_bak/下，文件名与数据库名一致。<br>数据库备份命令<code>mysqldump -u用户名 -p密码 数据库名 &gt; 导出的文件名</code>。<br>修改原mytool目录中的Dockerfile文件，覆盖以下内容，注意需要去掉注释哦</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">FROM mytool:1.0 # 基于上文中alpine构建的MySQL客户端</span><br><span class="line">ENV mysql_host  192.168.2.156 # 环境变量 目标连接服务器</span><br><span class="line">ENV mysql_user root # 环境变量 默认用户为 root</span><br><span class="line">ENV mysql_pass 123123 # 环境变量 连接mysql服务器主机对应用户的密码</span><br><span class="line">ENV mysql_db test</span><br><span class="line">ENTRYPOINT mysqldump -h$mysql_host  -u$mysql_user -p$mysql_pass $mysql_db &gt; /data/$mysql_db.sql</span><br></pre></td></tr></tbody></table></figure>
-<p>构建镜像，使用命令编译<code>docker build -t mytool:1.1 .</code><br>新建备份目录地址 <code>mkdir database_bak</code><br>运行并挂载指定目录 <code>docker run -it --name bakup --rm -v /home/xugz/mysql/database_bak:/data mytool:1.1</code></p>
-<p>或者增加环境变量指定，用于跨主机备份，参考以下命令</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run -it --name bakup --rm -v /home/xugz/mysql/database_bak:/data \</span><br><span class="line">-e mysql_pass=qwe123 -e mysql_host=192.168.222.1 -e mysql_db=db_test_products -e mysql_user=root \</span><br><span class="line">mytool:1.1</span><br></pre></td></tr></tbody></table></figure>
-<p>运行完成后，可到备份目标地址查看是否存在文件。</p>
-<h1 id="crontab定时备份数据表"><a href="#crontab定时备份数据表" class="headerlink" title="crontab定时备份数据表"></a>crontab定时备份数据表</h1><p>一般我们先写个脚本文件，塞入计划语句，然后加入到计划任务中。</p>
-<p>新建dbback目录，进入新建备份计划脚本文件  <code>vi /bakup.sh</code> 塞入以下内容</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">if [ ! -d "/data" ]; then</span><br><span class="line">  mkdir /data</span><br><span class="line">fi</span><br><span class="line">mysqldump -h$mysql_host  -u$mysql_user -p$mysql_pass $mysql_db &gt; /data/$mysql_db-$(date +%Y%m%d_%H%M%S).sql</span><br></pre></td></tr></tbody></table></figure>
-<p>保存文件后，授予脚本可执行权限 <code>chmod +x bakup.sh</code>。新建Dockerfile文件，添加以下内容，注意需要去掉注释哦</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">FROM mytool:1.0</span><br><span class="line">ENV mysql_host 192.168.2.156</span><br><span class="line">ENV mysql_user root</span><br><span class="line">ENV mysql_pass 123123</span><br><span class="line">ENV mysql_db test</span><br><span class="line">COPY ./bakup.sh /</span><br><span class="line">RUN chmod +x bakup.sh</span><br><span class="line">ENV cron_conf  "*       *       *       *       *  "</span><br><span class="line">RUN echo "$cron_conf /bakup.sh" &gt;&gt;  /var/spool/cron/crontabs/root</span><br><span class="line">ENTRYPOINT ["crond","-f"] # alpine中crond -f 命令为在客户端执行</span><br></pre></td></tr></tbody></table></figure>
-
-<p>执行编译 <code>docker build -t mysqlbakup:1.0 .</code><br>使用下面命令运行，备份192.168.2.125主机上的db_test_products表</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run -d --name bakup -v /home/xugz/mysql/database_bak:/data \</span><br><span class="line">-e mysql_pass=qwe123 -e mysql_host=192.168.2.125 -e mysql_db=db_test_products -e mysql_user=root \</span><br><span class="line">mysqlbakup:1.0</span><br></pre></td></tr></tbody></table></figure><script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Docker</category>
-        <category>MySQL</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-        <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MySQL指定日期加减</title>
-    <url>/2019/12/02/MySQL-time-addsub/</url>
-    <content><![CDATA[<p>MySQL官网是不承认时间直接相加减的，本篇记录时间加减操作需要注意点，加深记忆，避免以后入坑。<br>先来看看MySQL中常用的内建日期函数</p>
-<table>
-<thead>
-<tr>
-<th align="center"><strong>函数</strong></th>
-<th align="center"><strong>描述</strong></th>
-<th align="center"><strong>语法</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">NOW()</td>
-<td align="center">返回当前的日期和时间</td>
-<td align="center">NOW()</td>
-</tr>
-<tr>
-<td align="center">CURDATE()</td>
-<td align="center">返回当前的日期，该函数相当于current_date关键字</td>
-<td align="center">CURDATE()</td>
-</tr>
-<tr>
-<td align="center">CURTIME()</td>
-<td align="center">返回当前的时间，相当于current_time关键字</td>
-<td align="center">CURTIME()</td>
-</tr>
-<tr>
-<td align="center">DATE()</td>
-<td align="center">提取日期或日期/时间表达式的日期部分</td>
-<td align="center">DATE(date) date 参数是合法的日期表达式</td>
-</tr>
-<tr>
-<td align="center">EXTRACT()</td>
-<td align="center">用于返回日期/时间的单独部分，如年、月、日、小时、分钟等</td>
-<td align="center">EXTRACT(unit FROM date) date 参数是合法的日期表达式</td>
-</tr>
-<tr>
-<td align="center">DATE_ADD()</td>
-<td align="center">给日期添加指定的时间间隔</td>
-<td align="center">DATE_ADD(date,INTERVAL expr type) date 是合法的日期表达式，expr 是时间间隔。</td>
-</tr>
-<tr>
-<td align="center">DATE_SUB()</td>
-<td align="center">从日期减去指定的时间间隔</td>
-<td align="center">DATE_SUB(date,INTERVAL expr type) date 是合法的日期表达式，expr 是时间间隔。</td>
-</tr>
-<tr>
-<td align="center">DATEDIFF()</td>
-<td align="center">返回两个日期之间的天数</td>
-<td align="center">DATEDIFF(date1,date2) date1 和 date2 是合法的日期或日期/时间表达式。</td>
-</tr>
-<tr>
-<td align="center">DATE_FORMAT()</td>
-<td align="center">用不同的格式显示日期/时间</td>
-<td align="center">DATE_FORMAT(date,format) date 是合法的日期。format 规定日期/时间的输出格式。</td>
-</tr>
-</tbody></table>
-<a id="more"></a>
-<p>比如说，我们现在想要查询得出当前日期的一天前和五天前的日期，测试SQL语句如下</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">SELECT NOW(),CURDATE(), CURTIME(), DATE_SUB(CURDATE(),INTERVAL 1 DAY),CURDATE()-1, DATE_SUB(CURDATE(),INTERVAL 5 DAY), CURDATE()-5;</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 85%;margin: left"><img src="/2019/12/02/MySQL-time-addsub/sql_result.png" class="" title="执行SQL得到的结果"></div>
-明显发现使用 CURDATE()函数直接进行加减存在问题，需要留意。当我们需要日期加减操作时，可使用 DATE_SUB() 和 DATE_ADD() 函数。
-
-<p>DATE_ADD()和DATE_SUB()函数常用type参数有： </p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">MICROSECOND 微秒 </span><br><span class="line">SECOND 秒</span><br><span class="line">MINUTE 分钟</span><br><span class="line">HOUR 小时</span><br><span class="line">DAY 天</span><br><span class="line">WEEK 周</span><br><span class="line">MONTH 月 </span><br><span class="line">QUARTER 季度 </span><br><span class="line">YEAR 年</span><br></pre></td></tr></tbody></table></figure><script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>MySQL</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker搭建PHP运行环境</title>
-    <url>/2019/11/29/Docker-php-base/</url>
-    <content><![CDATA[<p>本篇是使用Docker安装PHP运行环境的命令笔记。这里PHP版本为7.0+。主要是手动运行php+fpm+apache步骤、使用compose编排php+fpm+apache 和nginx+PHP-FPM环境搭建过程简述。</p>
-<a id="more"></a>
-
-<h1 id="运行PHP程序"><a href="#运行PHP程序" class="headerlink" title="运行PHP程序"></a>运行PHP程序</h1><p>拉取7.2版本的官方PHP镜像 <code>docker pull php:7.2-cli</code><br>运行刚才的镜像<span style="font-size: 13px; color: #777;"> –rm 运行完自己干掉自己，一般用于执行临时任务</span></p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run -it --rm --name runphp -v  /home/xugz/php:/usr/src/myphp  php:7.2-cli \</span><br><span class="line">php /usr/src/myphp/index.php</span><br></pre></td></tr></tbody></table></figure>
-<h1 id="手动运行php-fpm-apache"><a href="#手动运行php-fpm-apache" class="headerlink" title="手动运行php+fpm+apache"></a>手动运行php+fpm+apache</h1><p>我们尽可能的使用基于alpine的镜像。<br>安装FPM镜像 <code>docker pull php:7.2.0-fpm-alpine3.6</code> ，使用命令<code>docker run -d --rm --name fpm php:7.2.0-fpm-alpine3.6</code>  让容器以后台守护模式运行<br>安装Apache镜像 <code>docker pull httpd:2.4-alpine</code>，写一个测试HTML网页，使用命令 <code>docker run -d -p 80:80 --rm --name myweb -v /home/xugz/php:/usr/local/apache2/htdocs/ httpd:2.4-alpine</code>映射80端口挂载默认网站路径，尝试是否正常使用。一般来说应该是可使用的。</p>
-<p>然后我们需要修改配置文件。我们可以自己准备配置，或者从容器中拷贝一个。根据文档，容器里默认的配置文件路径为/usr/local/apache2/conf/httpd.conf。<br>使用 <code>docker exec -it myweb cat /usr/local/apache2/conf/httpd.conf</code>查看配置文件信息<br>使用 <code>docker cp myweb:/usr/local/apache2/conf/httpd.conf /home/xugz/conf/</code>复制文件<br>修改配置文件 <code>vi /home/xugz/conf/httpd.conf</code> 找到以下内容，把前面的#号去掉开启对应模块</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">LoadModule proxy_module modules/mod_proxy.so</span><br><span class="line">LoadModule proxy_http_module modules/mod_proxy_http.so</span><br><span class="line">LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so</span><br></pre></td></tr></tbody></table></figure>
-<p>另需增加修改配置如下内容</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;VirtualHost *:80&gt;</span><br><span class="line">    ServerAdmin xugz@com.cn</span><br><span class="line">    DocumentRoot "/usr/local/apache2/htdocs"</span><br><span class="line">    ServerName localhost</span><br><span class="line">    &lt;Directory "/usr/local/apache2/htdocs"&gt;</span><br><span class="line">     Options None</span><br><span class="line">     Require all granted</span><br><span class="line">    &lt;/Directory&gt;</span><br><span class="line">    ProxyRequests Off</span><br><span class="line">    ProxyPassMatch ^/(.*\.php)$ fcgi://192.158.0.2:9000/php/$1 </span><br><span class="line">    #转向fpm基本配置。使用docker network ls &amp;&amp; docker network inspect bridge 中查看FPM的inet</span><br><span class="line">&lt;/VirtualHost&gt;</span><br></pre></td></tr></tbody></table></figure>
-<p>启动fpm的时候把php文件夹挂载到fpm容器中，因此fpm容器的启动要增加文件挂载，命令改成<br><code>docker run -d --rm --name fpm -v /home/xugz/php:/php php:7.2.0-fpm-alpine3.6</code><br>重新运行apache容器</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run -d  -p 80:80 --name myweb -v /home/xugz/php:/usr/local/apache2/htdocs/  \</span><br><span class="line">-v /home/xugz/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf \</span><br><span class="line">httpd:2.4-alpine</span><br></pre></td></tr></tbody></table></figure>
-<p>没有异常的话，可用 <code>curl localhost</code> 和 <code>curl localhost/index.php</code> 测试。</p>
-<h1 id="compose编排php-fpm-apache"><a href="#compose编排php-fpm-apache" class="headerlink" title="compose编排php+fpm+apache"></a>compose编排php+fpm+apache</h1><p>为了让我们容器的启动和删除操作方便，所以要我们要使用docker compose ，一款编排工具。<br>下载安装步骤见本站其他篇，<a href="https://xlline.github.io/2019/11/25/Docker-Nginx负载均衡/#compose">点我瞬时移动</a>。新建目录webcompose目录，在目录中新建docker-compose.yml文件,拷贝如下内容(就是将上文中两条启动容器命令翻译成dockerfile)</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">version: "3"                                                                         </span><br><span class="line">services:                                                                            </span><br><span class="line">  fpm:                                                                               </span><br><span class="line">   image: php:7.2.0-fpm-alpine3.6                                                    </span><br><span class="line">   container_name: fpm                                                               </span><br><span class="line">   volumes:                                                                          </span><br><span class="line">      - /home/xugz/php:/php                                                          </span><br><span class="line">   networks:                                                                         </span><br><span class="line">      mywebnet:                                                                      </span><br><span class="line">       ipv4_address: 192.159.0.2  # 这里的IP需要和Apache配置文件httpd.conf中的ProxyPassMatch fcgi地址保持一致                                                 </span><br><span class="line">                                                                                     </span><br><span class="line">  httpd:                                                                             </span><br><span class="line">   image: httpd:2.4-alpine                                                           </span><br><span class="line">   container_name: httpd                                                             </span><br><span class="line">   ports:                                                                            </span><br><span class="line">      - 80:80                                                                        </span><br><span class="line">   volumes:                                                                          </span><br><span class="line">      - /home/xugz/php:/usr/local/apache2/htdocs/                                    </span><br><span class="line">      - /home/xugz/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf                </span><br><span class="line">   networks:                                                                         </span><br><span class="line">      mywebnet:                                                                      </span><br><span class="line">       ipv4_address: 192.159.0.3  # 设置指定IP IP从0.1开始生成                                                </span><br><span class="line">                                                                                     </span><br><span class="line">                                                                                     </span><br><span class="line">networks:                                                                            </span><br><span class="line">  mywebnet:  # 如果之前创建了相同子网的网络 要先删掉之前的,否则冲突                                                          </span><br><span class="line">     driver: bridge                                                                  </span><br><span class="line">     ipam:                                                                           </span><br><span class="line">       config:                                                                       </span><br><span class="line">         - subnet: 192.159.0.0/16                                                    </span><br><span class="line">          # 子网随便填写 IP地址是以网络号和主机号来表示网络上的主机的，只有在一个网络号下的计算机之间才能“直接”互通，不同网络号的计算机要通过网关（Gateway）才能互通。但这样的划分在某些情况下显得并不十分灵活。为此IP网络还允许划分成更小的网络，称为子网（Subnet）。</span><br></pre></td></tr></tbody></table></figure>
-<p>然后可以使用 <code>docker-compose up -d</code>启动可用 <code>curl localhost</code> 和 <code>curl localhost/index.php</code> 测试。</p>
-<h1 id="搭建nginx-PHP-FPM环境"><a href="#搭建nginx-PHP-FPM环境" class="headerlink" title="搭建nginx+PHP-FPM环境"></a>搭建nginx+PHP-FPM环境</h1><p>使用命令 <code>docker pull nginx:1.13.9-alpine</code>安装Nginx<span style="font-size: 13px; color: #777;"><br>默认的网页文件夹是 /usr/share/nginx/html<br>默认的配置文件地址是/etc/nginx/nginx.conf</span><br>如果我们没有现成的配置文件，那么可以先胡乱启动下容器，然后拷贝到 我们的文件夹中。如下</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run --name nginx --rm -d  nginx:1.13.9-alpine</span><br><span class="line">docker cp nginx:/etc/nginx/nginx.conf ~/conf</span><br></pre></td></tr></tbody></table></figure>
-<p>普通html的情况下，nginx不需要做任何配置，使用如下命令重新运行后，尝试普通HTML访问是否正常</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker run --name nginx -d --rm -v /home/xugz/php:/usr/share/nginx/html \</span><br><span class="line">-p 80:80 nginx:1.13.9-alpine</span><br></pre></td></tr></tbody></table></figure>
-<h2 id="nginx-FPM的配置"><a href="#nginx-FPM的配置" class="headerlink" title="nginx+FPM的配置"></a>nginx+FPM的配置</h2><p>nginx配置文件的内容参考</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">user  nginx;</span><br><span class="line">worker_processes  1;</span><br><span class="line"></span><br><span class="line">error_log  /var/log/nginx/error.log warn;</span><br><span class="line">pid        /var/run/nginx.pid;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">events {</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">http {</span><br><span class="line">    include       /etc/nginx/mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">                      '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">                      '"$http_user_agent" "$http_x_forwarded_for"';</span><br><span class="line"></span><br><span class="line">    access_log  /var/log/nginx/access.log  main;</span><br><span class="line"></span><br><span class="line">    sendfile        on;</span><br><span class="line">    #tcp_nopush     on;</span><br><span class="line"></span><br><span class="line">    keepalive_timeout  65;</span><br><span class="line"></span><br><span class="line">    #gzip  on;</span><br><span class="line"></span><br><span class="line">  #  include /etc/nginx/conf.d/*.conf;</span><br><span class="line">  server{</span><br><span class="line">    listen 80;</span><br><span class="line">    location / {</span><br><span class="line">    root  /usr/share/nginx/html; </span><br><span class="line">     index  index.html index.htm index.php;</span><br><span class="line">   }</span><br><span class="line">   location ~ \.php$ {</span><br><span class="line">        root /php;</span><br><span class="line">        fastcgi_pass 192.138.0.2:9000; # 这个192.138.0.2 是容器IP 需要指定</span><br><span class="line">        fastcgi_index index.php;</span><br><span class="line">        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;</span><br><span class="line">        include fastcgi_params;</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-
-<p>启动FPM和Nginx</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker network create --driver=bridge --subnet=192.138.0.0/16 mynginx</span><br><span class="line"></span><br><span class="line">docker run -d  --rm --name fpm \</span><br><span class="line">--network mynginx --ip 192.138.0.2 \ # 这个IP和Nginx配置文件中 fastcgi_pass配置的IP需要保持一致</span><br><span class="line">-v /home/xugz/php:/php \</span><br><span class="line">php:7.2.0-fpm-alpine3.6</span><br><span class="line"></span><br><span class="line">docker run --name nginx -d --rm -v /home/xugz/php:/usr/share/nginx/html \</span><br><span class="line">-v /home/xugz/conf/nginx.conf:/etc/nginx/nginx.conf \</span><br><span class="line">--network mynginx  -p 80:80 \</span><br><span class="line">nginx:1.13.9-alpine</span><br></pre></td></tr></tbody></table></figure>
-
-<p>当然可以使用compose进行编排，很简单这里不就赘述了，不要忘记同步修改Apache和Nginx配置文件中的fpm部分，统一改成fpm的IP。<br><a href="https://hub.docker.com/_/nginx/" target="_blank" rel="noopener">nginx 官方镜像</a></p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Docker</category>
-        <category>PHP</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-        <tag>PHP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker-Machine</title>
-    <url>/2019/11/28/Docker-Machine/</url>
-    <content><![CDATA[<p>Docker Machine是简化的Docker安装的命令行工具,通过命令行即可在相应的平台上(目前支持在本机运行virtualbox虚拟主机，Hyper-V虚拟主机，VMware虚拟主机，AWS EC2，Azure，DigitalOcean，Google等公有云主机)安装Docker。（好比在你机器上装个虚拟机，老外帮你准备好了专门的ISO，docker 都帮你弄好了）</p>
-<p>本篇主要涉及Docker-Machine创建虚拟Docker主机、创建私有镜像仓库，利用Docker-Machine在虚拟主机中使用compose启动Nginx负载均衡、设置IP转发在windows中访问。</p>
-<a id="more"></a>
-
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>使用如下命令，或者直接到<a href="https://github.com/docker/machine/releases" target="_blank" rel="noopener">对应github</a>下载，授予可执行权限，保证最后拷贝到环境变量相关目录里(/usr/local/bin/)即可。  </p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">curl -L https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-`uname -s`-`uname -m` &gt;/tmp/docker-machine &amp;&amp; \</span><br><span class="line">chmod +x /tmp/docker-machine &amp;&amp; \</span><br><span class="line">sudo cp /tmp/docker-machine /usr/local/bin/docker-machine</span><br></pre></td></tr></tbody></table></figure>
-<p><a href="https://docs.docker.com/machine/install-machine/" target="_blank" rel="noopener">Docker Machine安装参考文档</a></p>
-<h1 id="创建Docker主机"><a href="#创建Docker主机" class="headerlink" title="创建Docker主机"></a>创建Docker主机</h1><p>首先我们需要安装virtualbox <a href="https://www.virtualbox.org/wiki/Linux_Downloads" target="_blank" rel="noopener">官方下载地址点我</a>。选择对应版本的rpm下载包，通过ftp方式拷贝到服务器，进行<code>yum install &lt;包名&gt; -y</code> 安装即可。同时，oracle也告诉我们存在其他方法 <a href="http://yum.oracle.com/getting-started.html" target="_blank" rel="noopener">参考地址</a>，如下</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">wget   http://yum.oracle.com/public-yum-ol7.repo</span><br><span class="line">然后把下载下来的文件拷贝到/etc/yum.repos.d中</span><br><span class="line">yum install VirtualBox-5.2</span><br></pre></td></tr></tbody></table></figure>
-<p><a href="https://docs.docker.com/machine/drivers/virtualbox/" target="_blank" rel="noopener">创建Docker主机安装virtualbox参考地址</a><br>完成可以执行 <code>docker-machine create --driver=virtualbox vbox-test</code> 创建。<br>执行该命令，他首先检查 /home/xugz/.docker/machine/cache 是否存在，没有则创建文件夹；然后寻找该文件夹下是否有 boot2docker.iso文件（一个基于Tiny Core Linux的系统，里面Docker啥的都帮你搞定了），另外会默认会创建一个虚拟网卡 （vboxnet0）。所以如果太慢，我们可以去<a href="https://github.com/boot2docker/boot2docker/releases/" target="_blank" rel="noopener">boot2docker.iso对应gitHub下载地址</a>手工下载用ftp传到目标服务器再执行创建。</p>
-<div style="width: 61%;margin: left"><img src="/2019/11/28/Docker-Machine/create.png" class=""></div>
-
-<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><p>查看列表 <code>docker-machine ls</code><br>查看IP地址 <code>docker-machine ip 虚拟机名称</code><br>停止和开启 <code>docker-machine stop/start  虚拟机名称</code><br>查看环境变量 <code>docker-machine env vbox-test</code><br> 如果我们要操作machine里面的docker环境变量 ,可以不用进入到虚拟机<br> 使用eval命令（可以读取一连串的参数,然后按照参数特性来执行）<br> 此时我们执行 <code>eval $(docker-machine env vbox-test)</code><br> 这时我们本机的docker客户端就连接了vbox-test的docker服务端<br> 切换回来使用命令 <code>eval $(docker-machine env -u)</code><br>SSH的方式连接到虚拟机 <code>docker-machine ssh 虚拟机名称</code></p>
-<h1 id="移植主机镜像到虚拟机"><a href="#移植主机镜像到虚拟机" class="headerlink" title="移植主机镜像到虚拟机"></a>移植主机镜像到虚拟机</h1><p><strong>创建私有镜像库</strong></p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">docker pull registry  # docker pull一个官方镜像 专门处理私有镜像的提交和拉取</span><br><span class="line">docker run -d -p 5000:5000 --name registry registry # 运行镜像生成新容器</span><br><span class="line">docker tag  centos:httpd  localhost:5000/web  # 给本地centos:httpd 镜像打标签，命名为localhost:5000/web</span><br><span class="line">docker push localhost:5000/web  # 提交镜像</span><br><span class="line">docker tag  centos:nginx localhost:5000/nginx</span><br><span class="line">docker push localhost:5000/nginx</span><br><span class="line">docker rmi localhost:5000/web # 提交完成后, 可以删除刚才创建的标签</span><br></pre></td></tr></tbody></table></figure>
-<p><strong>查看仓库目录</strong><br>注意以下的命令要保证registry容器正在运行<br>可以利用API的方式 查看私有仓库中的目录 <code>curl http://localhost:5000/v2/_catalog</code> <a href="https://docs.docker.com/registry/spec/api/#listing-repositories" target="_blank" rel="noopener">参考文档</a><br><strong>同步镜像</strong><br>最后使用命令 <code>docker-machine ssh vbox-test</code> 进入<br><code>docker pull 192.168.99.1:5000/nginx</code> 将私有镜像库中的Nginx下载到虚拟机里 主机的IP:端口</p>
-<p>修改镜像名使用tag命令 <code>docker tag &lt;原镜像名称&gt; &lt;新的镜像名&gt;</code> 完成后再把原镜像删除即可。我也不知道为什么官方没有rename命令，非得整这么麻烦。等我学会Go语言，就来本地尝试下。</p>
-<h1 id="利用Docker-Machine在虚拟主机中使用compose启动Nginx负载均衡"><a href="#利用Docker-Machine在虚拟主机中使用compose启动Nginx负载均衡" class="headerlink" title="利用Docker-Machine在虚拟主机中使用compose启动Nginx负载均衡"></a>利用Docker-Machine在虚拟主机中使用compose启动Nginx负载均衡</h1><p>这里我们也想使用compose进行容器统一管理，之前我们在宿主机中安装了compose（位置在：/usr/local/bin/docker-compose）我们可以直接拷贝就行了。</p>
-<h2 id="拷贝compose-到虚拟主机"><a href="#拷贝compose-到虚拟主机" class="headerlink" title="拷贝compose 到虚拟主机"></a>拷贝compose 到虚拟主机</h2><p>利用scp命令 <a href="https://docs.docker.com/machine/reference/scp/#example" target="_blank" rel="noopener">参考文档</a><br>我们进入宿主机执行  <code>docker-machine scp  /usr/local/bin/docker-compose  vbox-test:/home/docker/.local/bin</code><br><span style="font-size: 13px; color: #777;"> /home/docker/.local/bin 是虚拟机用户的一个环境变量 （也可以自己设置）</span><br>把我们之前做的compose配置文件拷贝过去 <code>docker-machine scp -r  mycompose vbox-test:/home/docker/</code>(如果是文件夹，则要加入-r 进行递归操作)。然后修改docker-compose.yml镜像配置改为虚拟主机自己的。<br>我们的compose里面有个映射文件，也就是把主机的文件映射到容器。那么是否我们也需要 把网站文件给拷贝到 虚拟机里面呢？<br>答案是不需要，我们可以使用 mount命令来完成。</p>
-<h2 id="映射文件挂载到虚拟主机"><a href="#映射文件挂载到虚拟主机" class="headerlink" title="映射文件挂载到虚拟主机"></a>映射文件挂载到虚拟主机</h2><p><a href="https://docs.docker.com/machine/reference/mount/" target="_blank" rel="noopener">mount命令参考文档</a><br>官方提醒我们，需要依赖使用sshfs将目录从虚拟机挂载到本地主机。SSHFS可以利用SFTP的方式把远程文件映射到本机 。<br>在宿主机的安装sshfs，安装如下依赖</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">yum install -y epel-release</span><br><span class="line">yum install -y fuse-sshfs</span><br></pre></td></tr></tbody></table></figure>
-<p>首先在虚拟机里创建一个文件夹叫做 nginx <code>docker-machine ssh vbox-test mkdir nginx</code><br>主机上也创建一个文件夹 （空的），叫做 vbox-nginx。<br>挂载使用命令 <code>docker-machine mount vbox-test:/home/docker/nginx  /home/xugz/mnginx</code> 需要注意不在挂载点目录执行<br>取消挂载使用命令 <code>docker-machine mount -u vbox-test:/home/docker/nginx  /home/xugz/mnginx</code></p>
-<p>把本地主机之前的nginx文件夹里面的文件，拷贝到mnginx里面。进入nginx文件夹使用命令<code>cp . /home/xugz/mnginx -r</code><br>对应修改docker-compose.yml中对应文件挂载的配置。我们以后只要在宿主机修改文件就可以了。<br>接下来我们就可以利用 <code>docker-compose up -d</code> 在我们的虚拟机中启动容器了。</p>
-<h2 id="外部访问-IP转发"><a href="#外部访问-IP转发" class="headerlink" title="外部访问 IP转发"></a>外部访问 IP转发</h2><p>在虚拟主机中使用<code>curl localhost:9090</code>访问<br>在宿主机中使用 <code>curl $(docker-machine ip vbox-test):9090</code>访问<br>在windows里访问使用VBoxManage（我们上面虚了好几层了哦<del>~</del>）<br>简单说一下virtualbox的几个命令 <a href="https://www.virtualbox.org/manual/ch08.html#vboxmanage-controlvm" target="_blank" rel="noopener">文档点我</a><br><code>VBoxManage list vms</code>  列出当前的所有虚拟机<br><code>VBoxManage controlvm</code> 可以用来修改正在运行的虚拟机状态<br>  <code>存在参数语法： natpf&lt;1-N&gt; [&lt;name&gt;],tcp|udp,[&lt;hostip&gt;],&lt;hostport&gt;,[&lt;guestip&gt;], &lt;guestport&gt;</code><br>譬如<code>VBoxManage controlvm "vbox-test" natpf1 "mynat1,tcp,,9090,,9090"</code> 这代表把vbox-test这个虚拟机的tcp端口（IP不限制）转发到 宿主机的9090端口。执行完成后我们就可以使用 宿主机IP:9090端口访问<br><code>VBoxManage controlvm "vbox-test" natpf1 delete mynat1</code> 删掉规则，这样外部就不能访问了</p>
-<h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><h2 id="http-server-gave-HTTP-response-to-HTTPS-client"><a href="#http-server-gave-HTTP-response-to-HTTPS-client" class="headerlink" title="http: server gave HTTP response to HTTPS client"></a>http: server gave HTTP response to HTTPS client</h2><p>因为docker为了安全，需要https 。但是我们可以让其不需要。<br>如果我们在主机里，那么要修改的是<code>/etc/docker/daemon.json</code>。在machine里也是一样的，那么要在/etc/docker下面 手动创建daemon.json文件（默认是木有的），添加如下内容</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{</span><br><span class="line">    "insecure-registries":["192.168.99.1:5000"]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p>修改完成需要重启虚拟机主机 <code>docker-machine restart 虚拟机名称</code>。</p>
-<div style="width: 61%;margin: left"><img src="/2019/11/28/Docker-Machine/error_https.png" class=""></div>
-## This computer doesn't have VT-X/AMD-v enabled. Enabling it in the BIOS is mandatory
-如果是在VMware中的Linux，需要在关机状态的虚拟机进行配置: 虚拟机&gt;设置&gt;处理器中勾选虚拟化 Intel VT-x/EPT 或 AMD-V/RVI(V)<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Docker+Nginx负载均衡</title>
     <url>/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</url>
     <content><![CDATA[<p>使用手工commit的方式创建了一个基于CentOS的Nginx容器，并且可以通过外部访问到。入手docker compose——Docker容器编排的工具，可以配置并启动多个容器，适合复杂业务场景。本篇是铺垫nginx负载均衡的步骤记录。</p>
@@ -762,6 +279,73 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo多设备同步管理</title>
+    <url>/2019/11/15/hexo%E5%AE%9E%E7%8E%B0%E5%A4%9A%E8%AE%BE%E5%A4%87%E5%90%8C%E6%AD%A5/</url>
+    <content><![CDATA[<p>qwewqeqweqwe </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mysql8.0之caching_sha2_password</title>
+    <url>/2019/11/15/mysql8.0%E4%B9%8Bcaching_sha2_password/</url>
+    <content><![CDATA[<p>本地MySQL8.0.18安装完成在命令行中可以正常连接访问，使用Navicat测试连接报错<em>Authentication plugin ‘caching_sha2_password’ cannot be loaded</em>。导致异常的原因是MySQL不同版本使用的密码加密规则不一致。在MySQL8之前的版本使用的密码加密规则是mysql_native_password，但是在MySQL8则是caching_sha2_password。</p>
+<a id="more"></a>
+<p>解决方案：<br>一、指定加密规则为mysql_native_password<br>使用语句修改用户加密方式<code>ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';</code><br>创建了一个新用户并指定，在命令行中执行语句<code>CREATE USER  'your username'@'%' IDENTIFIED WITH mysql_native_password BY 'your password';</code>，完成后使用新用户账号密码连接Navicat。<br>二、将默认密码规则设置为mysql_native_password，刷新权限并重置root密码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">default_authentication_plugin=mysql_native_password</span><br><span class="line">flush privileges;</span><br></pre></td></tr></tbody></table></figure>
+
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>Navicat</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu速学笔记</title>
     <url>/2019/11/08/Ubuntu/</url>
     <content><![CDATA[<p>为了学习docker来回顾Linux基础，本篇是基于Ubuntu操作系统18.04.3版本安装部署遇到问题或有用知识点的汇总整理。</p>
@@ -808,6 +392,7 @@
 <li><p>关闭数据库连接<br>使用命令 <code>./mysqladmin -u root -pqwe123 shutdown</code></p>
 </li>
 </ol>
+<p>CREATE USER  ‘xugz’@’%’ IDENTIFIED WITH mysql_native_password BY ‘qwe123’;</p>
 <h1 id="Memcached安装"><a href="#Memcached安装" class="headerlink" title="Memcached安装"></a>Memcached安装</h1><ol>
 <li><p>安装包下载 <a href="http://memcached.org/downloads" target="_blank" rel="noopener">官网地址</a> 或者使用wget。官网已经给我们详细说明</p>
 <div style="width: 55%;margin: left"><img src="/2019/11/08/Ubuntu/memcache_install.png" class=""></div>
@@ -857,8 +442,135 @@
       </tags>
   </entry>
   <entry>
+    <title>Docker学习笔记</title>
+    <url>/2019/11/06/Docker%E5%85%A5%E9%97%A8/</url>
+    <content><![CDATA[<h1 id="CentOS8安装Docker"><a href="#CentOS8安装Docker" class="headerlink" title="CentOS8安装Docker"></a>CentOS8安装Docker</h1><p><strong>卸载旧版本</strong><br>较旧的 Docker 版本称为 docker 或 docker-engine 。如果已安装这些程序，请卸载它们以及相关的依赖项</p>
+<p><strong>安装步骤</strong></p>
+<ol>
+<li>下载docker-ce的repo<br><code>curl https://download.docker.com/linux/centos/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo</code></li>
+<li>安装依赖（这是相比centos7的关键步骤）<br><code>yum install https://download.docker.com/linux/fedora/30/x86_64/stable/Packages/containerd.io-1.2.6-3.3.fc30.x86_64.rpm</code></li>
+<li>安装docker-ce<br><code>yum install docker-ce</code></li>
+<li>启动docker<br><code>systemctl start docker</code><br>启动成功，使用<code>systemctl status docker</code> 查看docker启动状态或者使用<code>docker version</code>验证是否安装成功。<a id="more"></a></li>
+</ol>
+<p><strong>普通用户运行docker命令不需要使用sudo</strong><br>在Linux系统中运行没有sudo密码的特定命令</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[xugz@xugz yum.repos.d]$ docker images</span><br><span class="line">Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.40/images/json: dial unix /var/run/docker.sock: connect: permission denied</span><br><span class="line">[xugz@xugz yum.repos.d]$ sudo docker images</span><br><span class="line">[sudo] password for xugz:</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">[xugz@xugz yum.repos.d]$ id xugz</span><br><span class="line">uid=1000(xugz) gid=1000(xugz) groups=1000(xugz),0(root)</span><br><span class="line">[xugz@xugz yum.repos.d]$ sudo usermod -aG docker $(whoami)</span><br><span class="line">[xugz@xugz yum.repos.d]$ id xugz</span><br><span class="line">uid=1000(xugz) gid=1000(xugz) groups=1000(xugz),984(docker),0(root)</span><br></pre></td></tr></tbody></table></figure>
+<p>注销并再次登录以使用没有sudo的Docker，可以使用docker version命令检查安装的Docker版本了。</p>
+<h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><h2 id="docker-安装完成后测试hello-world出现问题（Unable-to-find-image-‘hello-world-latest’-locally）"><a href="#docker-安装完成后测试hello-world出现问题（Unable-to-find-image-‘hello-world-latest’-locally）" class="headerlink" title="docker 安装完成后测试hello-world出现问题（Unable to find image ‘hello-world:latest’ locally）"></a>docker 安装完成后测试hello-world出现问题（Unable to find image ‘hello-world:latest’ locally）</h2><p>安装docker之后，测试hello-world镜像，终端卡在<code>Unable to find image 'hello-world:latest' locally</code>位置<br>docker在本地没有找到hello-world镜像，也没有从docker仓库中拉取镜像，出项这个问题的原因：是因为docker服务器再国外，我们在国内无法正常拉取镜像，所以就需要我们设置国内的镜像加速器。（我这里用的是阿里云，当然其他的也可以，大家可以自己选择。Docker 官方和国内很多云服务商都提供了国内加速器服务，例如： Docker官方提供的中国镜像库：<a href="https://registry.docker-cn.com" target="_blank" rel="noopener">https://registry.docker-cn.com</a>）。使用 systemd 的系统的同学，需要新增配置文件<code>/etc/docker/daemon.json</code>，添加以下内容保存退出</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{"registry-mirrors": ["https://alzgoonw.mirror.aliyuncs.com"]}</span><br></pre></td></tr></tbody></table></figure>
+<p>之后重新启动服务</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></tbody></table></figure>
+<p>重启之后，就可以正常拉取helloworld镜像了。</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>不要重复使用PHP的number_format函数</title>
     <url>/2019/11/04/PHP-number_format%E5%87%BD%E6%95%B0/</url>
+    <content><![CDATA[<p>  和其他朋友聊起来，说是他们公司临近双十一做了一套秒杀系统，价值三千多的商品，被三块钱卖出去了。这种情况大概率是金额精度操作或者格式化有误之类的问题。果不其然，最后发现是重复使用number_format函数造成金额截取。这坑没有必要跳进去，现在写下来加深下记忆力，希望自己不会犯类似错误。</p>
+<p>  number_format() 函数通过千位分组来格式化数字。<br>  Tips:该函数支持一个、两个或<strong>四个</strong>参数。<br>  <a id="more"></a></p>
+<h1 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h1><p> <em>number_format(number,decimals,decimalpoint,separator)</em></p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>参数</strong></th>
+<th align="center"><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">number</td>
+<td align="center">必需。要格式化的数字。如果未设置其他参数，则数字会被格式化为不带小数点且以逗号（,）作为千位分隔符。</td>
+</tr>
+<tr>
+<td align="center">decimals</td>
+<td align="center">可选。规定多少个小数。如果设置了该参数，则使用点号（.）作为小数点来格式化数字</td>
+</tr>
+<tr>
+<td align="center">decimalpoint</td>
+<td align="center">可选。规定用作小数点的字符串。</td>
+</tr>
+<tr>
+<td align="center">separator</td>
+<td align="center">可选。规定用作千位分隔符的字符串。仅使用该参数的第一个字符。比如 “xxx” 仅输出 “x”。<br><strong>注释</strong>：如果设置了该参数，那么所有其他参数都是必需的。</td>
+</tr>
+</tbody></table>
+<p><strong>技术细节</strong></p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>参数</strong></th>
+<th align="center"><strong>备注</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">返回值:</td>
+<td align="center">返回已格式化的数字。</td>
+</tr>
+<tr>
+<td align="center">PHP 版本：</td>
+<td align="center">4+</td>
+</tr>
+<tr>
+<td align="center">更新日志：</td>
+<td align="center">自 PHP 5.4 起，该函数在参数 decimalpoint 和 separator 中支持多字节。<br>在更老的版本中，只使用每个分隔符的第一个字节。</td>
+</tr>
+</tbody></table>
+<h1 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$num = 4999.59;</span><br><span class="line">echo  number_format($num)."\n";</span><br><span class="line">// 这里结果正确，四舍五入取整，输出结果为：5,000</span><br><span class="line">$formattedNum = number_format($num, 2);</span><br><span class="line">echo $formattedNum."\n";</span><br><span class="line">// 这里结果正确，保留两位小数，输出结果为：4,999.59</span><br><span class="line">echo number_format($num,2,'.',',')."\n";</span><br><span class="line">// 这里结果正确，保留两位小数，输出结果为：4,999.59</span><br><span class="line">echo number_format($formattedNum)."\n";</span><br><span class="line">// 这里有报错提醒（PHP Notice:  A non well formed numeric value encountered in /usercode/file.php on），输出结果为：4</span><br><span class="line"></span><br><span class="line">// 假设以 $formattedNum 进行加减后再来一遍format就不会有报错，但是金额错的就更离谱了，假设运费六元 不考虑精度问题直接加减进行测试，如下</span><br><span class="line">$fee = 6; </span><br><span class="line">$totalAmount = $formattedNum + $fee;</span><br><span class="line">echo number_format($totalAmount)."\n";</span><br></pre></td></tr></tbody></table></figure>
+
+<p>从上面的栗子可以明显看出来，重复使用number_format会导致数字异常，需要留意。</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>PHP</category>
+      </categories>
+      <tags>
+        <tag>PHP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>不要重复使用PHP的number_format函数</title>
+    <url>/2019/11/04/PHP%E7%9A%84number_format%E5%87%BD%E6%95%B0/</url>
     <content><![CDATA[<p>  和其他朋友聊起来，说是他们公司临近双十一做了一套秒杀系统，价值三千多的商品，被三块钱卖出去了。这种情况大概率是金额精度操作或者格式化有误之类的问题。果不其然，最后发现是重复使用number_format函数造成金额截取。这坑没有必要跳进去，现在写下来加深下记忆力，希望自己不会犯类似错误。</p>
 <p>  number_format() 函数通过千位分组来格式化数字。<br>  Tips:该函数支持一个、两个或<strong>四个</strong>参数。<br>  <a id="more"></a></p>
 <h1 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h1><p> <em>number_format(number,decimals,decimalpoint,separator)</em></p>
@@ -992,6 +704,44 @@
   <entry>
     <title>linux中rc.local设置开机自启没有生效</title>
     <url>/2019/10/29/Linux-rc.local%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E6%B2%A1%E6%9C%89%E7%94%9F%E6%95%88/</url>
+    <content><![CDATA[<p>在<code>/etc/rc.d/rc.local</code>中追加了执行命令但重启未生效，在网上找到解决方案：</p>
+<ol>
+<li>查看指定文件相关数据<br>使用<code>ll /etc/rc.d/rc.local</code><br>在第一个栏位文件的属性。Linux的文件基本上分为三个属性：可读（r），可写（w），可执行（x）。发现/etc/rc.d/rc.local没有可执行权限</li>
+<li>使用chmod命令修改<br>在<code>/etc/rc.d/rc.local</code>有这样一段话<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Please note that you must run 'chmod +x /etc/rc.d/rc.local' to ensure</span><br><span class="line"># that this script will be executed during boot.</span><br></pre></td></tr></tbody></table></figure>
+执行<code>chome +x  /etc/rc.d/rc.local</code>命令后，重启发现命令可以执行了。但前提要保证执行命令正确可执行才行。</li>
+</ol>
+<a id="more"></a>
+
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>linux中rc.local设置开机自启没有生效</title>
+    <url>/2019/10/29/linux%E4%B8%ADrc.local%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E6%B2%A1%E6%9C%89%E7%94%9F%E6%95%88/</url>
     <content><![CDATA[<p>在<code>/etc/rc.d/rc.local</code>中追加了执行命令但重启未生效，在网上找到解决方案：</p>
 <ol>
 <li>查看指定文件相关数据<br>使用<code>ll /etc/rc.d/rc.local</code><br>在第一个栏位文件的属性。Linux的文件基本上分为三个属性：可读（r），可写（w），可执行（x）。发现/etc/rc.d/rc.local没有可执行权限</li>
@@ -1176,7 +926,7 @@ fi</code></pre></li>
   </entry>
   <entry>
     <title>Hexo博客添加图片不显示问题</title>
-    <url>/2019/10/25/Hexo-addpic/</url>
+    <url>/2019/10/25/hexo_add_pic/</url>
     <content><![CDATA[<p>本想在自己文章中加入图片进行详细说明，奈何这图片偏要与我玩躲猫猫死活不出来，在网上看了几篇博客之后才得以解决，浪费了一些不必要的时间。所以在这里记录一下，希望以后遇到这问题可以快速解决。 <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f6b4.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f6b4.png?v8">🚴</span></p>
 <ol>
 <li><p>安装插件<br>在博客文件所在位置，右键-&gt;打开git bash后键入</p>
@@ -1278,7 +1028,7 @@ fi</code></pre></li>
   </entry>
   <entry>
     <title>Linux基础</title>
-    <url>/2019/10/23/Linux-base/</url>
+    <url>/2019/10/23/linux_base/</url>
     <content><![CDATA[<p>最近在云之梦网站学习Linux基础，发现有好多基础命令见面不相识……此篇作为学习笔记，利用零碎的时间终于完成课程学习，该篇添加常用命令以方便后续翻阅参考。</p>
 <h1 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h1><h2 id="操作系统分类"><a href="#操作系统分类" class="headerlink" title="操作系统分类"></a>操作系统分类</h2><ol>
 <li>客户端操作系统<br> windows 7,8,10等</li>
@@ -1404,7 +1154,7 @@ fi</code></pre></li>
 
 </li>
 </ol>
-<h1 id="系统目录结构"><a href="#系统目录结构" class="headerlink" title="系统目录结构"></a>系统目录结构</h1><div style="width: 50%;margin: left"><img src="/2019/10/23/Linux-base/dir_tree.png" class="" title="系统目录结构树"></div>
+<h1 id="系统目录结构"><a href="#系统目录结构" class="headerlink" title="系统目录结构"></a>系统目录结构</h1><div style="width: 50%;margin: left"><img src="/2019/10/23/linux_base/dir_tree.png" class="" title="系统目录结构树"></div>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/bin   存放二进制可执行文件(ls,cat,mkdir等)，存放系统命令</span><br><span class="line">/boot  核心系统启动文件，存放用于系统引导时使用的各种文件</span><br><span class="line">/dev   存放硬件设备，使用里面设备需要挂载,糖炒栗子：mount /dev/cdrom /media/</span><br><span class="line">/etc   存放系统程序管理和配置文件</span><br><span class="line">/home  存放除了root用户之外的所有用户文件的根目录，比如用户user的主目录就是/home/user，可以用~user表示</span><br><span class="line">/lib   存放跟文件系统中的程序运行所需要的共享库及内核模块。共享库又叫动态链接共享库，作用类似windows里的.dll文件，存放了根文件系统程序运行所需的共享文件。</span><br><span class="line">/media 空目录，不可删，用于挂在光盘使用</span><br><span class="line">/mnt   空测试目录，系统管理员安装临时文件系统的安装点，系统提供这个目录是让用户临时挂载其他的文件系统</span><br><span class="line">/opt   空测试目录，额外安装的可选应用程序包所放置的位置。一般情况下，我们可以把tomcat等都安装到这里。</span><br><span class="line">/proc  虚拟文件系统目录，是系统内存的映射。存放cpu、内存和硬盘等设备信息，可直接访问这个目录来获取系统信息。</span><br><span class="line">/root  超级用户（root）的主目录</span><br><span class="line">/run   程序进程PID </span><br><span class="line">/sbin  存放二进制可执行文件，只有root才能访问。这里存放的是系统管理员使用的系统级别的管理命令和程序。如ifconfig等</span><br><span class="line">/srv   自己的程序或源代码的放置目录</span><br><span class="line">/sys   内核信息文件</span><br><span class="line">/tmp   用于存放各种临时文件，是公用的临时文件存储点</span><br><span class="line">/usr   非系统程序用于存放系统应用程序，比较重要的目录/usr/local 本地系统管理员软件安装目录（安装系统级的应用）。这是最庞大的目录，要用到的应用程序和文件几乎都在这个目录。</span><br><span class="line">/var   用于存放运行时需要改变数据的文件，也是某些大文件的溢出区，比方说各种服务的日志文件（系统或程序日志等）</span><br></pre></td></tr></tbody></table></figure>
 
 <h1 id="基础命令"><a href="#基础命令" class="headerlink" title="基础命令"></a>基础命令</h1><ol>
@@ -1426,7 +1176,7 @@ fi</code></pre></li>
 <li>末行模式 :末行命令</li>
 <li>视图模式 visual</li>
 </ol>
-<h2 id="常用模式切换"><a href="#常用模式切换" class="headerlink" title="常用模式切换"></a>常用模式切换</h2><div style="width: 44%;margin: left"><img src="/2019/10/23/Linux-base/vi_model.png" class="" title="简单的模式切换"></div>
+<h2 id="常用模式切换"><a href="#常用模式切换" class="headerlink" title="常用模式切换"></a>常用模式切换</h2><div style="width: 44%;margin: left"><img src="/2019/10/23/linux_base/vi_model.png" class="" title="简单的模式切换"></div>
 
 <p>命令模式 =&gt; 输入模式<br>输入模式 =&gt; 命令模式 按下<code>esc</code><br>命令模式 =&gt; 末行模式 使用 <code>shift+:</code>输入<code>x</code>保存退出<br>末行模式 =&gt; 命令模式 按下<code>esc</code><br>命令模式 =&gt; 视图模式 使用<code>v</code><br> 按<code>v</code>键再按上下左右进行视图选中，进行快速缩进</p>
 <h3 id="命令模式常用命令"><a href="#命令模式常用命令" class="headerlink" title="命令模式常用命令"></a>命令模式常用命令</h3><p> 上<code>k</code>下<code>j</code>左<code>h</code>右<code>l</code>撤销用<code>u</code>恢复用ctrl+<code>r</code>(撤销多了恢复，两个配合使用)<br> 复制当前行 <code>yy</code> 复制多行 <code>nyy</code>, 比如<code>3yy</code>为复制三行<br> 粘贴到下一行 <code>p</code>, 粘贴到下一行n次 <code>np</code>.  粘贴到上一行 <code>P</code>, 粘贴到上一行n次 <code>nP</code></p>
@@ -1498,7 +1248,7 @@ fi</code></pre></li>
 <li>创建文件 <code>vi /mnt/startMyApp.sh</code> # 路径可自指定  <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">i=0</span><br><span class="line">while true</span><br><span class="line">do</span><br><span class="line">    echo $i&gt;&gt;/mnt/MyApp.txt</span><br><span class="line">    ((i++))</span><br><span class="line">    sleep 1</span><br><span class="line">done</span><br></pre></td></tr></tbody></table></figure></li>
 <li>给脚本设置执行权限<code>chmod a+x startMyApp.sh</code></li>
 <li>自定义myapp服务脚本<code>vi /etc/systemd/system/myapp.service</code><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[Unit] # 服务单元</span><br><span class="line">Description=myapp service  </span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">WorkingDirectory=/mnt # 工作目录</span><br><span class="line">ExecStart=/mnt/startMyApp.sh</span><br><span class="line">ExecStop=/bin/kill -s TERM $MAINPID  </span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target # 设置开机启动放到哪个运行级别</span><br></pre></td></tr></tbody></table></figure></li>
-<li>重载所有修改过的配置文件,扫描新的或有变动的单元<br><code>systemctl daemon-reload</code></li>
+<li>systemctl服务重载<br><code>systemctl daemon-reload</code></li>
 <li>把myapp服务加入开机启动<br><code>systemctl enable myapp.service</code></li>
 <li>启动myapp服务后程序执行<br><code>systemctl start myapp.service</code></li>
 <li>关闭myapp服务<br><code>systemctl stop myapp.service</code></li>
@@ -1534,11 +1284,11 @@ fi</code></pre></li>
   </entry>
   <entry>
     <title>Linux的crontab命令</title>
-    <url>/2019/10/23/Linux-crontab/</url>
+    <url>/2019/10/23/linux_crontab/</url>
     <content><![CDATA[<p>Linux下的任务调度分为两类：系统任务调度和用户任务调度。<br>系统任务调度：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，这个就是系统任务调度的配置文件。<br>用户任务调度：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。用户可以使用 crontab 工具来定制自己的计划任务。<br>所有用户定义的crontab文件都被保存在/var/spool/cron目录中。其文件名与用户名一致，使用者权限文件如下：<br><code>/etc/cron.deny</code>     该文件中所列用户不允许使用crontab命令<br><code>/etc/cron.allow</code>   该文件中所列用户允许使用crontab命令<br><code>/var/spool/cron/</code>   所有用户crontab文件存放的目录,以用户名命名  </p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">分 时 日 月 星期 命令</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br></pre></td></tr></tbody></table></figure>
 
-<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。</p>
+<p>在以上各个字段中，还可以使用以下特殊字符：<br>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。<br>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”<br>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”<br>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。  </p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">/sbin/service crond start    // 启动服务   或者使用  service crond start 命令 手动启动crontab服务</span><br><span class="line">/sbin/service crond stop     // 关闭服务</span><br><span class="line">/sbin/service crond restart  // 重启服务</span><br><span class="line">/sbin/service crond reload   // 重新载入配置</span><br><span class="line"></span><br><span class="line">chkconfig –level 35 crond on // 加入开机自动启动</span><br><span class="line">service crond status // 查看crontab服务状态</span><br></pre></td></tr></tbody></table></figure>
 
 <p>crontab (选项 例如:-e)(参数 crontab文件)<br>-e：编辑该用户的计时器设置；<br>-l：列出该用户的计时器设置；<br>-r：删除该用户的计时器设置；<br>-u&lt;用户名称&gt;：指定要设定计时器的用户名称。    </p>
@@ -1685,7 +1435,7 @@ fi</code></pre></li>
   </entry>
   <entry>
     <title>Hexo添加emoji表情</title>
-    <url>/2019/06/19/Hexo-addemjo/</url>
+    <url>/2019/06/19/hexo_add_emjo/</url>
     <content><![CDATA[<p>废话不多说，直接动手干吧。 具体表情参考 <a href="https://github.com/caiyongji/emoji-list" target="_blank" rel="noopener">GFM 表情列表</a> <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8">😜</span> </p>
 <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install hexo-filter-github-emojis --save</span><br><span class="line">npm un hexo-renderer-stylus --save</span><br><span class="line">npm i hexo-renderer-stylus-plus --save</span><br></pre></td></tr></tbody></table></figure>
 
@@ -1733,7 +1483,7 @@ fi</code></pre></li>
   </entry>
   <entry>
     <title>Hexo NexT主题添加字数统计阅读时长</title>
-    <url>/2019/06/19/Hexo-addwordcount/</url>
+    <url>/2019/06/19/hexo_add_wordcount/</url>
     <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
 
@@ -1779,7 +1529,7 @@ fi</code></pre></li>
   </entry>
   <entry>
     <title>修改Hexo博客next主题文章页面宽度</title>
-    <url>/2019/06/19/Hexo-postwidth/</url>
+    <url>/2019/06/19/hexo_postwidth/</url>
     <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
 <p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码即可</p>
 <pre><code>// 以下为新增代码！！修改post宽度
@@ -1881,7 +1631,7 @@ header.post-header {
   </entry>
   <entry>
     <title>轻量级标记语言Markdown的语法（GFM）</title>
-    <url>/2018/10/18/Markdown-GFM/</url>
+    <url>/2018/10/18/markdown_GFM/</url>
     <content><![CDATA[<p>Hexo下使用的MarkDown是Github的GFM，整理汇总常用语法命令方便后续查找。此篇包含常用的语法，当然也一些偶尔会用到的，基本上可以满足日常使用。</p>
 <h1 id="常用基础"><a href="#常用基础" class="headerlink" title="常用基础"></a>常用基础</h1><p><strong>字体相关</strong><br>斜体:用 <code>*</code> 或 <code>_</code> 包裹，紧贴被强调文本 </p>
 <figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">*斜体文本*</span><br></pre></td></tr></tbody></table></figure>
