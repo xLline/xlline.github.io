@@ -441,12 +441,12 @@
 <a id="more"></a>
 
 <h1 id="centOS7下安装docker"><a href="#centOS7下安装docker" class="headerlink" title="centOS7下安装docker"></a>centOS7下安装docker</h1><p>安装基本依赖 <code>sudo yum install -y yum-utils device-mapper-persistent-data lvm2</code><br>设置即将安装的是稳定版仓库 <code>sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</code><br>(该步骤可不选)edge月更新仓库 <code>sudo yum-config-manager --enable docker-ce-edge</code><br>安装之前可以查看所有仓库中所有docker版本 <code>yum list docker-ce --showduplicates | sort -r</code><br>默认安装使用命令 <code>yum install docker-ce -y</code><br>安装完成启动 <code>systemctl start docker</code> 并设置开机自启动 <code>systemctl enable docker</code><br>docker安装时默认创建了docker用户组，将普通用户加入docker用户组就可以不使用sudo来操作docker。使用命令 <code>sudo usermod -aG docker xugz</code>加入，需要重新登录或者执行 <code>newgrp docker</code> 改变当前用户的有效群组才能生效。<br>到这里没有异常的话，使用 <code>docker version</code> 验证安装是否成功</p>
-<div style="width: 70%;margin: left"><img src="/2019/11/21/Docker-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/docker_v.png" class=""></div>
+<div style="width: 70%;margin: left"><img src="/2019/11/21/Docker-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/docker_v.png" class></div>
 
 <p>安装过程同时可以参照<a href="https://yq.aliyun.com/articles/110806?spm=a2c1q.8351553.0.0.11b720beQRyGTx" target="_blank" rel="noopener">阿里云的帮助文档</a></p>
 <h1 id="centOS8安装docker"><a href="#centOS8安装docker" class="headerlink" title="centOS8安装docker"></a>centOS8安装docker</h1><p><strong>卸载旧版本</strong> 较旧的 Docker 版本称为 docker 或 docker-engine 。如果已安装这些程序，请卸载它们以及相关的依赖项<br><strong>安装步骤</strong><br>下载docker-ce的repo <code>curl https://download.docker.com/linux/centos/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo</code><br>安装依赖（这是相比centos7的关键步骤） <code>yum install https://download.docker.com/linux/fedora/30/x86_64/stable/Packages/containerd.io-1.2.6-3.3.fc30.x86_64.rpm</code><br>安装docker-ce  <code>yum install docker-ce</code><br>启动docker<code>systemctl start docker</code><br>启动成功，使用<code>systemctl status docker</code> 查看docker启动状态或者使用<code>docker version</code>验证是否安装成功。</p>
 <h1 id="配置镜像加速器"><a href="#配置镜像加速器" class="headerlink" title="配置镜像加速器"></a>配置镜像加速器</h1><p>这里我用的是阿里云的镜像，配置加速器<a href="https://cr.console.aliyun.com/cn-shenzhen/instances/mirrors" target="_blank" rel="noopener">官方</a>已经给到参考步骤了，如下图</p>
-<div style="width: 68%;margin: left"><img src="/2019/11/21/Docker-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/mirrors.png" class=""></div>
+<div style="width: 68%;margin: left"><img src="/2019/11/21/Docker-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/mirrors.png" class></div>
 
 <h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><p>检查docker版本 <code>docker --version</code> or <code>docker info</code><br>拉取镜像 <code>docker pull  &lt;images name&gt;</code><br>运行镜像 <code>docker run -i -t --name &lt;new container name&gt; &lt;images name&gt;</code></p>
 <div style="font-size: 13px; margin-left: 0.5em; color: #777;  margin-top: -10px">
@@ -471,16 +471,16 @@
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep docker</span><br><span class="line">sudo vim /usr/lib/systemd/system/docker.service</span><br><span class="line"># 将原来`ExecStart=/usr/bin/dockerd`改成`ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock`</span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart docker</span><br><span class="line">ps -ef | grep docker</span><br></pre></td></tr></tbody></table></figure>
 
 <h1 id="Docker管理工具portainer"><a href="#Docker管理工具portainer" class="headerlink" title="Docker管理工具portainer"></a>Docker管理工具portainer</h1><p>Docker API必须通过TCP公开，确保已经开放TCP连接2375端口<br>拉取镜像 <code>docker pull portainer/portainer</code><br>运行容器 <code>docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name mydocker portainer/portainer</code><br>运行成功后，浏览器输入虚拟机IP+9000即可进入对应可视化界面。初次进入portainer会让你先创建用户，密码不能少于八位。而后配置将Portainer连接到要管理的Docker环境。</p>
-<div style="width: 68%;margin: left"><img src="/2019/11/21/Docker-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/portainer_enter.png" class=""></div>
+<div style="width: 68%;margin: left"><img src="/2019/11/21/Docker-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/portainer_enter.png" class></div>
 
 <p>如果在此时报错: <em>Get <a href="http://192.168.2.156:2375/_ping" target="_blank" rel="noopener">http://192.168.2.156:2375/_ping</a>: dial tcp 192.168.2.156:2375: connect: no route to host</em> 。关闭防火墙即可解决。</p>
 <p>github地址：<a href="https://github.com/portainer/portainer" target="_blank" rel="noopener">https://github.com/portainer/portainer</a><br>portainer官网地址: <a href="https://portainer.readthedocs.io/en/latest/deployment.html" target="_blank" rel="noopener">https://portainer.readthedocs.io/en/latest/deployment.html</a></p>
 <h1 id="使用portainer创建MySQL容器"><a href="#使用portainer创建MySQL容器" class="headerlink" title="使用portainer创建MySQL容器"></a>使用portainer创建MySQL容器</h1><p>在搭建好的可视化界面中，找到App Templates选择需要的镜像，填写必要配置后点击部署。这里我安装的是MySQL。需要注意的是，创建完成后自动帮我们启动这个镜像，MySQL官方提醒使用命令<code>docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag</code> 进行运行需要注意。记录密码 <code>docker run --name mysql -p 3307:3306 -e MYSQL_ROOT_PASSWORD=123123 -d mysql</code>。之后就可以使用本地进行来连接了。当然我们也可以使用命令行<code>docker exec -it mysql bash</code> 进入docker的MySQL容器。</p>
-<div style="width: 68%;margin: left"><img src="/2019/11/21/Docker-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/docker_mysql.png" class=""></div>
+<div style="width: 68%;margin: left"><img src="/2019/11/21/Docker-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/docker_mysql.png" class></div>
 
 <p>MySQL官方镜像文档: <a href="https://hub.docker.com/_/mysql/" target="_blank" rel="noopener">https://hub.docker.com/_/mysql/</a></p>
 <h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><h2 id="普通用户运行docker命令不需要使用sudo"><a href="#普通用户运行docker命令不需要使用sudo" class="headerlink" title="普通用户运行docker命令不需要使用sudo"></a>普通用户运行docker命令不需要使用sudo</h2><p>使用root账号，修改文件 <code>/etc/sudoers</code>，找到 Allow root to run any commands anywhere 位置增加普通用户。如图</p>
-<div style="width: 30%;margin: left"><img src="/2019/11/21/Docker-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/sudoer_add.png" class=""></div>
+<div style="width: 30%;margin: left"><img src="/2019/11/21/Docker-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/sudoer_add.png" class></div>
 在Linux系统中运行没有sudo密码的特定命令
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[xugz@xugz yum.repos.d]$ docker images</span><br><span class="line">Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.40/images/json: dial unix /var/run/docker.sock: connect: permission denied</span><br><span class="line">[xugz@xugz yum.repos.d]$ sudo docker images</span><br><span class="line">[sudo] password for xugz:</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">[xugz@xugz yum.repos.d]$ id xugz</span><br><span class="line">uid=1000(xugz) gid=1000(xugz) groups=1000(xugz),0(root)</span><br><span class="line">[xugz@xugz yum.repos.d]$ sudo usermod -aG docker $(whoami)</span><br><span class="line">[xugz@xugz yum.repos.d]$ id xugz</span><br><span class="line">uid=1000(xugz) gid=1000(xugz) groups=1000(xugz),984(docker),0(root)</span><br></pre></td></tr></tbody></table></figure>
 注销并再次登录或者使用命令 `newgrp - docker` 改变当前用户的有效群组，完成后可以使用 `docker version` 命令检查安装的Docker版本了。
@@ -493,7 +493,7 @@
 <p>参考<br><a href="https://docs.docker.com/engine/reference/commandline/run/#capture-container-id-cidfile" target="_blank" rel="noopener">https://docs.docker.com/engine/reference/commandline/run/#capture-container-id-cidfile</a><br><a href="https://github.com/moby/moby/issues/7459" target="_blank" rel="noopener">https://github.com/moby/moby/issues/7459</a><br><a href="https://developers.redhat.com/blog/2014/05/05/running-systemd-within-docker-container/" target="_blank" rel="noopener">https://developers.redhat.com/blog/2014/05/05/running-systemd-within-docker-container/</a></p>
 <h2 id="使用Dockerfile成功启动Apache但浏览器拒绝访问"><a href="#使用Dockerfile成功启动Apache但浏览器拒绝访问" class="headerlink" title="使用Dockerfile成功启动Apache但浏览器拒绝访问"></a>使用Dockerfile成功启动Apache但浏览器拒绝访问</h2><p>如果是防火墙的问题，出现的报错提示应该是无法连接之类的，一般出现404  403那说明能连上。<br>因为默认的容器里可能没有设置默认主页配置，所以先将apache的默认主页index.html或index.htm 在浏览器输全尝试。<br>若还不行，进入容器，<code>curl http://localhost/index.html</code>尝试，确保浏览器地址没有输错。<br>若还不行，进入apache配置文件 /etc/httpd/conf/httpd.conf 找到默认目录DocumentRoot然后查看 这个目录是否有，且对应文件是否存在。<br>我这里的问题是，安装的这个apache镜像没有默认主页，新建就可以了……</p>
 <h2 id="启动容器时报错Error-response-from-daemon-driver-failed-programming-external-connectivity-on-endpoint-mysql"><a href="#启动容器时报错Error-response-from-daemon-driver-failed-programming-external-connectivity-on-endpoint-mysql" class="headerlink" title="启动容器时报错Error response from daemon: driver failed programming external connectivity on endpoint mysql"></a>启动容器时报错Error response from daemon: driver failed programming external connectivity on endpoint mysql</h2><p>docker服务启动时定义的自定义链DOCKER由于某种原因被清掉，重启docker服务及可重新生成自定义链DOCKER。使用命令<code>systemctl restart docker</code>在重新启动容器即可。如图</p>
-<div style="width: 68%;margin: left"><img src="/2019/11/21/Docker-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/docker_run_error.png" class=""></div>
+<div style="width: 68%;margin: left"><img src="/2019/11/21/Docker-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/docker_run_error.png" class></div>
 
 <h2 id="docker-log-报错-SELinux-Could-not-open-policy-file-lt-etc-selinux-targeted-policy-policy-31-No-such-file-or-directory"><a href="#docker-log-报错-SELinux-Could-not-open-policy-file-lt-etc-selinux-targeted-policy-policy-31-No-such-file-or-directory" class="headerlink" title="docker log 报错 SELinux:  Could not open policy file <= /etc/selinux/targeted/policy/policy.31:  No such file or directory"></a>docker log <container>报错 SELinux:  Could not open policy file &lt;= /etc/selinux/targeted/policy/policy.31:  No such file or directory</container></h2><p>因为使用centos镜像的问题，需要处理SELinux。实际开发中使用镜像alpine，这里就先放过这个问题，以后再表。</p>
 <h1 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h1><p><a href="https://yq.aliyun.com/articles/110806?spm=a2c1q.8351553.0.0.11b720beQRyGTx" target="_blank" rel="noopener">阿里云docker安装帮助文档</a><br><a href="https://docs.docker.com/engine/reference/commandline/docker/" target="_blank" rel="noopener">官方文档基本命令参考地址</a><br><a href="https://cr.console.aliyun.com/cn-shenzhen/instances/mirrors" target="_blank" rel="noopener">配置镜像加速器阿里云文档</a><br><a href="https://github.com/portainer/portainer" target="_blank" rel="noopener">管理工具portainer仓库地址</a><br><a href="https://portainer.readthedocs.io/en/latest/deployment.html" target="_blank" rel="noopener">管理工具portainer官网地址</a></p>
@@ -677,7 +677,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-count">29</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -688,7 +688,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -699,7 +699,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -790,7 +790,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 31.2k 字</span>
+  <span class="post-count">全站共 32.6k 字</span>
 </div>
         
 

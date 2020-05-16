@@ -449,21 +449,21 @@
       
         <p>为了学习docker来回顾Linux基础，本篇是基于Ubuntu操作系统18.04.3版本安装部署遇到问题或有用知识点的汇总整理。</p>
 <h1 id="ifconfig命令找不到"><a href="#ifconfig命令找不到" class="headerlink" title="ifconfig命令找不到"></a>ifconfig命令找不到</h1><p>问题描述： 在Vmware安装完成Ubuntu后，输入ifconfig提示：<em>Command ‘ifconfig’ not found, but can be installed with: sudo apt install net-tools</em>。当然官方提醒我们可以使用<code>sudo apt install net-tools</code>安装net-tools，然而并不如预想。</p>
-<div style="width: 70%;margin: left"><img src="/2019/11/08/Ubuntu/ifconfig_error.png" class="" title="ifconfig命令不存在"></div>
+<div style="width: 70%;margin: left"><img src="/2019/11/08/Ubuntu/ifconfig_error.png" class title="ifconfig命令不存在"></div>
 <a id="more"></a>
 
 <p>解决方案： 执行语句 <code>sudo apt-get update &amp;&amp; sudo apt-get install net-tools</code><br>再输入ifconfig就正常啦。(apt-get用于自动从互联网的软件仓库中搜索、安装、升级或卸载软件。我们需要定期执行<code>apt-get update</code>，让我们缓存包在系统中的软件列表源是最新的)</p>
-<div style="width: 70%;margin: left"> <img src="/2019/11/08/Ubuntu/ifconfig_sess.png" class=""></div>
+<div style="width: 70%;margin: left"> <img src="/2019/11/08/Ubuntu/ifconfig_sess.png" class></div>
 
 <p>如果在过程中提示 <em>E: Could not get lock /var/lib/apt/lists/lock - open (11: Resource temporarily unavailable)</em>， 不用担心，这是因为上一次安装时异常退出导致锁残留，可直接删除掉这个锁文件，使用命令<code>sudo rm /var/lib/apt/lists/lock</code>。</p>
-<div style="width: 70%;margin: left"><img src="/2019/11/08/Ubuntu/ifconfig_lock.png" class=""></div>
+<div style="width: 70%;margin: left"><img src="/2019/11/08/Ubuntu/ifconfig_lock.png" class></div>
 
 <h1 id="编译安装PHP7-3-11"><a href="#编译安装PHP7-3-11" class="headerlink" title="编译安装PHP7.3.11"></a>编译安装PHP7.3.11</h1><ol>
 <li>官网 <a href="http://php.net/downloads.php" target="_blank" rel="noopener">http://php.net/downloads.php</a> 下载安装包到本地或者使用wget <code>wget http://cn2.php.net/distributions/php-7.3.11.tar.gz</code></li>
 <li>安装依赖包 libxml2-dev和 gcc<br>a. 如果遇到错误：<em>error:xml2-config not found.Please check your libxml2 installation.</em> ，说明依赖包libxml2不存在，需要安装使用命令<code>sudo apt-get update &amp;&amp; sudo apt-get install libxml2-dev -y</code>。<br> b. 如果安装libxml2过程又提示<em>Unable to fetch some archives, maybe run apt-get update or try with –fix-missing?</em>，可执行<code>apt-get install libxml2-dev -y --fix-missing</code>解决。多次尝试无效时，保证当前网络连接正常的基础上，执行<code>sudo apt-get clean</code>再进行后续操作。<br> c. 如果又报错<em>configure: error: no acceptable C compiler found in $PATH</em>，是因为你本地没有可执行编译的源文件，需要执行<code>sudo apt-get update &amp;&amp; sudo apt-get install gcc -y</code>解决。</li>
 <li>执行预编译，使用<code>./configure --prefix=/usr/local/php</code>(这个后面最好加上<code>--with-config-file-path=/usr/local/php/conf</code>，代表指定php.ini路径，否则后面需要自己去设置) 代表我要装到/usr/local/php里，配置文件放到conf里  </li>
 <li>安装，执行完成之后最后一定要执行<code>make</code>，这一步是真正的编译。然后还要执行<code>sudo make install</code>，这一步是拷贝到你的目标文件夹，否则/usr/local/php是不会有的。  </li>
-<li>验证，没有Hello world感觉不完整是不是。写个简单的PHP页面<div style="width: 60%;margin: left"><img src="/2019/11/08/Ubuntu/php_ver.png" class=""></div>
+<li>验证，没有Hello world感觉不完整是不是。写个简单的PHP页面<div style="width: 60%;margin: left"><img src="/2019/11/08/Ubuntu/php_ver.png" class></div>
 
 </li>
 </ol>
@@ -480,7 +480,7 @@
 <li><p>新建 /usr/local/mysql文件, 修改归属用户权限<code>chown xugz:xugz mysql</code></p>
 </li>
 <li><p>初始化配置<br>详细参考 <a href="https://dev.mysql.com/doc/refman/8.0/en/installing-source-distribution.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.0/en/installing-source-distribution.html</a><br>mysqld是最终需要运行的可执行程序，不过我们一般使用mysqld_safe这个脚本来执行。进入安装目录 <code>cd /usr/local/mysql</code>，进入bin目录我们执行<code>mysqld --verbose --help</code>生成所有mysqld选项和可配置变量的列表</p>
-<div style="width: 60%;margin: left"><img src="/2019/11/08/Ubuntu/mysql_cnf.png" class="" title="mysql查找配置文件的顺序"></div>
+<div style="width: 60%;margin: left"><img src="/2019/11/08/Ubuntu/mysql_cnf.png" class title="mysql查找配置文件的顺序"></div>
 
 <p>如上图所示，MySQL先去寻找/etc/mysql/my.cnf文件，如果没有再去寻找 /etc/my.cnf，还没有再去寻找~/.my.cnf。我们只需要三选一创建文件，这里我选择大众常用的 /etc/my.cnf。执行<code>sudo vi /etc/my.cnf</code>添加以下内容</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[client]</span><br><span class="line">port = 3306</span><br><span class="line">socket = /usr/local/mysql/data/mysql.sock</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">port  = 3306</span><br><span class="line">socket = /usr/local/mysql/data/mysql.sock</span><br><span class="line">basedir = /usr/local/mysql</span><br><span class="line">datadir = /usr/local/mysql/data</span><br></pre></td></tr></tbody></table></figure>
@@ -493,7 +493,7 @@
 </ol>
 <h1 id="Memcached安装"><a href="#Memcached安装" class="headerlink" title="Memcached安装"></a>Memcached安装</h1><ol>
 <li><p>安装包下载 <a href="http://memcached.org/downloads" target="_blank" rel="noopener">官网地址</a> 或者使用wget。官网已经给我们详细说明</p>
-<div style="width: 55%;margin: left"><img src="/2019/11/08/Ubuntu/memcache_install.png" class=""></div>
+<div style="width: 55%;margin: left"><img src="/2019/11/08/Ubuntu/memcache_install.png" class></div>
 </li>
 <li><p>安装依赖 <code>sudo apt-get install libevent-dev -y</code> 灵活点根据官网提示修改</p>
 </li>
@@ -692,7 +692,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-count">29</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -703,7 +703,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -714,7 +714,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -805,7 +805,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 31.2k 字</span>
+  <span class="post-count">全站共 32.6k 字</span>
 </div>
         
 

@@ -438,7 +438,7 @@
 <a id="more"></a>
 
 <h1 id="手工搭建CentOS-Nginx容器"><a href="#手工搭建CentOS-Nginx容器" class="headerlink" title="手工搭建CentOS+Nginx容器"></a>手工搭建CentOS+Nginx容器</h1><p><code>docker pull centos</code><br>在centos镜像基础上创建一个临时容器tmp，执行命令 <code>docker run -it --privileged --name tmp centos /usr/sbin/init</code>后如下图。保持不动，新开窗口进行后续操作。</p>
-<div style="width: 61%;margin: left"><img src="/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/run_desc.png" class=""></div>
+<div style="width: 61%;margin: left"><img src="/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/run_desc.png" class></div>
 
 <p>进入容器 <code>docker exec -it tmp /bin/bash</code><br>升级包 <code>rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm</code><br>默认安装 <code>yum install nginx -y</code><br><span style="font-size: 13px; color: #777;"> 安装完成之后，nginx配置文件默认路径为 /etc/nginx/nginx.conf ，是全局配置文件。</span><br>启动nginx <code>systemctl start nginx</code><br>设置开机自启动 <code>systemctl enable nginx</code> 启动成功我们可以使用 <code>curl http://localhost</code> 验证，正常的话，我们会看到Welcome to nginx之类的HTML源码。<br>接下来我们要把容器作为镜像保存起来，使用commit命令。<br>利用dockerfile里面的格式去创建新镜像 <code>docker commit -c 'CMD ["/usr/sbin/init"] ' -c "EXPOSE 80" tmp centos:nginx</code><br>基于这个镜像创建新容器，因为docker非持久化，把配置文件映射到本地主机。使用cp命令。<br><code>docker cp tmp:/etc/nginx/nginx.conf /home/xugz/nginx/conf/</code><br>此时可以停止并删除临时容器tmp。<br>启动Nginx镜像 指定端口9090，nginx.conf文件同步 <code>docker run --name mynginx --privileged -p 9090:80 -v /home/xugz/nginx/conf/nginx.conf:/etc/nginx/nginx.conf -d centos:nginx</code>。启动成功后，使用虚拟机IP:9090在本地浏览器可以访问。</p>
 <p><a href="https://docs.docker.com/engine/reference/commandline/cp/" target="_blank" rel="noopener">cp命令参考地址</a><br><a href="https://docs.docker.com/engine/reference/commandline/commit/#description" target="_blank" rel="noopener">commit命令参考地址</a></p>
@@ -454,7 +454,7 @@
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">nginx: </span><br><span class="line">    container_name: mynginx</span><br><span class="line">    image: "centos:nginx"</span><br><span class="line">    ports: </span><br><span class="line">      - "9090:80"</span><br><span class="line">    privileged: true</span><br><span class="line">    volumes: </span><br><span class="line">      - "/home/xugz/nginx/conf/nginx.conf:/etc/nginx/nginx.conf"</span><br></pre></td></tr></tbody></table></figure>
 <p><a href="http://www.bejson.com/validators/yaml/" target="_blank" rel="noopener">yaml在线检查工具</a><br><a href="https://docs.docker.com/compose/" target="_blank" rel="noopener">compose官方参考文档</a></p>
 <h1 id="network"><a href="#network" class="headerlink" title="network"></a>network</h1><p>网络列表 <code>docker network ls</code><br>查看详细信息 <code>docker network inspect &lt;network name&gt;</code><br>容器之前可以使用IP进行互通，实验如图</p>
-<div style="width: 80%;margin: left"><img src="/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/network_before.png" class=""></div>
+<div style="width: 80%;margin: left"><img src="/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/network_before.png" class></div>
 
 <h2 id="手动配置"><a href="#手动配置" class="headerlink" title="手动配置"></a>手动配置</h2><p>现在我们新建网络 mynginx 然后让上文中涉及的三个容器都加入我们新建的网络里<br>停止原有三个容器 使用命令 <code>docker-compose stop</code><br>创建网络 指定子网为192.168.0.0 <code>docker network create -d bridge --subnet=192.168.0.0/16 mynginx</code><br>在docker-compose.yml文件中新增如下内容</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">version: "3"</span><br><span class="line">services:</span><br><span class="line">  web:</span><br><span class="line">    ……</span><br><span class="line">    networks:</span><br><span class="line">      - "mynginx-net" # 和networks中网络名称一致</span><br><span class="line">networks:</span><br><span class="line">  mynginx-net: # 可自定义</span><br><span class="line">    external:</span><br><span class="line">      name: "mynginx"</span><br></pre></td></tr></tbody></table></figure>
@@ -478,7 +478,7 @@
  exit 1 非正常退出  <br>
  || 表示 左边执行为false才会执行右边 &amp;&amp; 为左边执行为true才会执行右边 <br>
 </span> 
-<div style="width: 80%;margin: left"><img src="/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/health_run.png" class="" title="容器健康检查机制手动执行"><img src="/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/health_un.png" class="" title="不健康容器示例"></div>
+<div style="width: 80%;margin: left"><img src="/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/health_run.png" class title="容器健康检查机制手动执行"><img src="/2019/11/25/Docker-Nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/health_un.png" class title="不健康容器示例"></div>
 
 <p>此时，可以使用 <code>docker inspect web1</code> 命令检查容器<br>只看Health部分使用命令 <code>docker inspect --format='' web1</code></p>
 <p><strong>使用Compose进行健康检查</strong><br>docker-compose.yml文件对应容器中添加如下示例配置即可</p>
@@ -665,7 +665,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-count">29</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -676,7 +676,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -687,7 +687,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -778,7 +778,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 31.2k 字</span>
+  <span class="post-count">全站共 32.6k 字</span>
 </div>
         
 
