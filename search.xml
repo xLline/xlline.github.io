@@ -1,63 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Swoole之协程篇</title>
-    <url>/2019/12/09/Swoole-Coroutine/</url>
-    <content><![CDATA[<p>CPU一次只能对一个进程做处理。<br>进程有自己独立的地址空间，是资源分配和拥有的单位。进程之间数据不共享，进程内至少有一个线程。<br>线程是处理器调度的最小单位，是进程内的一个执行单元，同一个进程内的线程共享进程的地址空间和资源。<br>协程的本质是将线程的调度权还给了程序本身，而不是CPU。所以协程也称用户态的轻量型线程。</p>
-<a id="more"></a>
-<p>以官方文档为主，<a href="https://wiki.swoole.com/wiki/page/p-coroutine.html" target="_blank" rel="noopener">地址点我</a></p>
-<h1 id="Coroutine-create"><a href="#Coroutine-create" class="headerlink" title="Coroutine::create"></a>Coroutine::create</h1><p>创建一个新的协程，并立即执行。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">function Swoole\Coroutine::create(callable $function, ...$args) : int|false;</span><br><span class="line">function go(callable $function, ...$args) : int|false; // 短名API</span><br></pre></td></tr></tbody></table></figure>
-<p><code>$function</code> 协程执行的代码，必须为callable，系统能创建的协程总数量受限于<code>server-&gt;max_coroutine</code>设置。创建失败返回<code>false</code>，创建成功返回协程的ID。</p>
-<h1 id="Coroutine-System-sleep"><a href="#Coroutine-System-sleep" class="headerlink" title="Coroutine\System::sleep"></a>Coroutine\System::sleep</h1><p>进入等待状态。相当于PHP的<code>sleep</code>函数，不同的是<code>Coroutine::sleep</code>是协程调度器实现的，底层会<code>yield</code>当前协程，让出时间片，并添加一个异步定时器，当超时时间到达时重新<code>resume</code>当前协程，恢复运行。使用<code>sleep</code>接口可以方便地实现超时等待功能。使用sleep模拟IO阻塞，会引起协程的切换（进入调度队列）</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">function Coroutine\System::sleep(float $seconds);</span><br></pre></td></tr></tbody></table></figure>
-<p><code>$seconds</code>为睡眠的时间，单位为秒，支持浮点型，最小精度为毫秒（0.001秒）。必须大于0，最大不得超过一天时间（86400秒）</p>
-<h1 id="Coroutine-Channel"><a href="#Coroutine-Channel" class="headerlink" title="Coroutine\Channel"></a>Coroutine\Channel</h1><p>通道，类似于go语言的chan，支持多生产者协程和多消费者协程。底层自动实现了协程的切换和调度。<br><code>Channel-&gt;push</code> 当队列中有其他协程正在等待pop数据时，自动按顺序唤醒一个消费者协程。当队列已满时自动<code>yield</code>让出控制器，等待其他协程消费数据<br><code>Channel-&gt;pop</code> 当队列为空时自动<code>yield</code>，等待其他协程生产数据。消费数据后，队列可写入新的数据，自动按顺序唤醒一个生产者协程。<br>简单代码示例如下</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">use Swoole\Coroutine as co;</span><br><span class="line">$chan=new co\Channel(1); // 容量为1 最小为1</span><br><span class="line">go(function() use($chan){ //只负责 计算  cpu</span><br><span class="line">    $count=0;</span><br><span class="line">    for($i=1;$i&lt;=3;$i++){</span><br><span class="line">        $count=$count+$i;</span><br><span class="line">        co::sleep(1);</span><br><span class="line">    }</span><br><span class="line">    $chan-&gt;push($count);</span><br><span class="line">});</span><br><span class="line">go(function() use($chan){  //只负责输出  IO</span><br><span class="line">    echo $chan-&gt;pop().PHP_EOL;</span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="Coroutine-yield"><a href="#Coroutine-yield" class="headerlink" title="Coroutine::yield"></a>Coroutine::yield</h1><p>让出当前协程的执行权。 此方法拥有另外一个别名：<code>Coroutine::suspend()</code></p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">function Coroutine::yield();</span><br></pre></td></tr></tbody></table></figure>
-<p>必须与<code>Coroutine::resume()</code>方法成对使用。该协程<code>yield</code>以后，必须由其他外部协程<code>resume</code>，否则将会造成协程泄漏，被挂起的协程永远不会执行。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">use Swoole\Coroutine as co;</span><br><span class="line">$cid = go(function(){</span><br><span class="line">    for($i=1;$i&lt;=10;$i++){</span><br><span class="line">        if($i==6){</span><br><span class="line">            co::yield();</span><br><span class="line">        }</span><br><span class="line">        echo $i.PHP_EOL;</span><br><span class="line">//        co::sleep(0.2); // 当IO存在堵塞时发生协程切换 进入调度队列 没有堵塞的话看起来是顺序执行</span><br><span class="line">    }</span><br><span class="line">});</span><br><span class="line"></span><br><span class="line">go(function() use ($cid){</span><br><span class="line">    for($i=1;$i&lt;=10;$i++){</span><br><span class="line">        echo 'a'.$i.PHP_EOL;</span><br><span class="line">    }</span><br><span class="line">    co::resume($cid);</span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure>
-<h1 id="Coroutine-Http-Client"><a href="#Coroutine-Http-Client" class="headerlink" title="Coroutine\Http\Client"></a>Coroutine\Http\Client</h1><p>协程版Http客户端基于原生的异步Http客户端，基本的设置和使用方法和异步Http客户端一致，不在需要注册回调函数，只需要同步写法即可</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">go(function(){</span><br><span class="line">    $cli = new Swoole\Coroutine\Http\Client('192.168.2.156', 8082);</span><br><span class="line">    $cli-&gt;get('/index.php?t=123123');</span><br><span class="line">    echo $cli-&gt;body;</span><br><span class="line">    $cli-&gt;close();</span><br><span class="line">});</span><br><span class="line">go(function(){</span><br><span class="line">    $cli = new Swoole\Coroutine\Http\Client('192.168.2.156', 8082);</span><br><span class="line">    $cli-&gt;get('/index.php');</span><br><span class="line">    echo $cli-&gt;body;</span><br><span class="line">    $cli-&gt;close();</span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure>
-<p>如果未设置<code>timeout</code>，则将底层<code>connect</code>和<code>request</code>超时设置为默认的500ms</p>
-<h1 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h1><p>在4.1.0版本中，底层增加一个新的特性，可以在运行时动态将基于<code>php_stream</code>实现的扩展、PHP网络客户端代码一键协程化。</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">function Runtime::enableCoroutine(bool $enable = true, int $flags = SWOOLE_HOOK_ALL);</span><br><span class="line">function Runtime::enableCoroutine(int $flags = SWOOLE_HOOK_ALL);</span><br></pre></td></tr></tbody></table></figure>
-<p><code>$enable</code>：打开或关闭协程 <code>$flags</code>：选择要Hook的类型，可以多选，默认为全选。仅在<code>$enable = true</code>时有效<br>需要留意官方文档中的可用列表和不可用列表</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">Swoole\Runtime::enableCoroutine();</span><br><span class="line">function getHtml2($t=false){</span><br><span class="line">    $fp=stream_socket_client("tcp://192.168.2.156:8082");</span><br><span class="line">    $path="/index.php";</span><br><span class="line">    if($t) $path.="?".$t;</span><br><span class="line">    fwrite($fp, "GET $path HTTP/1.0\r\nAccept: */*\r\n\r\n");</span><br><span class="line">    $ret="";</span><br><span class="line">    while (!feof($fp)) {</span><br><span class="line">        $ret.=fgets($fp, 1024);</span><br><span class="line">    }</span><br><span class="line">    fclose($fp);</span><br><span class="line">    return $ret;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">go(function(){</span><br><span class="line">    echo getHtml2("t=123");</span><br><span class="line">});</span><br><span class="line">go(function(){</span><br><span class="line">    echo  getHtml2();</span><br><span class="line">});</span><br><span class="line">// 其他代码段不贴了，当传参t时，sleep一秒后执行</span><br><span class="line">// 目前Runtime函数支持stream_socket_client协程化，所以运行结果 输出先 getHtml2()的内容，后getHtml2("t=123")</span><br><span class="line">// 当然Swoole存在内置函数，可以直接实现协程化，见Coroutine\Http\Client</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="Coroutine-MySQL"><a href="#Coroutine-MySQL" class="headerlink" title="Coroutine\MySQL"></a>Coroutine\MySQL</h1><p>请勿同时使用异步回调和协程MySQL<br>使用MySQL协程客户端是否要关闭？</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">$swoole_mysql = new Swoole\Coroutine\MySQL();</span><br><span class="line">$swoole_mysql-&gt;connect([</span><br><span class="line">    'host' =&gt; '127.0.0.1',</span><br><span class="line">    'port' =&gt; 3306,</span><br><span class="line">    'user' =&gt; 'user',</span><br><span class="line">    'password' =&gt; 'pass',</span><br><span class="line">    'database' =&gt; 'test',</span><br><span class="line">]);</span><br><span class="line">$res = $swoole_mysql-&gt;query('select sleep(1)');</span><br></pre></td></tr></tbody></table></figure><script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Swoole</category>
-        <category>Coroutine</category>
-      </categories>
-      <tags>
-        <tag>Swoole</tag>
-        <tag>Coroutine</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>基于win+PHPStorm+Linux的推荐开发环境配置</title>
     <url>/2019/12/06/DevelopTool-phpstorm/</url>
     <content><![CDATA[<p>想要在Windows开发可偏偏有拓展包依赖于Linux？也不想使用samba进行网络映射挂载虚拟盘？那这里还有一个方法，使用PHPstorm配置下下就可以。<br>当前我的环境在Vmware，基于centos7使用Docker搭建的。具体步骤见详情。</p>
@@ -136,8 +79,8 @@
         <category>Docker</category>
       </categories>
       <tags>
-        <tag>Docker</tag>
         <tag>Smaba</tag>
+        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
@@ -1628,165 +1571,6 @@ fi</code></pre></li>
       </tags>
   </entry>
   <entry>
-    <title>Hexo添加emoji表情</title>
-    <url>/2019/06/19/Hexo-addemjo/</url>
-    <content><![CDATA[<p>废话不多说，直接动手干吧。 具体表情参考 <a href="https://github.com/caiyongji/emoji-list" target="_blank" rel="noopener">GFM 表情列表</a> <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8">😜</span> </p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install hexo-filter-github-emojis --save</span><br><span class="line">npm un hexo-renderer-stylus --save</span><br><span class="line">npm i hexo-renderer-stylus-plus --save</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="打开-站点配置文件，添加以下内容"><a href="#打开-站点配置文件，添加以下内容" class="headerlink" title="打开 站点配置文件，添加以下内容"></a>打开 站点配置文件，添加以下内容</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="解决渲染错误问题"><a href="#解决渲染错误问题" class="headerlink" title="解决渲染错误问题"></a>解决渲染错误问题</h1><ul>
-<li>修改 <code>themes/next/layout/_partials/head.swig</code>, 解决渲染错误问题，渲染 emoji 表情时会被自动加上 a 标签<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;script type="text/javascript" id="hexo.configurations"&gt;</span><br><span class="line">  var NexT = window.NexT || {};</span><br><span class="line">  var CONFIG = {</span><br><span class="line">    root: '{{ theme.root }}',</span><br><span class="line">    scheme: '{{ theme.scheme }}',</span><br><span class="line">    sidebar: {{ theme.sidebar | json_encode }},</span><br><span class="line">    fancybox: {{ theme.fancybox }},</span><br><span class="line">    tabs: {{ theme.tabs.enable }},</span><br><span class="line">    motion: {{ theme.use_motion }},</span><br><span class="line">    duoshuo: {</span><br><span class="line">      userId: '{{ theme.duoshuo_info.user_id | default() }}',</span><br><span class="line">      author: '{{ theme.duoshuo_info.admin_nickname | default(__('author'))}}'</span><br><span class="line">    },</span><br><span class="line">    algolia: {</span><br><span class="line">      applicationID: '{{ theme.algolia.applicationID }}',</span><br><span class="line">      apiKey: '{{ theme.algolia.apiKey }}',</span><br><span class="line">      indexName: '{{ theme.algolia.indexName }}',</span><br><span class="line">      hits: {{ theme.algolia_search.hits | json_encode }},</span><br><span class="line">      labels: {{ theme.algolia_search.labels | json_encode }}</span><br><span class="line">    },</span><br><span class="line">    *{# ↓ 在这里修改，其他未动 ↓ #}</span><br><span class="line">    {# 添加 emojis 参数 #}</span><br><span class="line">    emojis: {</span><br><span class="line">      className: '{{ config.githubEmojis.className | default('github-emoji') }}'</span><br><span class="line">    }*</span><br><span class="line">  };</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></tbody></table></figure></li>
-<li>修改 <code>themes/next/source/js/src/utils.js</code><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// 注意看 CONFIG.emojis.className 那一行，其他未动</span><br><span class="line">$('.content img')</span><br><span class="line">  .not('[hidden]')</span><br><span class="line">  .not('.group-picture img, .post-gallery img, *img.' + CONFIG.emojis.className*)</span><br><span class="line">  .each(function () {</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
-
-</li>
-</ul>
-<h1 id="自定义emoji-样式"><a href="#自定义emoji-样式" class="headerlink" title="自定义emoji 样式"></a>自定义emoji 样式</h1><p>在 <code>站点配置文件</code> 中，我们配置：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
-<p>在 <code>themes/next/source/css/_variables/base.styl</code> 中使用 hexo-site-config 方法获取 <code>站点配置文件</code> 中的值，我们添加</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// Github emojis class name</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">get_emoji_class() {</span><br><span class="line">  emoji_class = hexo-site-config('githubEmojis.className')</span><br><span class="line">  return emoji_class ? emoji_class : 'github-emoji'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$github-emojis-class-name   = get_emoji_class()</span><br></pre></td></tr></tbody></table></figure>
-<p>最后在自定义样式文件 <code>themes/next/source/css/_custom/custom.styl</code> 中添加：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">img.{$github-emojis-class-name} {</span><br><span class="line">  display: inline;</span><br><span class="line">  height: 1.7em;</span><br><span class="line">  width: 1.7em;</span><br><span class="line">  vertical-align: -0.4em;</span><br><span class="line">  border: none !important;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span>  </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>修改Hexo博客next主题文章页面宽度</title>
-    <url>/2019/06/19/Hexo-postwidth/</url>
-    <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
-<p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码即可</p>
-<pre><code>// 以下为新增代码！！修改post宽度
-header{ width: 80% !important; }
-header.post-header {
-  width: auto !important;
-}
-.container .main-inner { width: 80%; }
-.content-wrap { width: calc(100% - 260px); }
-
-.header {
-  +tablet() {
-    width: auto !important;
-  }
-  +mobile() {
-    width: auto !important;
-  }
-}
-
-.container .main-inner {
-  +tablet() {
-    width: auto !important;
-  }
-  +mobile() {
-    width: auto !important;
-  }
-}
-
-.content-wrap {
-  +tablet() {
-    width: 100% !important;
-  }
-  +mobile() {
-    width: 100% !important;
-  }
-}</code></pre><script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo NexT主题添加字数统计阅读时长</title>
-    <url>/2019/06/19/Hexo-addwordcount/</url>
-    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
-
-<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
-<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
-<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-
-<p>到这里就可以啦，快去试试吧。  </p>
-<script>
-        document.querySelectorAll('.github-emoji')
-          .forEach(el => {
-            if (!el.dataset.src) { return; }
-            const img = document.createElement('img');
-            img.style = 'display:none !important;';
-            img.src = el.dataset.src;
-            img.addEventListener('error', () => {
-              img.remove();
-              el.style.color = 'inherit';
-              el.style.backgroundImage = 'none';
-              el.style.background = 'none';
-            });
-            img.addEventListener('load', () => {
-              img.remove();
-            });
-            document.body.appendChild(img);
-          });
-      </script>]]></content>
-      <categories>
-        <category>拾级而上</category>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用Hexo+GitHub搭建个人博客教程</title>
     <url>/2019/06/19/Hexo+GitHub/</url>
     <content><![CDATA[<p>开始搭建自己的小站吧。简单记录，方便后续翻阅。<br>从无到有的流程还是比较详细的，按步骤从头到尾跟着执行可以避免大部分问题。本次搭站 <a href="https://zhuanlan.zhihu.com/p/60578464" target="_blank" rel="noopener">参考文章</a> 人家写的已经很详细了，这里进行备份基础补充和常见问题的汇总。</p>
@@ -1895,6 +1679,165 @@ header.post-header {
       <tags>
         <tag>Hexo</tag>
         <tag>GitHub</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo添加emoji表情</title>
+    <url>/2019/06/19/Hexo-addemjo/</url>
+    <content><![CDATA[<p>废话不多说，直接动手干吧。 具体表情参考 <a href="https://github.com/caiyongji/emoji-list" target="_blank" rel="noopener">GFM 表情列表</a> <span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f61c.png?v8">😜</span> </p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm install hexo-filter-github-emojis --save</span><br><span class="line">npm un hexo-renderer-stylus --save</span><br><span class="line">npm i hexo-renderer-stylus-plus --save</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="打开-站点配置文件，添加以下内容"><a href="#打开-站点配置文件，添加以下内容" class="headerlink" title="打开 站点配置文件，添加以下内容"></a>打开 站点配置文件，添加以下内容</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="解决渲染错误问题"><a href="#解决渲染错误问题" class="headerlink" title="解决渲染错误问题"></a>解决渲染错误问题</h1><ul>
+<li>修改 <code>themes/next/layout/_partials/head.swig</code>, 解决渲染错误问题，渲染 emoji 表情时会被自动加上 a 标签<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;script type="text/javascript" id="hexo.configurations"&gt;</span><br><span class="line">  var NexT = window.NexT || {};</span><br><span class="line">  var CONFIG = {</span><br><span class="line">    root: '{{ theme.root }}',</span><br><span class="line">    scheme: '{{ theme.scheme }}',</span><br><span class="line">    sidebar: {{ theme.sidebar | json_encode }},</span><br><span class="line">    fancybox: {{ theme.fancybox }},</span><br><span class="line">    tabs: {{ theme.tabs.enable }},</span><br><span class="line">    motion: {{ theme.use_motion }},</span><br><span class="line">    duoshuo: {</span><br><span class="line">      userId: '{{ theme.duoshuo_info.user_id | default() }}',</span><br><span class="line">      author: '{{ theme.duoshuo_info.admin_nickname | default(__('author'))}}'</span><br><span class="line">    },</span><br><span class="line">    algolia: {</span><br><span class="line">      applicationID: '{{ theme.algolia.applicationID }}',</span><br><span class="line">      apiKey: '{{ theme.algolia.apiKey }}',</span><br><span class="line">      indexName: '{{ theme.algolia.indexName }}',</span><br><span class="line">      hits: {{ theme.algolia_search.hits | json_encode }},</span><br><span class="line">      labels: {{ theme.algolia_search.labels | json_encode }}</span><br><span class="line">    },</span><br><span class="line">    *{# ↓ 在这里修改，其他未动 ↓ #}</span><br><span class="line">    {# 添加 emojis 参数 #}</span><br><span class="line">    emojis: {</span><br><span class="line">      className: '{{ config.githubEmojis.className | default('github-emoji') }}'</span><br><span class="line">    }*</span><br><span class="line">  };</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></tbody></table></figure></li>
+<li>修改 <code>themes/next/source/js/src/utils.js</code><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// 注意看 CONFIG.emojis.className 那一行，其他未动</span><br><span class="line">$('.content img')</span><br><span class="line">  .not('[hidden]')</span><br><span class="line">  .not('.group-picture img, .post-gallery img, *img.' + CONFIG.emojis.className*)</span><br><span class="line">  .each(function () {</span><br><span class="line">  ……</span><br></pre></td></tr></tbody></table></figure>
+
+</li>
+</ul>
+<h1 id="自定义emoji-样式"><a href="#自定义emoji-样式" class="headerlink" title="自定义emoji 样式"></a>自定义emoji 样式</h1><p>在 <code>站点配置文件</code> 中，我们配置：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">githubEmojis:</span><br><span class="line">  enable: true</span><br><span class="line">  className: github-emoji</span><br><span class="line">  unicode: false</span><br><span class="line">  styles:</span><br><span class="line">  localEmojis:</span><br></pre></td></tr></tbody></table></figure>
+<p>在 <code>themes/next/source/css/_variables/base.styl</code> 中使用 hexo-site-config 方法获取 <code>站点配置文件</code> 中的值，我们添加</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">// Github emojis class name</span><br><span class="line">// --------------------------------------------------</span><br><span class="line">get_emoji_class() {</span><br><span class="line">  emoji_class = hexo-site-config('githubEmojis.className')</span><br><span class="line">  return emoji_class ? emoji_class : 'github-emoji'</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$github-emojis-class-name   = get_emoji_class()</span><br></pre></td></tr></tbody></table></figure>
+<p>最后在自定义样式文件 <code>themes/next/source/css/_custom/custom.styl</code> 中添加：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">img.{$github-emojis-class-name} {</span><br><span class="line">  display: inline;</span><br><span class="line">  height: 1.7em;</span><br><span class="line">  width: 1.7em;</span><br><span class="line">  vertical-align: -0.4em;</span><br><span class="line">  border: none !important;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>到这里就可以啦。<span class="github-emoji" style="color: transparent;background:no-repeat url(https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8) center/contain" data-src="https://github.githubassets.com/images/icons/emoji/unicode/1f340.png?v8">🍀</span>  </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo NexT主题添加字数统计阅读时长</title>
+    <url>/2019/06/19/Hexo-addwordcount/</url>
+    <content><![CDATA[<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>NexT 主题默认已经集成了文章【字数统计】、【阅读时长】统计功能，如果我们需要使用，只需要在主题配置文件 <code>_config.yml</code> 中打开 wordcount 统计功能即可。如下所示：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line"># Post wordcount display settings</span><br><span class="line"># Dependencies: https://github.com/willin/hexo-wordcount</span><br><span class="line">post_wordcount:</span><br><span class="line">  item_text: true</span><br><span class="line">  wordcount: true         # 单篇 字数统计</span><br><span class="line">  min2read: true          # 单篇 阅读时长</span><br><span class="line">  totalcount: false       # 网站 字数统计</span><br><span class="line">  separated_meta: true</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h1><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">npm i --save hexo-wordcount</span><br><span class="line"># Node 版本7.6.0之前,请安装 2.x 版本 (Node.js v7.6.0 and previous)</span><br><span class="line">npm install hexo-wordcount@2 --save</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="post-添加"><a href="#post-添加" class="headerlink" title="post 添加"></a>post 添加</h1><p>如果还是不行，建议简单强暴添加，方法如下<br>打开<code>hexo\themes\hexo-theme-next\layout\_macro\post.swig</code> 文件，在文件类搜索关键词busuanzi，找到这段代码后</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">{% if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %}</span><br><span class="line">    &lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">    &lt;span class="post-meta-item-icon"</span><br><span class="line">    {% if not theme.post_meta.item_text %} title="{{ __('post.views') }}" {% endif %}&gt;</span><br><span class="line">    &lt;i class="fa fa-{{ theme.busuanzi_count.post_views_icon }}"&gt;&lt;/i&gt;</span><br><span class="line">    {% if theme.post_meta.item_text %} {{__('post.views') + __('symbol.colon') }} {% endif %}</span><br><span class="line">    &lt;span class="busuanzi-value" id="busuanzi_value_page_pv" &gt;&lt;/span&gt;</span><br><span class="line">    &lt;/span&gt;</span><br><span class="line">            </span><br><span class="line">{% endif %}</span><br></pre></td></tr></tbody></table></figure>
+<p>在endif上面，即本文代码块那个空行处添加以下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;span class="post-meta-divider"&gt;|&lt;/span&gt;</span><br><span class="line">&lt;span title="{{ __('post.wordcount') }}"&gt;&lt;span class="post-meta-item-icon"&gt;&lt;i class="fa fa-file-word-o"&gt;&lt;/i&gt;&lt;/span&gt;字数： {{ wordcount(post.content) }}&lt;/span&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<h1 id="全站添加"><a href="#全站添加" class="headerlink" title="全站添加"></a>全站添加</h1><p>打开<code>hexo\themes\hexo-theme-next\layout\_partials\footer.swig</code> 文件，新增如下代码</p>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">&lt;div class="theme-info"&gt;</span><br><span class="line">  &lt;div class="powered-by"&gt;&lt;/div&gt;</span><br><span class="line">  &lt;span class="post-count"&gt;全站共 {{ totalcount(site) }} 字&lt;/span&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+
+<p>到这里就可以啦，快去试试吧。  </p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>修改Hexo博客next主题文章页面宽度</title>
+    <url>/2019/06/19/Hexo-postwidth/</url>
+    <content><![CDATA[<p>网上方法很多，我简单记录一种，手动修改样式，宽度自适应。</p>
+<p><code>\themes\next\source/css/_schemes/Picses/_layout.styl</code>文件末尾添加如下代码即可</p>
+<pre><code>// 以下为新增代码！！修改post宽度
+header{ width: 80% !important; }
+header.post-header {
+  width: auto !important;
+}
+.container .main-inner { width: 80%; }
+.content-wrap { width: calc(100% - 260px); }
+
+.header {
+  +tablet() {
+    width: auto !important;
+  }
+  +mobile() {
+    width: auto !important;
+  }
+}
+
+.container .main-inner {
+  +tablet() {
+    width: auto !important;
+  }
+  +mobile() {
+    width: auto !important;
+  }
+}
+
+.content-wrap {
+  +tablet() {
+    width: 100% !important;
+  }
+  +mobile() {
+    width: 100% !important;
+  }
+}</code></pre><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>]]></content>
+      <categories>
+        <category>拾级而上</category>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
