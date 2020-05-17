@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Redis," />
+  <meta name="keywords" content="Redis,cluster,sentinel," />
 
 
 
@@ -87,7 +87,7 @@
 
 
 <meta name="description" content="本文是在本地环境学习配置Redis集群的流程文。使用Redis版本为5.0.8，基于VMware中的centOS7系统。">
-<meta name="keywords" content="Redis">
+<meta name="keywords" content="Redis,cluster,sentinel">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis集群配置">
 <meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2020&#x2F;05&#x2F;16&#x2F;Redis-config&#x2F;index.html">
@@ -97,7 +97,9 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2020&#x2F;05&#x2F;16&#x2F;Redis-config&#x2F;slave_readonly.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2020&#x2F;05&#x2F;16&#x2F;Redis-config&#x2F;sentinel_look.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2020&#x2F;05&#x2F;16&#x2F;Redis-config&#x2F;sentinel_work.png">
-<meta property="og:updated_time" content="2020-05-16T12:34:12.332Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2020&#x2F;05&#x2F;16&#x2F;Redis-config&#x2F;cluster_start.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2020&#x2F;05&#x2F;16&#x2F;Redis-config&#x2F;cluster_sess.png">
+<meta property="og:updated_time" content="2020-05-17T10:02:05.600Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2020&#x2F;05&#x2F;16&#x2F;Redis-config&#x2F;slave_readonly.png">
 
@@ -396,7 +398,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.4k 字
+                  3.1k 字
                 </span>
               
 
@@ -412,7 +414,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5分钟
+                  12分钟
                 </span>
               
             </span>
@@ -447,9 +449,9 @@
 <p>使用<code>ps -ef | grep redis</code>检查两个进程是否正常存在。<br>使用<code>./redis-cli -h 127.0.0.1 -p 6380</code>命令指定端口和服务器进入客户端，使用<code>info</code>命令查看Replication选项确定是否配置成功，使用<code>role</code>也可。</p>
 <figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Replication</span></span><br><span class="line">role:master <span class="comment"># 角色，master代表是主机</span></span><br><span class="line">connected_slaves:1 <span class="comment"># 连接的从机的数量 我们这里只配置了6381一个</span></span><br><span class="line">slave0:ip=127.0.0.1,port=6381,state=online,offset=280,lag=0</span><br></pre></td></tr></tbody></table></figure>
 <p>下图为验证主备功能的。图片显示6380主服务器可读可写，6381备服只有读取权限。</p>
-<img src="/2020/05/16/Redis-config/slave_readonly.png" class title="主备功能数据获取验证"> 
+<img src="/2020/05/16/Redis-config/slave_readonly.png" class="" title="主备功能数据获取验证"> 
 
-<h1 id="使用哨兵实现主从切换"><a href="#使用哨兵实现主从切换" class="headerlink" title="使用哨兵实现主从切换"></a>使用哨兵实现主从切换</h1><p><a href="http://www.redis.cn/topics/sentinel.html" target="_blank" rel="noopener">参考Redis中文文档中对哨兵的描述</a></p>
+<h1 id="使用哨兵模式实现主从切换"><a href="#使用哨兵模式实现主从切换" class="headerlink" title="使用哨兵模式实现主从切换"></a>使用哨兵模式实现主从切换</h1><p><a href="http://www.redis.cn/topics/sentinel.html" target="_blank" rel="noopener">参考Redis中文文档中对哨兵的描述</a></p>
 <blockquote>
 <p>Redis的Sentinel系统用于管理多个Redis服务器（instance），该系统执行以下三个任务:</p>
 <ol>
@@ -458,13 +460,48 @@
 <li>自动故障迁移（Automatic failover）：当一个主服务器不能正常工作时，Sentinel会开始一次自动故障迁移操作，它会将失效主服务器的其中一个从服务器升级为新的主服务器， 让失效主服务器的其他从服务器改为复制新的主服务器；当客户端试图连接失效的主服务器时，集群也会向客户端返回新主服务器的地址，使得集群可以使用新主服务器代替失效服务器。</li>
 </ol>
 </blockquote>
-<h2 id="配置-Sentinelsent"><a href="#配置-Sentinelsent" class="headerlink" title="配置 Sentinelsent"></a>配置 Sentinelsent</h2><p>Redis 源码中包含了一个名为 sentinel.conf 的文件， 这个文件是一个带有详细注释的 Sentinel 配置文件示例。<br>运行一个 Sentinel 所需的配置如下所示：</p>
-<figure class="highlight php"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 端口</span></span><br><span class="line">port <span class="number">6380</span>  </span><br><span class="line"><span class="comment">// 工作目录</span></span><br><span class="line">dir /usr/local/redis/tmp</span><br><span class="line"><span class="comment">// 指定的要检测的实例。参数分别是 别名 ip 端口 server异常时需要确认异常的哨兵个数。1表示至少1个setinel实例同时检测到redis server异常时才将redis server的状态判决为"宕机"</span></span><br><span class="line">sentinel monitor mymaster <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> <span class="number">6380</span> <span class="number">1</span> </span><br><span class="line"><span class="comment">// 指定某个sentinel实例监控到某个redis实例持续异常多长时间后，会判决其状态为down。单位毫秒</span></span><br><span class="line">sentinel down-after-milliseconds mymaster <span class="number">60000</span> </span><br><span class="line"><span class="comment">// 若sentinel在该配置值内未能完成failover操作（即故障时master/slave自动切换），则认为本次failover失败</span></span><br><span class="line">sentinel failover-timeout mymaster <span class="number">180000</span> </span><br><span class="line"><span class="comment">// 指定failover过程中，同时被sentinel reconfigure的最大slave实例数。由于reconfigure过程中，对应的slave会中断响应客户端请求，故为避免所有的slave同时不可用，该值需适当配小。</span></span><br><span class="line">sentinel parallel-syncs mymaster <span class="number">1</span></span><br></pre></td></tr></tbody></table></figure>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>Redis 源码中包含了一个名为 sentinel.conf 的文件， 这个文件是一个带有详细注释的 Sentinel 配置文件示例。<br>运行一个 Sentinel 所需的配置如下所示：</p>
+<figure class="highlight php"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 端口</span></span><br><span class="line">port <span class="number">6380</span>  </span><br><span class="line"><span class="comment">// 工作目录</span></span><br><span class="line">dir /usr/local/redis/tmp</span><br><span class="line"><span class="comment">// 指定的要检测的实例。参数分别是 别名 ip 端口 server异常时需要确认异常的哨兵个数。1表示至少1个setinel实例同时检测到redis server异常时才将redis server的状态判决为"宕机"</span></span><br><span class="line">sentinel monitor mymaster <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> <span class="number">6380</span> <span class="number">1</span> </span><br><span class="line"><span class="comment">// 指定某个sentinel实例监控到某个redis实例持续异常多长时间后，会判决其状态为down。单位毫秒</span></span><br><span class="line">sentinel down-after-milliseconds mymaster <span class="number">60000</span> </span><br><span class="line"><span class="comment">// 若sentinel在该配置值内未能完成failover操作（即故障时master/slave自动切换），则认为本次failover失败</span></span><br><span class="line">sentinel failover-timeout mymaster <span class="number">180000</span> </span><br><span class="line"><span class="comment">// 指定failover过程中，同时被sentinel reconfigure的最大slave实例数。由于reconfigure过程中，对应的slave会中断响应客户端请求，故为避免所有的slave同时不可用，该值需适当配小。</span></span><br><span class="line">sentinel parallel-syncs mymaster <span class="number">1</span></span><br><span class="line"><span class="comment">// know-salve 代表已知的从机</span></span><br><span class="line">sentinel known-slave mymaster <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> <span class="number">6381</span> </span><br><span class="line"><span class="comment">// 同时一时间最多3个slave可同时更新配置</span></span><br><span class="line">sentinel leader-epoch mymaster <span class="number">3</span></span><br></pre></td></tr></tbody></table></figure>
 <p>将Redis源码中的 sentinel.conf 的文件拷贝到/usr/local/redis/conf目录下，修改自身需要的配置选项。</p>
-<h2 id="启动-Sentinelsent"><a href="#启动-Sentinelsent" class="headerlink" title="启动 Sentinelsent"></a>启动 Sentinelsent</h2><p>对于 redis-sentinel 程序，可以用<code>./redis-sentinel /path/to/sentinel.conf</code>命令来启动 Sentinel 系统。<br>对于 redis-server 程序，可以用<code>./redis-server /path/to/sentinel.conf --sentinel</code>命令来启动一个运行在 Sentinel 模式下的 Redis 服务器。<br>启动完成后我进行了数据验证，下图是验证用到的相关命令（注意redis服务的切换）</p>
-<img src="/2020/05/16/Redis-config/sentinel_look.png" class title="验证哨兵功能"> 
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p>对于 redis-sentinel 程序，可以用<code>./redis-sentinel /path/to/sentinel.conf</code>命令来启动 Sentinel 系统。或者使用<code>nohup /usr/local/redis/bin/redis-sentinel /usr/local/redis/conf/sentinel.conf  &amp;</code>不挂断地运行命令。<br>对于 redis-server 程序，可以用<code>./redis-server /path/to/sentinel.conf --sentinel</code>命令来启动一个运行在 Sentinel 模式下的 Redis 服务器。<br>启动完成后我进行了数据验证，下图是验证用到的相关命令（注意redis服务的切换）</p>
+<img src="/2020/05/16/Redis-config/sentinel_look.png" class="" title="验证哨兵功能"> 
 <p>通过上图的验证我们发现：本来主机是6380可以读写，从服务器是6381只可读。手动杀掉主服务器的运行进程，等待最大持续异常时间（down-after-milliseconds）后，哨兵会将主服务器自动切换成6381，将6380作为6381的备服。即使我们后续将6380再次启动，6380仍是6381的备服，数据只读。这在哨兵的服务进程中也有体现，见下图</p>
-<img src="/2020/05/16/Redis-config/sentinel_work.png" class> <script>
+<img src="/2020/05/16/Redis-config/sentinel_work.png" class=""> 
+
+<h1 id="主从从配置"><a href="#主从从配置" class="headerlink" title="主从从配置"></a>主从从配置</h1><p>如果让所有的slave节点数据的复制和同步都由master节点来处理，会造成master节点I/O压力过大。所以我们打算将6380作为主服务器，用于写入操作，6381和6382作为备服负责读操作。为了减轻master压力，让6382数据备份来源改成6381，实现主从从模式。</p>
+<h2 id="配置修改"><a href="#配置修改" class="headerlink" title="配置修改"></a>配置修改</h2><h3 id="redis-conf"><a href="#redis-conf" class="headerlink" title="redis.conf"></a>redis.conf</h3><p>确认以下参数：port、pidfile、daemonize、dbfilename和dir。<br>将slaveof选项添加到备服。将6382数据备份来源改成6381，6381的数据备份来源还是6380。6382的部分配置如下</p>
+<figure class="highlight php"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">bind <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">port <span class="number">6382</span></span><br><span class="line">daemonize yes</span><br><span class="line">pidfile <span class="string">"/usr/local/redis/redis_6382.pid"</span></span><br><span class="line">slaveof <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> <span class="number">6381</span></span><br><span class="line">dbfilename <span class="string">"dump6382.rdb"</span></span><br><span class="line">dir <span class="string">"/usr/local/redis/datadir/"</span></span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="Sentinel-conf"><a href="#Sentinel-conf" class="headerlink" title="Sentinel.conf"></a>Sentinel.conf</h3><p>哨兵启动后其实自动修改配置文件，一般建议不要手工修改。<br>如果之前配的是一主多从，配置中会存在sentinel known-slave选项。如果我们要配置主从从，要把多余的从在配置文件手工删掉。</p>
+<h2 id="便捷操作"><a href="#便捷操作" class="headerlink" title="便捷操作"></a>便捷操作</h2><p>为了操作方便，将多台服务启动命令整合到可执行脚本。</p>
+<h3 id="server-start"><a href="#server-start" class="headerlink" title="server_start"></a>server_start</h3><p>该脚本是为了方便启动redis server。在~/redis-cluster目录下新增文件server_start，同时启动三台redis实例和哨兵后台运行。脚本内容如下</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/6380.conf</span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/6381.conf</span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/6382.conf</span><br><span class="line">nohup /usr/local/redis/bin/redis-sentinel /usr/local/redis/conf/sentinel.conf  &amp;</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="cli-start"><a href="#cli-start" class="headerlink" title="cli_start"></a>cli_start</h3><p>该脚本是为了方便启动redis server。在~/redis-cluster目录下新增文件cli_start，可支持传入端口参数。脚本内容如下</p>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="keyword">if</span> [ -n <span class="string">"<span class="variable">$1</span>"</span> ]   <span class="comment">#-n 传入参数不为空 $1代表第二参数，$0是可执行文件名自己本身</span></span><br><span class="line">  <span class="keyword">then</span></span><br><span class="line">  /usr/<span class="built_in">local</span>/redis/bin/redis-cli -h 127.0.0.1 -p <span class="variable">$1</span></span><br><span class="line"> <span class="keyword">else</span></span><br><span class="line"> <span class="built_in">echo</span> <span class="string">"error,no port"</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></tbody></table></figure>
+<p>将redis server启动后，使用<code>./cli-start port</code>命令进入客户端，各自键入info命令尝试插入获取数据验证发现：6380为master，可读可写。其有一个从服为6381，6381角色为slave，他也有一个从服为6382。6381和6382都只可读。</p>
+<h1 id="cluster集群"><a href="#cluster集群" class="headerlink" title="cluster集群"></a>cluster集群</h1><p><a href="http://www.redis.cn/topics/cluster-tutorial.html" target="_blank" rel="noopener">参考Redis中文文档中对集群的描述</a></p>
+<h2 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h2><p>搭建集群的第一件事情我们需要一些运行在 集群模式的Redis实例. 这意味这集群并不是由一些普通的Redis实例组成的，集群模式需要通过配置启用，开启集群模式后的Redis实例便可以使用集群特有的命令和特性了.</p>
+<p>下面是一个最少选项的集群的配置文件:</p>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">port 7000</span><br><span class="line">pidfile <span class="string">"/usr/local/redis/redis_7000.pid"</span></span><br><span class="line"><span class="comment"># 表示打开集群 </span></span><br><span class="line">cluster-enabled yes </span><br><span class="line">cluster-node-timeout 5000</span><br><span class="line"><span class="comment"># 开启AOF存储模式</span></span><br><span class="line">appendonly yes </span><br><span class="line"><span class="comment">#集群模式下,每个redis节点生成一个配置文件，由redis自己维护。文件名区分开即可  下面两个文件名如果不像我一样放在同目录的话，可以不修改</span></span><br><span class="line">cluster-config-file nodes_7000.conf</span><br><span class="line">appendfilename <span class="string">"appendonly_7000.aof"</span></span><br><span class="line"><span class="comment"># 注释掉dbfilename 关闭RDB改用AOF</span></span><br><span class="line"><span class="comment"># dbfilename </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 关掉RDB存储</span></span><br><span class="line">save　<span class="string">""</span></span><br><span class="line"><span class="comment">#save 900 1</span></span><br><span class="line"><span class="comment">#save 300 10</span></span><br><span class="line"><span class="comment">#save 60 1000</span></span><br></pre></td></tr></tbody></table></figure>
+<p>要让集群正常运作至少需要三个主节点，不过在刚开始试用集群功能时， 官方强烈建议使用六个节点： 其中三个为主节点， 而其余三个则是各个主节点的从节点。所以我们创建进入一个新目录cluster_conf，并创建六个以端口号为名字的Redis.conf文件，文件的内容可以使用上面的示例配置文件，稍后我们将运行六个Redis实例。</p>
+<h2 id="安装Ruby"><a href="#安装Ruby" class="headerlink" title="安装Ruby"></a>安装Ruby</h2><p>低版本的redis需要安装ruby环境，现在高版本的redis-cli已经支持集群了，不再需要安装ruby了。</p>
+<p>切换到root账号，执行默认安装。</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">su - root </span><br><span class="line">yum -y install ruby ruby-devel rubygems rpm-build</span><br><span class="line">gem install redis</span><br></pre></td></tr></tbody></table></figure>
+<p>或者编译安装。<a href="http://www.ruby-lang.org/en/downloads/" target="_blank" rel="noopener">官方下载地址</a><br> <code>wget https://cache.ruby-lang.org/pub/ruby/2.4/ruby-2.7.1.tar.gz --no-check-certificate</code></p>
+<h2 id="搭建集群"><a href="#搭建集群" class="headerlink" title="搭建集群"></a>搭建集群</h2><p>首先启动六个实例，我们可以使用<code>/usr/local/redis/bin/redis-server /usr/local/redis/cluster_conf/7000.conf</code>命令一条条启动，也可以封装到可执行脚本中。<br>启动完成 <code>ps -ef | grep redis</code> 查看如下</p>
+<img src="/2020/05/16/Redis-config/cluster_start.png" class=""> 
+<p>现在我们已经有了六个正在运行中的 Redis 实例， 接下来我们需要使用这些实例来创建集群， 并为每个节点编写配置文件。<br>通过使用 Redis 集群命令行工具 redis-trib ，编写节点配置文件的工作可以非常容易地完成：redis-trib 位于 Redis 源码的 src 文件夹中，它是一个 Ruby 程序，这个程序通过向实例发送特殊命令来完成创建新集群，检查集群，或者对集群进行重新分片（reshared）等工作。</p>
+<p>创建一个新的集群, 选项–replicas 1 表示我们希望为集群中的每个主节点创建一个从节点。下面命令默认创建7000 7001 7002 为主节点，7003 7004 7005为备节点。<br>低版本使用：<code>./redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005</code><br>Redis5.0后不再支持上条命令，需要使用redis-cli来实现。如下<br><code>./redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 --cluster-replicas 1</code><br>之后跟着的其他参数则是这个集群实例的地址列表,3个master3个slave redis-trib 会打印出一份预想中的配置给你看，如果你觉得没问题的话，就可以输入yes，redis-trib 就会将这份配置应用到集群当中,让各个节点开始互相通讯,最后可以得到如下信息：</p>
+<blockquote>
+<p>[OK] All nodes agree about slots configuration.<br>[OK] All 16384 slots covered.</p>
+</blockquote>
+<p>这表示集群中的 16384 个槽都有至少一个主节点在处理， 集群运作正常。此时，我们可以使用<code>redis-cli -c -p 7000</code>命令连接到7000端口的客户端，也可以通过脚本进入。相关验证如下图</p>
+<img src="/2020/05/16/Redis-config/cluster_sess.png" class=""> 
+
+<p><span style="font-size: 13px; color: #777;">官方提供了一个自动化脚本,在 redis源码目录的utils文件夹，下面有个create-cluster文件夹，下面有个create-cluster脚本。也可以根据里面的代码进行脚本执行搭建。</span></p>
+<h1 id="常见错误"><a href="#常见错误" class="headerlink" title="常见错误"></a>常见错误</h1><h2 id="ERR-Slot-xxxxx-is-already-busy-Redis-CommandError"><a href="#ERR-Slot-xxxxx-is-already-busy-Redis-CommandError" class="headerlink" title="ERR Slot xxxxx is already busy (Redis::CommandError)"></a>ERR Slot xxxxx is already busy (Redis::CommandError)</h2><p>如果上一次运行出错，则必须去datadir对应目录去手工删除自动生成的cluster配置文件。</p>
+<script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
@@ -501,7 +538,7 @@
   <p><span>本文标题:</span><a href="/2020/05/16/Redis-config/">Redis集群配置</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 xugz 的个人博客">xugz</a></p>
   <p><span>发布时间:</span>2020年05月16日 - 14:17</p>
-  <p><span>最后更新:</span>2020年05月16日 - 20:34</p>
+  <p><span>最后更新:</span>2020年05月17日 - 18:02</p>
   <p><span>原始链接:</span><a href="/2020/05/16/Redis-config/" title="Redis集群配置">https://xlline.github.io/2020/05/16/Redis-config/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://xlline.github.io/2020/05/16/Redis-config/"  aria-label="复制成功！"></i></span>
   </p>
@@ -543,6 +580,10 @@
         <div class="post-tags">
           
             <a href="/tags/Redis/" rel="tag"><i class="fa fa-tag"></i> Redis</a>
+          
+            <a href="/tags/cluster/" rel="tag"><i class="fa fa-tag"></i> cluster</a>
+          
+            <a href="/tags/sentinel/" rel="tag"><i class="fa fa-tag"></i> sentinel</a>
           
         </div>
       
@@ -662,7 +703,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -711,7 +752,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置最简单的主从"><span class="nav-number">2.</span> <span class="nav-text">配置最简单的主从</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#启动master"><span class="nav-number">2.1.</span> <span class="nav-text">启动master</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动slave"><span class="nav-number">2.2.</span> <span class="nav-text">启动slave</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用哨兵实现主从切换"><span class="nav-number">3.</span> <span class="nav-text">使用哨兵实现主从切换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置-Sentinelsent"><span class="nav-number">3.1.</span> <span class="nav-text">配置 Sentinelsent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动-Sentinelsent"><span class="nav-number">3.2.</span> <span class="nav-text">启动 Sentinelsent</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置最简单的主从"><span class="nav-number">2.</span> <span class="nav-text">配置最简单的主从</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#启动master"><span class="nav-number">2.1.</span> <span class="nav-text">启动master</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动slave"><span class="nav-number">2.2.</span> <span class="nav-text">启动slave</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用哨兵模式实现主从切换"><span class="nav-number">3.</span> <span class="nav-text">使用哨兵模式实现主从切换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置"><span class="nav-number">3.1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动"><span class="nav-number">3.2.</span> <span class="nav-text">启动</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#主从从配置"><span class="nav-number">4.</span> <span class="nav-text">主从从配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置修改"><span class="nav-number">4.1.</span> <span class="nav-text">配置修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#redis-conf"><span class="nav-number">4.1.1.</span> <span class="nav-text">redis.conf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sentinel-conf"><span class="nav-number">4.1.2.</span> <span class="nav-text">Sentinel.conf</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#便捷操作"><span class="nav-number">4.2.</span> <span class="nav-text">便捷操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#server-start"><span class="nav-number">4.2.1.</span> <span class="nav-text">server_start</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cli-start"><span class="nav-number">4.2.2.</span> <span class="nav-text">cli_start</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cluster集群"><span class="nav-number">5.</span> <span class="nav-text">cluster集群</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置-1"><span class="nav-number">5.1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Ruby"><span class="nav-number">5.2.</span> <span class="nav-text">安装Ruby</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#搭建集群"><span class="nav-number">5.3.</span> <span class="nav-text">搭建集群</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见错误"><span class="nav-number">6.</span> <span class="nav-text">常见错误</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ERR-Slot-xxxxx-is-already-busy-Redis-CommandError"><span class="nav-number">6.1.</span> <span class="nav-text">ERR Slot xxxxx is already busy (Redis::CommandError)</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -753,7 +794,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 32.6k 字</span>
+  <span class="post-count">全站共 34.3k 字</span>
 </div>
         
 

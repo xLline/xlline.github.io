@@ -557,7 +557,7 @@
 
 </li>
 </ol>
-<h1 id="系统目录结构"><a href="#系统目录结构" class="headerlink" title="系统目录结构"></a>系统目录结构</h1><div style="width: 50%;margin: left"><img src="/2019/10/23/Linux-base/dir_tree.png" class title="系统目录结构树"></div>
+<h1 id="系统目录结构"><a href="#系统目录结构" class="headerlink" title="系统目录结构"></a>系统目录结构</h1><div style="width: 50%;margin: left"><img src="/2019/10/23/Linux-base/dir_tree.png" class="" title="系统目录结构树"></div>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/bin   存放二进制可执行文件(ls,cat,mkdir等)，存放系统命令</span><br><span class="line">/boot  核心系统启动文件，存放用于系统引导时使用的各种文件</span><br><span class="line">/dev   存放硬件设备，使用里面设备需要挂载,糖炒栗子：mount /dev/cdrom /media/</span><br><span class="line">/etc   存放系统程序管理和配置文件</span><br><span class="line">/home  存放除了root用户之外的所有用户文件的根目录，比如用户user的主目录就是/home/user，可以用~user表示</span><br><span class="line">/lib   存放跟文件系统中的程序运行所需要的共享库及内核模块。共享库又叫动态链接共享库，作用类似windows里的.dll文件，存放了根文件系统程序运行所需的共享文件。</span><br><span class="line">/media 空目录，不可删，用于挂在光盘使用</span><br><span class="line">/mnt   空测试目录，系统管理员安装临时文件系统的安装点，系统提供这个目录是让用户临时挂载其他的文件系统</span><br><span class="line">/opt   空测试目录，额外安装的可选应用程序包所放置的位置。一般情况下，我们可以把tomcat等都安装到这里。</span><br><span class="line">/proc  虚拟文件系统目录，是系统内存的映射。存放cpu、内存和硬盘等设备信息，可直接访问这个目录来获取系统信息。</span><br><span class="line">/root  超级用户（root）的主目录</span><br><span class="line">/run   程序进程PID </span><br><span class="line">/sbin  存放二进制可执行文件，只有root才能访问。这里存放的是系统管理员使用的系统级别的管理命令和程序。如ifconfig等</span><br><span class="line">/srv   自己的程序或源代码的放置目录</span><br><span class="line">/sys   内核信息文件</span><br><span class="line">/tmp   用于存放各种临时文件，是公用的临时文件存储点</span><br><span class="line">/usr   非系统程序用于存放系统应用程序，比较重要的目录/usr/local 本地系统管理员软件安装目录（安装系统级的应用）。这是最庞大的目录，要用到的应用程序和文件几乎都在这个目录。</span><br><span class="line">/var   用于存放运行时需要改变数据的文件，也是某些大文件的溢出区，比方说各种服务的日志文件（系统或程序日志等）</span><br></pre></td></tr></tbody></table></figure>
 
 <h1 id="基础命令"><a href="#基础命令" class="headerlink" title="基础命令"></a>基础命令</h1><ol>
@@ -579,7 +579,7 @@
 <li>末行模式 :末行命令</li>
 <li>视图模式 visual</li>
 </ol>
-<h2 id="常用模式切换"><a href="#常用模式切换" class="headerlink" title="常用模式切换"></a>常用模式切换</h2><div style="width: 44%;margin: left"><img src="/2019/10/23/Linux-base/vi_model.png" class title="简单的模式切换"></div>
+<h2 id="常用模式切换"><a href="#常用模式切换" class="headerlink" title="常用模式切换"></a>常用模式切换</h2><div style="width: 44%;margin: left"><img src="/2019/10/23/Linux-base/vi_model.png" class="" title="简单的模式切换"></div>
 
 <p>命令模式 =&gt; 输入模式<br>输入模式 =&gt; 命令模式 按下<code>esc</code><br>命令模式 =&gt; 末行模式 使用 <code>shift+:</code>输入<code>x</code>保存退出<br>末行模式 =&gt; 命令模式 按下<code>esc</code><br>命令模式 =&gt; 视图模式 使用<code>v</code><br> 按<code>v</code>键再按上下左右进行视图选中，进行快速缩进</p>
 <h3 id="命令模式常用命令"><a href="#命令模式常用命令" class="headerlink" title="命令模式常用命令"></a>命令模式常用命令</h3><p> 上<code>k</code>下<code>j</code>左<code>h</code>右<code>l</code>撤销用<code>u</code>恢复用ctrl+<code>r</code>(撤销多了恢复，两个配合使用)<br> 复制当前行 <code>yy</code> 复制多行 <code>nyy</code>, 比如<code>3yy</code>为复制三行<br> 粘贴到下一行 <code>p</code>, 粘贴到下一行n次 <code>np</code>.  粘贴到上一行 <code>P</code>, 粘贴到上一行n次 <code>nP</code></p>
@@ -861,7 +861,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -952,7 +952,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 32.6k 字</span>
+  <span class="post-count">全站共 34.3k 字</span>
 </div>
         
 

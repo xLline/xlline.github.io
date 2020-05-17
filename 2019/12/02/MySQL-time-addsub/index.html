@@ -489,7 +489,7 @@
 <a id="more"></a>
 <p>比如说，我们现在想要查询得出当前日期的一天前和五天前的日期，测试SQL语句如下</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT NOW(),CURDATE(), CURTIME(), DATE_SUB(CURDATE(),INTERVAL 1 DAY),CURDATE()-1, DATE_SUB(CURDATE(),INTERVAL 5 DAY), CURDATE()-5;</span><br></pre></td></tr></tbody></table></figure>
-<div style="width: 85%;margin: left"><img src="/2019/12/02/MySQL-time-addsub/sql_result.png" class title="执行SQL得到的结果"></div>
+<div style="width: 85%;margin: left"><img src="/2019/12/02/MySQL-time-addsub/sql_result.png" class="" title="执行SQL得到的结果"></div>
 明显发现使用 CURDATE()函数直接进行加减存在问题，需要留意。当我们需要日期加减操作时，可使用 DATE_SUB() 和 DATE_ADD() 函数。
 
 <p>DATE_ADD()和DATE_SUB()函数常用type参数有： </p>
@@ -686,7 +686,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -761,7 +761,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 32.6k 字</span>
+  <span class="post-count">全站共 34.3k 字</span>
 </div>
         
 

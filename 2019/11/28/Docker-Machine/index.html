@@ -442,7 +442,7 @@
 <h1 id="创建Docker主机"><a href="#创建Docker主机" class="headerlink" title="创建Docker主机"></a>创建Docker主机</h1><p>首先我们需要安装virtualbox <a href="https://www.virtualbox.org/wiki/Linux_Downloads" target="_blank" rel="noopener">官方下载地址点我</a>。选择对应版本的rpm下载包，通过ftp方式拷贝到服务器，进行<code>yum install &lt;包名&gt; -y</code> 安装即可。同时，oracle也告诉我们存在其他方法 <a href="http://yum.oracle.com/getting-started.html" target="_blank" rel="noopener">参考地址</a>，如下</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget   http://yum.oracle.com/public-yum-ol7.repo</span><br><span class="line">然后把下载下来的文件拷贝到/etc/yum.repos.d中</span><br><span class="line">yum install VirtualBox-5.2</span><br></pre></td></tr></tbody></table></figure>
 <p><a href="https://docs.docker.com/machine/drivers/virtualbox/" target="_blank" rel="noopener">创建Docker主机安装virtualbox参考地址</a><br>完成可以执行 <code>docker-machine create --driver=virtualbox vbox-test</code> 创建。<br>执行该命令，他首先检查 /home/xugz/.docker/machine/cache 是否存在，没有则创建文件夹；然后寻找该文件夹下是否有 boot2docker.iso文件（一个基于Tiny Core Linux的系统，里面Docker啥的都帮你搞定了），另外会默认会创建一个虚拟网卡 （vboxnet0）。所以如果太慢，我们可以去<a href="https://github.com/boot2docker/boot2docker/releases/" target="_blank" rel="noopener">boot2docker.iso对应gitHub下载地址</a>手工下载用ftp传到目标服务器再执行创建。</p>
-<div style="width: 61%;margin: left"><img src="/2019/11/28/Docker-Machine/create.png" class></div>
+<div style="width: 61%;margin: left"><img src="/2019/11/28/Docker-Machine/create.png" class=""></div>
 
 <h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><p>查看列表 <code>docker-machine ls</code><br>查看IP地址 <code>docker-machine ip 虚拟机名称</code><br>停止和开启 <code>docker-machine stop/start  虚拟机名称</code><br>查看环境变量 <code>docker-machine env vbox-test</code><br> 如果我们要操作machine里面的docker环境变量 ,可以不用进入到虚拟机<br> 使用eval命令（可以读取一连串的参数,然后按照参数特性来执行）<br> 此时我们执行 <code>eval $(docker-machine env vbox-test)</code><br> 这时我们本机的docker客户端就连接了vbox-test的docker服务端<br> 切换回来使用命令 <code>eval $(docker-machine env -u)</code><br>SSH的方式连接到虚拟机 <code>docker-machine ssh 虚拟机名称</code></p>
 <h1 id="移植主机镜像到虚拟机"><a href="#移植主机镜像到虚拟机" class="headerlink" title="移植主机镜像到虚拟机"></a>移植主机镜像到虚拟机</h1><p><strong>创建私有镜像库</strong></p>
@@ -459,7 +459,7 @@
 <h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><h2 id="http-server-gave-HTTP-response-to-HTTPS-client"><a href="#http-server-gave-HTTP-response-to-HTTPS-client" class="headerlink" title="http: server gave HTTP response to HTTPS client"></a>http: server gave HTTP response to HTTPS client</h2><p>因为docker为了安全，需要https 。但是我们可以让其不需要。<br>如果我们在主机里，那么要修改的是<code>/etc/docker/daemon.json</code>。在machine里也是一样的，那么要在/etc/docker下面 手动创建daemon.json文件（默认是木有的），添加如下内容</p>
 <figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    "insecure-registries":["192.168.99.1:5000"]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>修改完成需要重启虚拟机主机 <code>docker-machine restart 虚拟机名称</code>。</p>
-<div style="width: 61%;margin: left"><img src="/2019/11/28/Docker-Machine/error_https.png" class></div>
+<div style="width: 61%;margin: left"><img src="/2019/11/28/Docker-Machine/error_https.png" class=""></div>
 ## This computer doesn't have VT-X/AMD-v enabled. Enabling it in the BIOS is mandatory
 如果是在VMware中的Linux，需要在关机状态的虚拟机进行配置: 虚拟机&gt;设置&gt;处理器中勾选虚拟化 Intel VT-x/EPT 或 AMD-V/RVI(V)<script>
         document.querySelectorAll('.github-emoji')
@@ -663,7 +663,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">26</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -754,7 +754,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">全站共 32.6k 字</span>
+  <span class="post-count">全站共 34.3k 字</span>
 </div>
         
 
