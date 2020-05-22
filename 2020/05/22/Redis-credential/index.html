@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Git,credential," />
 
 
 
@@ -86,13 +86,15 @@
 
 
 
-<meta name="description" content="记录开发学习中遇到的问题和知识点，作为当时的思维梳理，同时方便后续翻阅。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="手册集">
-<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;categories&#x2F;%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A&#x2F;PHP&#x2F;PHPStorm&#x2F;index.html">
+<meta name="description" content="凭证存储为了解决Git使用HTTP协议访问远程仓库账号密码需要多次输入的问题。">
+<meta name="keywords" content="Git,credential">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git的HTTP协议凭证存储">
+<meta property="og:url" content="https:&#x2F;&#x2F;xlline.github.io&#x2F;2020&#x2F;05&#x2F;22&#x2F;Redis-credential&#x2F;index.html">
 <meta property="og:site_name" content="手册集">
-<meta property="og:description" content="记录开发学习中遇到的问题和知识点，作为当时的思维梳理，同时方便后续翻阅。">
+<meta property="og:description" content="凭证存储为了解决Git使用HTTP协议访问远程仓库账号密码需要多次输入的问题。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-05-22T10:56:23.991Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -128,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="https://xlline.github.io/categories/拾级而上/PHP/PHPStorm/"/>
+  <link rel="canonical" href="https://xlline.github.io/2020/05/22/Redis-credential/"/>
 
 
 
 
 
-  <title>分类: PHPStorm | 手册集</title>
+  <title>Git的HTTP协议凭证存储 | 手册集</title>
   
 
 
@@ -153,7 +155,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -281,55 +283,253 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block category">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>PHPStorm<small>分类</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://xlline.github.io/2020/05/22/Redis-credential/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xugz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="手册集">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2019/12/06/DevelopTool-phpstorm/" itemprop="url">
-              
-                <span itemprop="name">基于win+PHPStorm+Linux的推荐开发环境配置</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">Git的HTTP协议凭证存储</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2019-12-06T14:01:44+08:00"
-              content="2019-12-06" >
-          12-06
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-22T18:27:53+08:00">
+                2020-05-22
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/" itemprop="url" rel="index">
+                    <span itemprop="name">拾级而上</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8B%BE%E7%BA%A7%E8%80%8C%E4%B8%8A/Git/" itemprop="url" rel="index">
+                    <span itemprop="name">Git</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+	
+          
+	   <span class="post-meta-divider">|</span>
+            <span class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  467 字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  1分钟
+                </span>
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    </div>
+      
 
+      
+        <p>凭证存储为了解决Git使用HTTP协议访问远程仓库账号密码需要多次输入的问题。</p>
+<a id="more"></a>
+
+<p>解决这个问题，我们可以使用<code>git-credential-store</code>和<code>git-credential-cache</code>来管理密码，前者在文件（.gitconfig文件同目录下的.git-credentials中）中用明文存储密码，后者存在内存中。<br>命令如下：</p>
+<figure class="highlight m"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 默认<span class="number">15</span>分钟 将账号密码存储在内存</span><br><span class="line">git config --global credential.helper cache</span><br><span class="line">// 设置一个小时内记住密码</span><br><span class="line">git config credential.helper <span class="string">'cache --timeout=3600'</span></span><br><span class="line">// 密码存储到磁盘</span><br><span class="line">git config --global credential.helper store</span><br><span class="line">// 删除credential配置</span><br><span class="line">git config --system --unset credential.helper</span><br></pre></td></tr></tbody></table></figure>
+
+<p>也可以依赖第三方：<br>Mac系统，Git默认提供<code>osxkeychain</code>辅助程序来管理你的密码，使用命令<code>git config --global credential.helper osxkeychain</code>实现。<br>Windows系统，安装<code>git-credential-winstore</code>全称是Windows Credential Store for Git，可以将https方式的Git登陆用户名和密码保存在Windows自带的凭据管理系统中，比credential.helper方式更加安全。<br>安装方式：<br>1、下载后解压文件后复制git-credential-winstore.exe 文件到git安装目录的bin目录里面<br>2、将 Git 添加到环境变量。打开环境变量（计算机右键 - &gt; 高级系统设置 -&gt; 环境变量 -&gt; 在系统变量里面找到path双击 ）<br>3、将 Git 安装目录bin文件夹目录添加到步骤2打开的path的最后面，前面添加一个分号。<br>4、双击 bin 目录下的 git-credential-winstore.exe 文件，有个浮层，一般点击是按钮。<br>5、重启 git bash ，会有一个浮层让你输入用户名和密码。</p>
+<p>如果安装的是GitGUI，则提供的是<code>git-credential-manager</code>。</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+      
+    </div>
+    
+    
+    
+
+<div>
+      
+        
+      
+</div>
+
+    
+
+    
+
+    
+	<div>
+	  
+	    <div>
+<!--todo 暂时删除本文结束小标签，这个东西是统一的，不太喜欢，后续优化后再放开 只需要删除 条件 and passage_end_tag 即可 -->
+    
+</div>
+
+	  
+	</div>
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Git/" rel="tag"><i class="fa fa-tag"></i> Git</a>
+          
+            <a href="/tags/credential/" rel="tag"><i class="fa fa-tag"></i> credential</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/16/Redis-config/" rel="next" title="Redis集群配置">
+                <i class="fa fa-chevron-left"></i> Redis集群配置
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -337,6 +537,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -582,6 +786,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
